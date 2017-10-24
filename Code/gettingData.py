@@ -1,0 +1,11 @@
+import dota2api
+api = dota2api.Initialise("D2621F001696D18D41FC7C955EF66E40")
+hist = api.get_match_history(account_id=41231571)
+match = api.get_match_details(match_id=1000193456)
+leages = api.get_league_listing()
+print(leages)
+print('\n')
+print(match.keys())
+print(match['game_mode_name'])
+print(match['radiant_name'])
+#dict_keys(['players', 'dire_name', 'dire_captain', 'radiant_captain', 'barracks_status_dire', 'positive_votes', 'radiant_team_id', 'game_mode', 'start_time', 'dire_team_complete', 'lobby_name', 'pre_game_duration', 'picks_bans', 'game_mode_name', 'lobby_type', 'match_seq_num', 'duration', 'negative_votes', 'barracks_status_radiant', 'dire_score', 'radiant_win', 'radiant_logo', 'flags', 'engine', 'match_id', 'first_blood_time', 'radiant_score', 'tower_status_dire', 'dire_team_id', 'cluster_name', 'human_players', 'radiant_name', 'tower_status_radiant', 'cluster', 'dire_logo', 'leagueid', 'radiant_team_complete'])
