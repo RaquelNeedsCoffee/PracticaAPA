@@ -1,5 +1,6 @@
 import requests
 
+steam_API = 'http://api.steampowered.com/IDOTA2Match_570'
 
 def get_data():
     sorted_pro_matches = []
@@ -9,7 +10,7 @@ def get_data():
         if len(sorted_pro_matches) > 0:
             parameters['start_at_match_id'] = sorted_pro_matches[0]['match_id'] - 1
         new_matches = sorted(
-            requests.get('http://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1', params=parameters)
+            requests.get(steam_API + '/GetMatchHistory/v1', params=parameters)
             .json()['result']['matches'],
             key=lambda k: k['match_id']
         )
@@ -26,3 +27,7 @@ for m in matches:
 
 print(matches[0]['match_id'], '\n', len(matches), len(set(match_ids)))
 print(matches[0])
+
+parameters = {'match_id': matches[0]['match_id']}
+match_det = requests.get(steam_API + '/GetMatchDetails/v1', params=parameters)
+print(match_det)
