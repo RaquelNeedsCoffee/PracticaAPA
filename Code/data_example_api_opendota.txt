@@ -1,0 +1,16 @@
+{
+'radiant_score': 27,
+'league_name': 'ProDotA Cup Series',
+'dire_score': 8,
+'duration': 1563,
+'series_type': 1,
+'radiant_name': 'New Beginning',
+'radiant_team_id': 3931472,
+'leagueid': 5562,
+'start_time': 1507295518,
+'dire_team_id': 3262512,
+'dire_name': 'ThePrime.NND',
+'match_id': 3486235330,
+'series_id': 167611,
+'radiant_win': True
+}

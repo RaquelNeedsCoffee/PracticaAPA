@@ -1,0 +1,21 @@
+{
+'match_seq_num': 3064281130,
+'dire_team_id': 0, 
+'players': 
+[
+	{'hero_id': 63, 'player_slot': 0, 'account_id': 4294967295},
+	{'hero_id': 90, 'player_slot': 1, 'account_id': 4294967295},
+	{'hero_id': 49, 'player_slot': 2, 'account_id': 4294967295},
+	{'hero_id': 40, 'player_slot': 3, 'account_id': 4294967295},
+	{'hero_id': 99, 'player_slot': 4, 'account_id': 4294967295},
+	{'hero_id': 75, 'player_slot': 128, 'account_id': 4294967295},
+	{'hero_id': 36, 'player_slot': 129, 'account_id': 253585935},
+	{'hero_id': 95, 'player_slot': 130, 'account_id': 4294967295},
+	{'hero_id': 71, 'player_slot': 131, 'account_id': 255121137},
+	{'hero_id': 21, 'player_slot': 132, 'account_id': 203292645}
+],
+'start_time': 1508878144,
+'match_id': 3521068201,
+'radiant_team_id': 0,
+'lobby_type': 7
+ }
