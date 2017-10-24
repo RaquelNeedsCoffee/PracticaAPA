@@ -30,6 +30,7 @@ print(sbm[0]['match_id'])
 
 for i in range(0, 100):
     parameters = {'less_than_match_id': sbm[0]['match_id']}
+    #TODO: mirar si funciona con la api oficial
     newmatches = requests.get('http://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1',params=parameters)
     opendota = requests.get('https://api.opendota.com/api/proMatches',params=parameters)
     l = len(sbm)
