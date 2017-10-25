@@ -17,7 +17,7 @@ print(match['radiant_name'])
 
 parameters = {'key': "D2621F001696D18D41FC7C955EF66E40", 'matches_requested': 30}
 
-newmatches = requests.get('http://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1',params=parameters)
+newmatches = requests.get('http://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1', params=parameters)
 # IDOTA2Match_570/GetMatchHistory/v001/
 print(len(newmatches.json()['result']['matches']))
 # print(newmatches.content.decode("utf-8"))
