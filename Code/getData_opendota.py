@@ -1,17 +1,17 @@
 import requests
 
-opendota_API = 'https://api.opendota.com/api'
+opendota_api_URL = 'https://api.opendota.com/api'
 
 
 def get_data():
     sorted_pro_matches = []
     parameters = {}
-    num_reqs = 100
+    num_reqs = 5
     for i in range(0, num_reqs):
         if len(sorted_pro_matches) > 0:
             parameters = {'less_than_match_id': sorted_pro_matches[0]['match_id']}
-        open_dota = requests.get(opendota_API + '/proMatches', params=parameters)
-        sorted_new_matches = sorted(open_dota.json(), key=lambda k: k['match_id'])
+            pro_matches = requests.get(opendota_api_URL + '/proMatches', params=parameters)
+        sorted_new_matches = sorted(pro_matches.json(), key=lambda k: k['match_id'])
         sorted_pro_matches = sorted_new_matches + sorted_pro_matches
         # print(len(sorted_new_matches), len(sorted_pro_matches))
 
@@ -25,4 +25,8 @@ for m in matches:
     match_ids = match_ids + [m['match_id']]
 
 print(matches[0]['match_id'], matches[-1]['match_id'], len(matches), len(set(match_ids)))
-print(matches[0])
+match_keys = matches[0].keys()
+
+print()
+for k in match_keys:
+    print(k)
