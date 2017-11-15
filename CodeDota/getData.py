@@ -9,8 +9,7 @@ dota2api_api = dota2api.Initialise(api_key)
 def get_pro_matches_ids():
     sorted_pro_matches = sorted(
                 requests.get(opendota_api_URL + '/proMatches').json(),
-                key=lambda k: k['match_id']
-            )
+                key=lambda k: k['match_id'])
     if len(sorted_pro_matches) > 0:
         parameters = {'less_than_match_id': sorted_pro_matches[0]['match_id']}
         num_requests = 10
