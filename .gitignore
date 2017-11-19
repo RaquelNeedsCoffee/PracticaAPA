@@ -34,6 +34,11 @@ vignettes/*.pdf
 
 #The previous code
 
-/Code/fma*
-/Data
-/Code/wd.R
+Code/fma*
+
+FMA/Data/*
+Contest/Data/*
+Contest/CData/*
+
+Data
+Code/wd.R
