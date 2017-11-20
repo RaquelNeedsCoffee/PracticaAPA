@@ -43,10 +43,10 @@ rmse <- function(actuals, prediction) sqrt(mean((actuals-prediction)^2))
 diagnosis <- function(actual, probs, title=""){
   cat("\nSummary results for", title
       , "\nauc:", auc(actual, probs)
-      , "\nacc:", acc(actual, probs)
-      , "\nbce:", bce(actual, probs)
-      , "\nmll:", mll(actual, probs)
-      , "\nrmse:", rmse(actual, probs)
+      , "\n Accuracy:", acc(actual, probs)
+      , "\n Binary cross entropy:", bce(actual, probs)
+      , "\n Mean Logloss:", mll(actual, probs)
+      , "\n Root mean squared error:", rmse(actual, probs)
       , "\n"
   )
 }
@@ -58,8 +58,8 @@ to_p <- function(r) {
 }
 
 ####################################################
-####### Split data 
-#####################################################
+################ Split data ######################## 
+####################################################
 
 # ---------------------------------------------
 set.seed(3141569)
@@ -81,6 +81,6 @@ for (f in to_do){
 }
 
 # shrink? Then use this subset
-subs <- sample(nrow(train_df), 0.3 *nrow(train_df))
+#subs <- sample(nrow(train_df), 0.3 *nrow(train_df))
 
 
