@@ -3,10 +3,10 @@
 library(data.table) # 
 
 ## read data tables
-members_dt <- fread("../Data/members.csv")
-songs_dt <- fread("../Data/songs.csv")
-train_dt <- fread("../Data/train.csv")
-test_dt <- fread("../Data/test.csv")
+members_dt <- fread("Contest/Data/members.csv")
+songs_dt <- fread("Contest/Data/songs.csv")
+train_dt <- fread("Contest/Data/train.csv")
+test_dt <- fread("Contest/Data/test.csv")
 
 ## convert long integer to date format
 standard_time <- function(i){
@@ -62,3 +62,17 @@ y<- train_df$target
 test_id <- test_df$id
 train_df$target <- NULL
 test_df$id <- NULL
+
+write.csv(y,file="Contest/Data/clean_target.csv")
+write.csv(train_df,file="Contest/Data/clean_train.csv")
+write.csv(test_df,file="Contest/Data/clean_test.csv")
+
+rm(both)
+rm(members_dt)
+rm(songs_dt)
+rm(test_dt)
+rm(train_dt)
+rm(f)
+rm(test_id)
+rm(standard_time)
+gc()
