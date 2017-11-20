@@ -3,7 +3,7 @@
 #######################################
 ####### Random forest ################
 ######################################
-
+library(ranger)
 rf <- ranger(y[subs] ~ . , data = train_df[subs,], num.trees = 12
              , verbose= FALSE)
 
@@ -77,7 +77,7 @@ diagnosis(y_ens_val, pred_2_e
 #######################################
 ############# xgboots  ################
 #######################################
-
+library(xgboost)
 param = list(
   objective="binary:logistic",
   eval_metric= "auc",
