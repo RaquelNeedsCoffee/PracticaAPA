@@ -4,6 +4,10 @@
 ########## Auxiliar functions
 #################################################
 
+load("Contest/Data/clean_test.RData")
+load("Contest/Data/clean_train.RData")
+load("Contest/Data/clean_target.RData")
+
 # au/ roc, avoid overflow error in Metrics::auc 
 my_auc <- function(true_Y, probs) {
   # 
@@ -81,6 +85,7 @@ for (f in to_do){
 }
 
 # shrink? Then use this subset
-#subs <- sample(nrow(train_df), 0.3 *nrow(train_df))
+data_percentage = 1
+subs <- sample(nrow(train_df), data_percentage *nrow(train_df))
 
 

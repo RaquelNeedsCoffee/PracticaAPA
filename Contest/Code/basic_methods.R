@@ -110,4 +110,5 @@ model <- xgb.train(
 pred_3_e  <- predict(model, x_val)
 pred_3_t  <- predict(model, x_test) 
 diagnosis(y_ens_val, pred_3_e, title="xgb")
-
+save(model, file = "logistic_regresion.rda")
+gc()
