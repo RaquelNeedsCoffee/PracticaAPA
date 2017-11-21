@@ -4,6 +4,10 @@
 ########## Auxiliar functions
 #################################################
 
+load("Contest/Data/clean_test.RData")
+load("Contest/Data/clean_train.RData")
+load("Contest/Data/clean_target.RData")
+
 # au/ roc, avoid overflow error in Metrics::auc 
 my_auc <- function(true_Y, probs) {
   # 
