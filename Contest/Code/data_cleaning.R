@@ -18,7 +18,7 @@ members_dt[, expiration_date :=
              as.Date(std_time(expiration_date))]
 # clear std_time
 rm(std_time)
-
+gc()
 ## prepare combined table
 train_dt [, id := -1]
 test_dt [, target := -1]
@@ -26,17 +26,18 @@ both <- rbind(train_dt, test_dt)
 # Clear train_dt and test_dt
 rm(train_dt)
 rm(test_dt)
-
+gc()
 print(sum(is.na(both)))
 
 ## Merge both with songs and members
 both <- merge(both, members_dt, by = "msno", all.x=TRUE)
 # clear members_dt
 rm(members_dt)
+gc()
 both <- merge(both, songs_dt, by = "song_id", all.x=TRUE)
 # clear songs_dt
 rm(songs_dt)
-
+gc()
 print(sum(is.na(both)))
 
 ## Label encode the char columns

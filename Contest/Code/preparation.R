@@ -81,6 +81,7 @@ for (f in to_do){
 }
 
 # shrink? Then use this subset
-#subs <- sample(nrow(train_df), 0.3 *nrow(train_df))
+data_percentage = 1
+subs <- sample(nrow(train_df), data_percentage *nrow(train_df))
 
 
