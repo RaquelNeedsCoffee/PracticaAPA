@@ -1,15 +1,10 @@
 # Este es el data cleaning the un señor muy majo de kaggle, me falta probar que tal va
 
-library(data.table) # 
-
-## read data tables
-members_dt <- fread("Contest/Data/members.csv")
-songs_dt <- fread("Contest/Data/songs.csv")
-train_dt <- fread("Contest/Data/train.csv")
-test_dt <- fread("Contest/Data/test.csv")
+# load data tables (members_dt, songs_dt, train_dt, test_dt)
+load("Contest/Data/data_tables.RData")
 
 ## convert long integer to date format
-standard_time <- function(i){
+std_time <- function(i){
   # i is numeric of form 20170101
   dd<-as.character(i)
   paste0(substr(dd, 1, 4), "-", 
@@ -18,20 +13,29 @@ standard_time <- function(i){
 }
 
 members_dt[, registration_init_time :=
-             as.Date(standard_time(registration_init_time))]
+             as.Date(std_time(registration_init_time))]
 members_dt[, expiration_date :=
-             as.Date(standard_time(expiration_date))]
+             as.Date(std_time(expiration_date))]
+# clear std_time
+rm(std_time)
 
 ## prepare combined table
 train_dt [, id := -1]
 test_dt [, target := -1]
-both<- rbind(train_dt, test_dt)
+both <- rbind(train_dt, test_dt)
+# Clear train_dt and test_dt
+rm(train_dt)
+rm(test_dt)
 
 print(sum(is.na(both)))
 
 ## Merge both with songs and members
 both <- merge(both, members_dt, by = "msno", all.x=TRUE)
+# clear members_dt
+rm(members_dt)
 both <- merge(both, songs_dt, by = "song_id", all.x=TRUE)
+# clear songs_dt
+rm(songs_dt)
 
 print(sum(is.na(both)))
 
@@ -45,7 +49,7 @@ for (f in names(both)){
 }
 
 ## There are two date columns left
-## For now to Jilian only
+## For now to Julian only
 both[, registration_init_time := julian(registration_init_time)]
 both[, expiration_date := julian(expiration_date)]
 both[, length_membership := 
@@ -58,21 +62,14 @@ test_df <- both[both$target == -1,]
 train_df$id <- NULL
 test_df$target <- NULL
 
-y<- train_df$target
+y <- train_df$target
 test_id <- test_df$id
 train_df$target <- NULL
 test_df$id <- NULL
 
-write.csv(y,file="Contest/Data/clean_target.csv")
-write.csv(train_df,file="Contest/Data/clean_train.csv")
-write.csv(test_df,file="Contest/Data/clean_test.csv")
+save(y, file="Contest/Data/clean_target.RData")
+save(train_df,file="Contest/Data/clean_train.RData")
+save(test_df,file="Contest/Data/clean_test.RData")
 
-rm(both)
-rm(members_dt)
-rm(songs_dt)
-rm(test_dt)
-rm(train_dt)
-rm(f)
-rm(test_id)
-rm(standard_time)
+rm(list=c("both", "f", "test_id"))
 gc()
