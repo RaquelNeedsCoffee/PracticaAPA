@@ -1,4 +1,6 @@
-# Este es el data cleaning the un señor muy majo de kaggle, me falta probar que tal va
+# Este es el data cleaning the un seÃ±or muy majo de kaggle, me falta probar que tal va
+
+library(data.table)
 
 # load data tables (members_dt, songs_dt, train_dt, test_dt)
 load("Contest/Data/data_tables.RData")
