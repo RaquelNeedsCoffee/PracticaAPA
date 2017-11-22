@@ -33,12 +33,13 @@ vignettes/*.pdf
 *.knit.md
 
 #The previous code
-
 Code/fma*
-
 FMA/Data/*
-Contest/Data/*
 Contest/CData/*
+
+Contest/Data/*
+
+Contest/Locals
 
 Data
 Code/wd.R
