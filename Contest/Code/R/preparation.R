@@ -81,6 +81,6 @@ for (f in to_do){
 }
 
 # shrink? Then use this subset
-#subs <- sample(nrow(train_df), 0.3 *nrow(train_df))
+subs <- sample(nrow(train_df), 1*nrow(train_df))
 
 
