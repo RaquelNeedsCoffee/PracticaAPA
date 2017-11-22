@@ -7,8 +7,6 @@ import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 import gc
 
 
-
-
 df_train = pd.read_csv('../Data/train.csv')
 df_test = pd.read_csv('../Data/test.csv')
 df_members = pd.read_csv('../Data/members.csv')
