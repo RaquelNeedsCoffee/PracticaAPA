@@ -44,3 +44,8 @@ Contest/Locals
 Data
 Code/wd.R
 .Rproj.user
+
+*.out
+.fuse*
+*.aux
+*.gz
