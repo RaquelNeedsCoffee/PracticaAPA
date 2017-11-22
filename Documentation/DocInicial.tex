@@ -1,0 +1,53 @@
+\documentclass[a4paper]{article}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Music recomendation}
+\author{}
+
+\begin{document}
+\maketitle
+
+\section*{Posibles Métodos}
+\begin{itemize}
+\item logistic regression, multinomial regression
+(single-layer MLP), LDA, QDA, RDA, \textbf{Naive Bayes}, \textbf{nearest-neighbours},\textbf{linear SVM}, quadratic SVM
+\item one-hidden-layer MLP, the RBFNN, the SVM with RBF kernel, a
+Random Forest
+\end{itemize}
+
+\section*{Preprocessing}
+
+Los datos iniciales son: 
+\begin{itemize}
+\item train.csv
+\item test.csv
+\item songs.csv
+\item members.csv
+\item song\_extra\_info.csv
+\end{itemize}
+
+La idea inicial es mejorar train utilizando songs, members y song\_extra\_info y convertirlo en un único train y test. 
+
+Después pasar todas las variables categóricasa numéricas y aplicarle un PCA.
+
+Debería quedar: 
+\begin{itemize}
+\item clean\_train.csv
+\item clean\_test.csv
+\end{itemize}
+
+
+\end{document}
