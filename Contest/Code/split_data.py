@@ -22,7 +22,7 @@ def split(test_proportion):
     (X_train, X_test, y_train, y_test) = ms.train_test_split(X, y, test_size=test_proportion, random_state=1, stratify=y)
     (X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
     print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ', X_val.shape)
-    return optimice(X_train), X_test, X_val, y_train, y_test, y_val
+    return optimice(X_train), optimice(X_test), optimice(X_val), optimice(y_train), optimice(y_test), optimice(y_val)
 
 
 def main():
