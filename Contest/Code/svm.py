@@ -11,7 +11,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVC
 
 
-from Code.split_data import split
+from Contest.Code.split_data import split
 
 
 def svm():
@@ -20,7 +20,7 @@ def svm():
     :return:
     """
     print('We are spliting the data: ')
-    (X_train, X_test, X_val, y_train, y_test, y_val) = split()
+    (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.95)
     # We scalate the data for using svm
     scaler = MinMaxScaler(feature_range=(-1, 1)).fit(X_train)
 

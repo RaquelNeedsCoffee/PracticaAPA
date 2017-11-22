@@ -9,11 +9,11 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn import metrics
 
 
-from Code.split_data import split
+from Contest.Code.split_data import split
 
 
 def main():
-    (X_train, X_test, X_val, y_train, y_test, y_val) = split()
+    (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.95)
     print('KNN: ')
     # Create a kNN classifier object
     knc = nb.KNeighborsClassifier()
@@ -23,7 +23,6 @@ def main():
     knc.fit(X_train, y_train.values.ravel())
     pred = knc.fit(X_train, y_train.values.ravel()).predict(X_test)
     # Obtain accuracy score of learned classifier on test data
-    # TODO: change accuracy to f mesure
     print('Accuracy: ', knc.score(X_test, y_test))
     print('Full report: \n: ', metrics.classification_report(y_test, pred))
 
