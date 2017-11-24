@@ -20,10 +20,10 @@ def split_isrc(isrc):
 
 
 def print_df_info(df):
-    # print('Types:')
-    # print(df.dtypes)
-    # print('Null values:')
-    # print(df.isnull().sum())
+    print('Types:')
+    print(df.dtypes)
+    print('Null values:')
+    print(df.isnull().sum())
     print('Memory consumed by dataframe : {} MB\n\n'.format(df.memory_usage(index=True).sum() / 1024 ** 2))
 
 
