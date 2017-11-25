@@ -16,7 +16,7 @@ import gc
 def naive_bayes(X_train, X_test, y_train, y_test):
     print('Naive Bayes: ')
     clf = GaussianNB()
-    if path.isfile('../Data/Models/knn'):
+    if path.isfile('../Data/Models/nb'):
         clf_trained = pickle.load(open('Data/Models/nb', 'rb'))
     else:
         print('Training the model...')
@@ -48,15 +48,16 @@ def knn(X_train, X_test, y_train, y_test):
     print('Full report: \n: ', metrics.classification_report(y_test, pred))
 
 
-def random_forest(X_train, X_test, y_train, y_test):
+def random_forest(X_train, X_test, y_train, y_test, n_estimators):
     print('Random Forest: ')
-    rf = RandomForestClassifier(n_estimators=1)
-    if path.isfile('../Data/Models/rf'):
-        rf_trained = pickle.load(open('Data/Models/rf', 'rb'))
+    rf_path = '../Data/Models/rf'+str(n_estimators)+'.pkl'
+    rf = RandomForestClassifier(n_estimators=n_estimators)
+    if path.isfile(rf_path):
+        rf_trained = pickle.load(open(rf_path, 'rb'))
     else:
         print('Training the model...')
         rf_trained = rf.fit(X_train, y_train.values.ravel())
-        with open('../Data/Models/rf', 'wb') as handle:
+        with open(rf_path, 'wb') as handle:
             pickle.dump(rf_trained, handle)
 
     pred = rf_trained.predict(X_test)
@@ -68,7 +69,8 @@ def random_forest(X_train, X_test, y_train, y_test):
 
 def main():
     (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.95)
-    random_forest(X_train, X_test, y_train, y_test)
+    for i in [1, 3, 5, 7, 9, 11, 13, 15, 17]:
+        random_forest(X_train, X_test, y_train, y_test, i)
 
 
 if __name__ == "__main__":
