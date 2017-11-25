@@ -114,6 +114,34 @@ def check_missing_values(df):
         for col in columns_with_Nan:
             print("%s : number of nans %d" % (col, df[col].isnull().sum()))
 
+"""
+Idea sobre como solucionar los missings: 
+Train: 
+source_system_tab : number of nans 24849
+source_screen_name : number of nans 414796
+source_type : number of nans 21539
+gender : number of nans 2961436
+genre_ids : number of nans 118341
+language : number of nans 36
 
-check_missing_values(train)
-check_missing_values(test)
+Test: 
+source_system_tab : number of nans 8442
+source_screen_name : number of nans 162880
+source_type : number of nans 7297
+gender : number of nans 1052215
+genre_ids : number of nans 42085
+language : number of nans 17
+
+para language al ser tan pocos no vale la pena montar un modelo, quitamos las muestras con missing y a tomar viento
+Para género, que es el que tiene más utilizaría un modelo tipo knn para rellenar los huecos.
+para el resto aun lo tengo que pensar 
+"""
+
+
+def main():
+    check_missing_values(train)
+    check_missing_values(test)
+
+
+if __name__ == "__main__":
+    main()
