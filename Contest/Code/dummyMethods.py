@@ -13,6 +13,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import Perceptron
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.neural_network import MLPClassifier
 
 import pickle
 import gc
@@ -257,6 +258,41 @@ def perceptron(X_train, X_test, X_val, y_train, y_test, y_val, reg, pen):
     gc.collect()
 
 
+def mlp(X_train, X_test, X_val, y_train, y_test, y_val, reg, size=(1, 20), act='logistic'):
+    """
+    Hiperparametros:
+    - reg el parametro de recularizacion
+    - size el tamaño de los hiden layers
+    - act {‘identity’, ‘logistic’, ‘tanh’, ‘relu’} la funcion de activación
+    :param X_train:
+    :param X_test:
+    :param X_val:
+    :param y_train:
+    :param y_test:
+    :param y_val:
+    :param reg:
+    :param size:
+    :param act:
+    :return:
+    """
+    print('Multi Layer Perceptron : ')
+    _path = '../Data/Models/mlp.pkl'
+    mlp = MLPClassifier(hidden_layer_sizes=size, activation=act, alpha=reg, verbose=True)
+    if path.isfile(_path):
+        mlp_trained = pickle.load(open(_path, 'rb'))
+    else:
+        print('Training the model...')
+        mlp_trained = mlp.fit(X_train, y_train.values.ravel())
+        print('Trained')
+        with open(_path, 'wb') as handle:
+            pickle.dump(mlp_trained, handle)
+    pred = mlp_trained.predict(X_test)
+    print("Accuracy:", metrics.accuracy_score(y_test, pred))
+    print('Full report: \n', metrics.classification_report(y_test, pred))
+    del mlp, mlp_trained, pred
+    gc.collect()
+
+
 def run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val):
     for i in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]:
         # random_forest(X_train, X_test, y_train, y_test, i)
@@ -264,7 +300,9 @@ def run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val):
 
 
 def main():
-    (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.20)
+    split_range = 0.2
+    print('El split range es: ', split_range)
+    (X_train, X_test, X_val, y_train, y_test, y_val) = split(split_range)
     # naive_bayes(X_train, X_test, y_train, y_test)
     # lda(X_train, X_test, y_train, y_test)
     # qda(X_train, X_test, y_train, y_test)
