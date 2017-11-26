@@ -10,9 +10,9 @@ from sklearn.ensemble import RandomForestClassifier
 from os import path
 from Contest.Code.split_data import split
 from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import Perceptron
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-
 
 import pickle
 import gc
@@ -49,6 +49,70 @@ def lda(X_train, X_test, y_train, y_test):
     gc.collect()
 
 
+def qda(X_train, X_test, y_train, y_test):
+    """
+    QDA
+    Suposiciones:
+    - Gausianidad de los datos
+    - Diferentes varianzas
+    Hiperparametros:
+    - No
+    :param X_train:
+    :param X_test:
+    :param y_train:
+    :param y_test:
+    :return:
+    """
+    print("QDA:")
+    # Importante estandarizar datos
+    qda = QuadraticDiscriminantAnalysis()
+    _path = '../Data/Models/qda.plk'
+    if path.isfile(_path):
+        qda_trained = pickle.load(open(_path, 'rb'))
+    else:
+        print('Training the model...')
+        qda_trained = qda.fit(X_train, y_train.values.ravel())
+        with open(_path, 'wb') as handle:
+            pickle.dump(qda_trained, handle)
+    pred = qda_trained.predict(X_test)
+    print("Accuracy:", metrics.accuracy_score(y_test, pred))
+    print('Full report: \n', metrics.classification_report(y_test, pred))
+    del qda, qda_trained
+    gc.collect()
+
+
+def rda(X_train, X_test, y_train, y_test, reg):
+    """
+    RDA
+    Suposiciones:
+    - Gausianidad de los datos
+    - Diferentes varianzas
+    Hiperparametros:
+    - regularizrion parameter
+    :param X_train:
+    :param X_test:
+    :param y_train:
+    :param y_test:
+    :return:
+    """
+    print("RDA:")
+    # Importante estandarizar datos
+    rda = QuadraticDiscriminantAnalysis(reg_param=reg)
+    _path = '../Data/Models/rda.plk'
+    if path.isfile(_path):
+        rda_trained = pickle.load(open(_path, 'rb'))
+    else:
+        print('Training the model...')
+        rda_trained = rda.fit(X_train, y_train.values.ravel())
+        with open(_path, 'wb') as handle:
+            pickle.dump(rda_trained, handle)
+    pred = rda_trained.predict(X_test)
+    print("Accuracy:", metrics.accuracy_score(y_test, pred))
+    print('Full report: \n', metrics.classification_report(y_test, pred))
+    del rda, rda_trained
+    gc.collect()
+
+
 def logistic_regresion(X_train, X_test, y_train, y_test):
     """
     La regresión logística de toda la vida.
@@ -79,38 +143,6 @@ def logistic_regresion(X_train, X_test, y_train, y_test):
     print("Accuracy:", metrics.accuracy_score(y_test, pred))
     print('Full report: \n', metrics.classification_report(y_test, pred))
     del lr, lr_trained
-    gc.collect()
-
-
-def qda(X_train, X_test, y_train, y_test):
-    """
-    QDA
-    Suposiciones:
-    - Gausianidad de los datos
-    - Diferentes varianzas
-    Hiperparametros:
-    - No
-    :param X_train:
-    :param X_test:
-    :param y_train:
-    :param y_test:
-    :return:
-    """
-    print("QDA:")
-    # Importante estandarizar datos
-    qda = QuadraticDiscriminantAnalysis()
-    _path = '../Data/Models/qda.plk'
-    if path.isfile(_path):
-        qda_trained = pickle.load(open(_path, 'rb'))
-    else:
-        print('Training the model...')
-        qda_trained = qda.fit(X_train, y_train.values.ravel())
-        with open(_path, 'wb') as handle:
-            pickle.dump(qda_trained, handle)
-    pred = qda_trained.predict(X_test)
-    print("Accuracy:", metrics.accuracy_score(y_test, pred))
-    print('Full report: \n', metrics.classification_report(y_test, pred))
-    del qda, qda_trained
     gc.collect()
 
 
@@ -175,7 +207,7 @@ def knn(X_train, X_test, y_train, y_test, neighbors):
 
 
 def random_forest(X_train, X_test, y_train, y_test, n_estimators):
-    print('Random Forest ', n_estimators,' :')
+    print('Random Forest ', n_estimators, ' :')
     rf_path = '../Data/Models/rf' + str(n_estimators) + '.pkl'
     rf = RandomForestClassifier(n_estimators=n_estimators)
     if path.isfile(rf_path):
@@ -193,19 +225,52 @@ def random_forest(X_train, X_test, y_train, y_test, n_estimators):
     gc.collect()
 
 
+def perceptron(X_train, X_test, X_val, y_train, y_test, y_val, reg, pen):
+    """
+    Hiperparametros:
+    - pen (l1 o l2 o elasticnet) norma de regularizacion
+    - reg (alpha en (0,1))constante de regularizacion
+    :param X_train:
+    :param X_test:
+    :param X_val:
+    :param y_train:
+    :param y_test:
+    :param y_val:
+    :param reg:
+    :return:
+    """
+    print('Perceptron : ')
+    _path = '../Data/Models/perceptron.pkl'
+    per = Perceptron(penalty=pen, alpha=reg, n_jobs=-1)
+    if path.isfile(_path):
+        per_trained = pickle.load(open(_path, 'rb'))
+    else:
+        print('Training the model...')
+        per_trained = per.fit(X_train, y_train.values.ravel())
+        with open(_path, 'wb') as handle:
+            pickle.dump(per_trained, handle)
+
+    pred = per_trained.predict(X_test)
+    print("Accuracy:", metrics.accuracy_score(y_test, pred))
+    print('Full report: \n', metrics.classification_report(y_test, pred))
+    del per, per_trained
+    gc.collect()
+
+
 def run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val):
-    for i in [1, 3, 5, 7, 9, 11, 13, 15, 17,19,21,23,25,27,29,31]:
-        #random_forest(X_train, X_test, y_train, y_test, i)
+    for i in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]:
+        # random_forest(X_train, X_test, y_train, y_test, i)
         knn(X_train, X_test, y_train, y_test, i)
 
 
 def main():
-    (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.50)
-    naive_bayes(X_train, X_test, y_train, y_test)
-    lda(X_train, X_test, y_train, y_test)
-    qda(X_train, X_test, y_train, y_test)
-    logistic_regresion(X_train, X_test, y_train, y_test)
+    (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.20)
+    # naive_bayes(X_train, X_test, y_train, y_test)
+    # lda(X_train, X_test, y_train, y_test)
+    # qda(X_train, X_test, y_train, y_test)
+    # logistic_regresion(X_train, X_test, y_train, y_test)
     run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val)
+
 
 if __name__ == "__main__":
     main()
