@@ -1,6 +1,6 @@
 import pandas as pd
 import sklearn.model_selection as ms
-
+from sklearn import preprocessing
 from Contest.Code.optimice_dataset import optimice
 
 def split(test_proportion):
@@ -22,12 +22,14 @@ def split(test_proportion):
     (X_train, X_test, y_train, y_test) = ms.train_test_split(X, y, test_size=test_proportion, random_state=1, stratify=y)
     (X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
     print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ', X_val.shape)
-    return optimice(X_train), optimice(X_test), optimice(X_val), y_train, y_test, y_val
+    X_train = pd.DataFrame(data=preprocessing.scale(X_train.values), columns=X_train.columns, index=X_train.index)
+    X_test = pd.DataFrame(data=preprocessing.scale(X_test.values), columns=X_test.columns, index=X_test.index)
+    return X_train, X_test, X_val, y_train, y_test, y_val
 
 
 def main():
     (X_train, X_test, X_val, y_train, y_test,y_val) = split(0.95)
-
+    print(X_train.head())
 
 if __name__ == "__main__":
     main()
