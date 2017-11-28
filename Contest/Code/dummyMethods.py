@@ -19,6 +19,9 @@ import pickle
 import gc
 
 
+global_path = '../Data/Models/0.2/'
+
+
 def lda(X_train, X_test, y_train, y_test):
     """
     LDA
@@ -35,7 +38,7 @@ def lda(X_train, X_test, y_train, y_test):
     print("LDA:")
     # Importante estandarizar datos
     lda = LinearDiscriminantAnalysis()
-    _path = '../Data/Models/lda.plk'
+    _path = global_path + 'lda.plk'
     if path.isfile(_path):
         lda_trained = pickle.load(open(_path, 'rb'))
     else:
@@ -67,7 +70,7 @@ def qda(X_train, X_test, y_train, y_test):
     print("QDA:")
     # Importante estandarizar datos
     qda = QuadraticDiscriminantAnalysis()
-    _path = '../Data/Models/qda.plk'
+    _path = global_path + 'qda.plk'
     if path.isfile(_path):
         qda_trained = pickle.load(open(_path, 'rb'))
     else:
@@ -99,7 +102,7 @@ def rda(X_train, X_test, y_train, y_test, reg):
     print("RDA:")
     # Importante estandarizar datos
     rda = QuadraticDiscriminantAnalysis(reg_param=reg)
-    _path = '../Data/Models/rda.plk'
+    _path = global_path + 'rda.plk'
     if path.isfile(_path):
         rda_trained = pickle.load(open(_path, 'rb'))
     else:
@@ -132,7 +135,7 @@ def logistic_regresion(X_train, X_test, y_train, y_test):
     print("Regresion Lineal:")
     # Importante estandarizar datos
     lr = LogisticRegression(solver='saga', n_jobs=-1)
-    _path = '../Data/Models/lr.plk'
+    _path = global_path + 'lr.plk'
     if path.isfile(_path):
         lr_trained = pickle.load(open(_path, 'rb'))
     else:
@@ -159,12 +162,12 @@ def naive_bayes(X_train, X_test, y_train, y_test):
     """
     print('Naive Bayes: ')
     clf = GaussianNB()
-    if path.isfile('../Data/Models/nb'):
-        clf_trained = pickle.load(open('../Data/Models/nb', 'rb'))
+    if path.isfile(global_path + 'nb'):
+        clf_trained = pickle.load(open(global_path + 'nb', 'rb'))
     else:
         print('Training the model...')
         clf_trained = clf.fit(X_train, y_train.values.ravel())
-        with open('../Data/Models/nb', 'wb') as handle:
+        with open(global_path + 'nb', 'wb') as handle:
             pickle.dump(clf_trained, handle)
 
     pred = clf_trained.predict(X_test)
@@ -187,8 +190,8 @@ def knn(X_train, X_test, y_train, y_test, neighbors):
     """
     print('KNN ', neighbors, ' :')
     # Create a kNN classifier object
-    knc = nb.KNeighborsClassifier(n_neighbors=neighbors, n_jobs=-1)
-    _path = '../Data/Models/knn' + str(neighbors) + 'pkl'
+    knc = nb.KNeighborsClassifier(algorithm='ball_tree', n_neighbors=neighbors, n_jobs=-1)
+    _path = global_path + 'knn' + str(neighbors) + 'ball_tree' + 'pkl'
     if path.isfile(_path):
         knc_trained = pickle.load(open(_path, 'rb'))
     else:
@@ -209,7 +212,7 @@ def knn(X_train, X_test, y_train, y_test, neighbors):
 
 def random_forest(X_train, X_test, y_train, y_test, n_estimators):
     print('Random Forest ', n_estimators, ' :')
-    rf_path = '../Data/Models/rf' + str(n_estimators) + '.pkl'
+    rf_path = global_path + 'rf' + str(n_estimators) + '.pkl'
     rf = RandomForestClassifier(n_estimators=n_estimators)
     if path.isfile(rf_path):
         rf_trained = pickle.load(open(rf_path, 'rb'))
@@ -241,7 +244,7 @@ def perceptron(X_train, X_test, X_val, y_train, y_test, y_val, reg, pen):
     :return:
     """
     print('Perceptron : ')
-    _path = '../Data/Models/perceptron.pkl'
+    _path = global_path + 'perceptron.pkl'
     per = Perceptron(penalty=pen, alpha=reg, n_jobs=-1)
     if path.isfile(_path):
         per_trained = pickle.load(open(_path, 'rb'))
@@ -276,7 +279,7 @@ def mlp(X_train, X_test, X_val, y_train, y_test, y_val, reg, size=(1, 20), act='
     :return:
     """
     print('Multi Layer Perceptron : ')
-    _path = '../Data/Models/mlp.pkl'
+    _path = global_path + 'mlp.pkl'
     mlp = MLPClassifier(hidden_layer_sizes=size, activation=act, alpha=reg, verbose=True)
     if path.isfile(_path):
         mlp_trained = pickle.load(open(_path, 'rb'))
@@ -295,18 +298,36 @@ def mlp(X_train, X_test, X_val, y_train, y_test, y_val, reg, size=(1, 20), act='
 
 def run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val):
     for i in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]:
-        # random_forest(X_train, X_test, y_train, y_test, i)
-        knn(X_train, X_test, y_train, y_test, i)
+        random_forest(X_train, X_test, y_train, y_test, i)
+        # knn(X_train, X_test, y_train, y_test, i)
+
+
+def run_nn(X_train, X_test, X_val, y_train, y_test, y_val):
+    reg = 0.1
+    perceptron(X_train, X_test, X_val, y_train, y_test, y_val, 0.1, 'l2')
+    mlp(X_train, X_test, X_val, y_train, y_test, y_val, 0.1)
+
+
+def run_all():
+    split_range = 0.2
+    print('El split range es: ', split_range)
+    (X_train, X_test, X_val, y_train, y_test, y_val) = split(split_range)
+    naive_bayes(X_train, X_test, y_train, y_test)
+    lda(X_train, X_test, y_train, y_test)
+    qda(X_train, X_test, y_train, y_test)
+    logistic_regresion(X_train, X_test, y_train, y_test)
+    run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val)
+    run_nn(X_train, X_test, X_val, y_train, y_test, y_val)
 
 
 def main():
     split_range = 0.2
     print('El split range es: ', split_range)
     (X_train, X_test, X_val, y_train, y_test, y_val) = split(split_range)
-    # naive_bayes(X_train, X_test, y_train, y_test)
-    # lda(X_train, X_test, y_train, y_test)
-    # qda(X_train, X_test, y_train, y_test)
-    # logistic_regresion(X_train, X_test, y_train, y_test)
+    naive_bayes(X_train, X_test, y_train, y_test)
+    lda(X_train, X_test, y_train, y_test)
+    qda(X_train, X_test, y_train, y_test)
+    logistic_regresion(X_train, X_test, y_train, y_test)
     run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val)
 
 
