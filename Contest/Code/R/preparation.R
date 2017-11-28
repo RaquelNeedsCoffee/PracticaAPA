@@ -85,11 +85,9 @@ for (f in to_do){
 }
 
 # shrink? Then use this subset
-<<<<<<< HEAD:Contest/Code/R/preparation.R
 subs <- sample(nrow(train_df), 1*nrow(train_df))
-=======
+
 data_percentage = 1
 subs <- sample(nrow(train_df), data_percentage *nrow(train_df))
->>>>>>> master:Contest/Code/preparation.R
 
 

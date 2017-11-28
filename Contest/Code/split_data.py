@@ -3,6 +3,7 @@ import sklearn.model_selection as ms
 from sklearn import preprocessing
 from Contest.Code.optimice_dataset import optimice
 
+
 def split(test_proportion):
     """
     This function does the stratified split of our data with a test size of 0.95 (as the teacher recommended )

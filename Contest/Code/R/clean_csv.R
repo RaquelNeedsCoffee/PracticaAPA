@@ -3,10 +3,10 @@
 library(data.table) # 
 
 ## read data tables
-members_dt <- fread("Contest/Data/members.csv")
-songs_dt <- fread("Contest/Data/songs.csv")
-train_dt <- fread("Contest/Data/train.csv")
-test_dt <- fread("Contest/Data/test.csv")
+members_dt <- fread("Contest/Data/members.csv",stringsAsFactors = TRUE)
+songs_dt <- fread("Contest/Data/songs.csv", stringsAsFactors = TRUE)
+train_dt <- fread("Contest/Data/train.csv", stringsAsFactors = TRUE)
+test_dt <- fread("Contest/Data/test.csv", stringsAsFactors = TRUE)
 
 ## convert long integer to date format
 standard_time <- function(i){
@@ -33,7 +33,20 @@ print(sum(is.na(both)))
 both <- merge(both, members_dt, by = "msno", all.x=TRUE)
 both <- merge(both, songs_dt, by = "song_id", all.x=TRUE)
 
+rm(members_dt)
+rm(songs_dt)
+rm(test_dt)
+rm(train_dt)
+gc()
+
 print(sum(is.na(both)))
+print(sum(is.na(both$lyricist)))
+###########################################################3
+# Treating missing values
+##############################################################
+library(mice)
+both[!complete.cases(both),] 
+both$language= mice(both$language, m=1)
 
 ## Label encode the char columns
 for (f in names(both)){
@@ -41,7 +54,7 @@ for (f in names(both)){
     both[is.na(both[[f]]), eval(f) := ""]
     both[, eval(f) := as.integer(
       as.factor(both[[f]]))]
-  } else both[is.na(both[[f]]), eval(f) := -999]
+  } else both[is.na(both[[f]]), eval(f) := NA]
 }
 
 ## There are two date columns left
@@ -60,7 +73,7 @@ test_df$target <- NULL
 
 #y<- train_df$target
 test_id <- test_df$id
-#train_df$target <- NULL
+train_df$target <- NULL
 test_df$id <- NULL
 
 #write.csv(y,file="Contest/Data/clean_target.csv")
