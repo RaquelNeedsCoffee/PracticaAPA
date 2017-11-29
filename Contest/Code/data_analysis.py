@@ -4,10 +4,10 @@ import numpy as np
 from sklearn.preprocessing import LabelBinarizer
 
 # globals
-data_path = 'D:\\FIB\\PracticaAPA\\Data\\'
+#data_path = 'D:\\FIB\\PracticaAPA\\Data\\'
 
 
-# data_path = '../Data'
+data_path = '../Data/'
 
 
 def split_isrc(isrc):
@@ -115,7 +115,8 @@ def process_members():
     # members['gender'] = members['gender'].astype('category')  # to uint in a moment
     members['registered_via'] = members['registered_via'].astype(np.uint8)
     # members['msno'] = members['msno'].astype('category')# no memory reduction
-    print('Imput missing "gender" values')  # TODO: hay MUCHOS NaN, mirar si es lo mejor.
+    print('Imput missing "gender" values')
+    # TODO: Cambiar more_freq_gender to knn
     more_freq_gender = members['gender'].value_counts().idxmax()
     members['gender'] = members['gender'].fillna(more_freq_gender)
     print('"gender" to numeric')
