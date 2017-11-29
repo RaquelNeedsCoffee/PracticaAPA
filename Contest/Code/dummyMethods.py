@@ -3,7 +3,7 @@ This file is for testing how dummy methods do with the dataset
 """
 
 import sklearn.model_selection as ms
-import sklearn.neighbors as nb  # knn
+from sklearn.neighbors import KNeighborsClassifier  # knn
 from sklearn.naive_bayes import GaussianNB
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
@@ -190,7 +190,7 @@ def knn(X_train, X_test, y_train, y_test, neighbors):
     """
     print('KNN ', neighbors, ' :')
     # Create a kNN classifier object
-    knc = nb.KNeighborsClassifier(algorithm='ball_tree', n_neighbors=neighbors, n_jobs=-1)
+    knc = KNeighborsClassifier(algorithm='ball_tree', n_neighbors=neighbors, n_jobs=-1)
     _path = global_path + 'knn' + str(neighbors) + 'ball_tree' + 'pkl'
     if path.isfile(_path):
         knc_trained = pickle.load(open(_path, 'rb'))

@@ -2,10 +2,10 @@ import gc
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelBinarizer
+from sklearn.neighbors import KNeighborsClassifier
 
 # globals
 # data_path = 'D:\\FIB\\PracticaAPA\\Data\\'
-
 
 data_path = '../Data/'
 
@@ -104,7 +104,26 @@ def process_train():
 
 
 def fill_na_gender_knn(members):
-	pass
+	index = members['gender'].isnull()
+	X_test = members.ix[index, members.columns != 'gender']
+	msno_test = X_test['msno']
+	X_test = X_test.ix[:, X_test.columns != 'msno']
+
+	X_train = members.dropna(subset=['gender'])
+	y_train = X_train.ix[:, X_train.columns == 'gender']
+	X_train = X_train.ix[:, X_train.columns != 'gender']
+	msno_train = X_train['msno']
+	X_train = X_train.ix[:, X_train.columns != 'msno']
+
+	knn = KNeighborsClassifier(algorithm='ball_tree', n_jobs=-1)
+	knn_trained = knn.fit(X_train, y_train.values.ravel())
+	new_y = knn_trained.predict(X_test)
+	X_test['gender'] = new_y
+	X_test['msno'] = msno_test
+	X_train['gender'] = y_train
+	X_train['msno'] = msno_train
+	X_train = X_train.append(X_test)
+	return X_train
 
 
 def process_members():
@@ -120,9 +139,7 @@ def process_members():
 	members['registered_via'] = members['registered_via'].astype(np.uint8)
 	# members['msno'] = members['msno'].astype('category')# no memory reduction
 	print('Imput missing "gender" values')
-	# TODO: Cambiar more_freq_gender to knn
-	more_freq_gender = members['gender'].value_counts().idxmax()
-	members['gender'] = members['gender'].fillna(more_freq_gender)
+	members = fill_na_gender_knn(members)
 	print('"gender" to numeric')
 	members['gender'] = LabelBinarizer().fit_transform(members['gender'])
 	members['gender'] = members['gender'].astype(np.uint8)
@@ -191,68 +208,73 @@ def final_preprocessing(df):
 	pass
 
 
-print('Loading data...\n')
+def main():
+	print('Loading data...\n')
 
-# # Merge and preprocess train and members into training
-df_train = process_train()
-df_members = process_members()
+	# # Merge and preprocess train and members into training
+	# df_train = process_train()
+	df_members = process_members()
 
-df_training = df_train.merge(df_members, on='msno', how='left')
-print('merged df_train df_members -> df_training {} rows'.format(len(df_training)))
-# df_training['msno'] = df_training['msno'].astype('category')# drop msno later
-print_df_info(df_training)
+	# df_training = df_train.merge(df_members, on='msno', how='left')
+	# print('merged df_train df_members -> df_training {} rows'.format(len(df_training)))
+	# # df_training['msno'] = df_training['msno'].astype('category')# drop msno later
+	# print_df_info(df_training)
+	#
+	# # Drop msno
+	# print('drop msno')
+	# df_training = df_training.drop('msno', axis=1)
+	# print_df_info(df_training)
+	#
+	# del df_train
+	# del df_members
+	# gc.collect()
+	#
+	# # # Merge and preprocess songs and training
+	# df_songs = process_songs()
+	#
+	# df_training = df_training.merge(df_songs, on='song_id', how='left')
+	# print('merged df_training df_songs -> df_training {} rows'.format(len(df_training)))
+	# print_df_info(df_training)
+	# print('Convert columns')
+	# # df_training['song_id'] = df_songs['song_id'].astype('category') # no memory reduction
+	# df_training['language'] = df_training['language'].fillna(0)
+	# df_training['language'] = df_training['language'].astype(np.int8)
+	# df_training['language'] = df_training['language'].replace(0, np.nan)
+	# print_df_info(df_training)
+	#
+	# print('Process genres and imput missing values:')
+	# genres_count = count_genres_freq(df_training)
+	# # genres_count = sorted(genres_count.items(), key=operator.itemgetter(1), reverse=True)
+	# max_count_genre = np.nan
+	# if len(genres_count) > 0:
+	# 	max_count_genre = max(genres_count, key=genres_count.get)
+	# if max_count_genre is not np.nan:
+	# 	df_training['genre_ids'] = df_training['genre_ids'].fillna(max_count_genre)
+	# print('Substitute multiple genres on song by single genre:')
+	# # df_training['genre_ids'].replace #? get_max_genre <- fer replace dels q tinguin multiple genre per un de sol
+	# print_df_info(df_training)
+	#
+	# del df_songs
+	# gc.collect()
+	#
+	# # # Merge and preprocess song_extra and training
+	# df_song_extra = process_song_extra()
+	#
+	# df_training = df_training.merge(df_song_extra, on='song_id', how='left')
+	# print('merged df_training df_song_extra -> df_training {} rows'.format(len(df_training)))
+	# print_df_info(df_training)
+	#
+	# print('Drop rows with NaN values of df_training')
+	# df_training = df_training.dropna()
+	# print('merged df_training df_song_extra -> df_training {} rows'.format(len(df_training)))
+	# print_df_info(df_training)
+	#
+	# del df_song_extra
+	# del df_training
+	# gc.collect()
 
-# Drop msno
-print('drop msno')
-df_training = df_training.drop('msno', axis=1)
-print_df_info(df_training)
+	print('Done loading...')
 
-del df_train
-del df_members
-gc.collect()
 
-# # Merge and preprocess songs and training
-df_songs = process_songs()
-
-df_training = df_training.merge(df_songs, on='song_id', how='left')
-print('merged df_training df_songs -> df_training {} rows'.format(len(df_training)))
-print_df_info(df_training)
-print('Convert columns')
-# df_training['song_id'] = df_songs['song_id'].astype('category') # no memory reduction
-df_training['language'] = df_training['language'].fillna(0)
-df_training['language'] = df_training['language'].astype(np.int8)
-df_training['language'] = df_training['language'].replace(0, np.nan)
-print_df_info(df_training)
-
-print('Process genres and imput missing values:')
-genres_count = count_genres_freq(df_training)
-# genres_count = sorted(genres_count.items(), key=operator.itemgetter(1), reverse=True)
-max_count_genre = np.nan
-if len(genres_count) > 0:
-	max_count_genre = max(genres_count, key=genres_count.get)
-if max_count_genre is not np.nan:
-	df_training['genre_ids'] = df_training['genre_ids'].fillna(max_count_genre)
-print('Substitute multiple genres on song by single genre:')
-# df_training['genre_ids'].replace #? get_max_genre <- fer replace dels q tinguin multiple genre per un de sol
-print_df_info(df_training)
-
-del df_songs
-gc.collect()
-
-# # Merge and preprocess song_extra and training
-df_song_extra = process_song_extra()
-
-df_training = df_training.merge(df_song_extra, on='song_id', how='left')
-print('merged df_training df_song_extra -> df_training {} rows'.format(len(df_training)))
-print_df_info(df_training)
-
-print('Drop rows with NaN values of df_training')
-df_training = df_training.dropna()
-print('merged df_training df_song_extra -> df_training {} rows'.format(len(df_training)))
-print_df_info(df_training)
-
-del df_song_extra
-del df_training
-gc.collect()
-
-print('Done loading...')
+if __name__ == "__main__":
+	main()
