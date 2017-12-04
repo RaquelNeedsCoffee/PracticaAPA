@@ -77,40 +77,65 @@ def my_mca(X_train, X_test):
 	table2.loc['Σ'] = table2.sum()
 	table2.index.name = 'Factor'
 	np.round(table2.astype(float), 4)
-	#Todo: calcular cuantas features necesitamos para conservar x varianza
+	# Todo: calcular cuantas features necesitamos para conservar x varianza
 	print('Varianza explicada tomando 45 features: ', table2['τZ'][0:45].sum())
 	## The projection can also be computed using vectorized form,
 	X_train = Matrix_mult(X_train.values, G[:, :45]) / S[:45] / 10
 	X_test = Matrix_mult(X_test.values, G[:, :45]) / S[:45] / 10
-	print('shape',X_test.shape)
-	names = ['V' +str(i) for i in range(45)]
+	print('shape', X_test.shape)
+	names = ['V' + str(i) for i in range(45)]
 	return pd.DataFrame(X_train, columns=names), pd.DataFrame(X_test, columns=names)
 
 
 def to_dummies(X):
-	X['language'] = X['language'].astype('category')
+	for column in X.columns:
+		X[column] = X[column].astype('category')
 	return pd.get_dummies(X)
 
+
+def split(X, proportion):
+	X = contest_data.ix[:, contest_data.columns != 'target']
+	y = contest_data.ix[:, contest_data.columns == 'target']
+	print('Train \nRaw data: \n ', 'Shape: ', X.shape, 'Type: ', type(X))
+	print('Target \nRaw data: \n ', 'Shape: ', y.shape)
+	# I split the data between the X and the target value
+
+	# X is a dataframe not a np.array
+	print('Size of X: ', X.shape, '\nSize of y: ', y.shape)
+	(X_train, X_test, y_train, y_test) = ms.train_test_split(X, y, test_size=test_proportion, random_state=1,
+	                                                         stratify=y)
+	(X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
+	print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ',
+	      X_val.shape)
+	X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
+	X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+
+
 def main():
+	#todo: si no revienta probamso con el name
 	categorical = ['source_system_tab', 'source_screen_name', 'source_type', 'city', 'registered_via',
-	               'gender', 'genre_ids', 'artist_name', 'composer', 'lyricist', 'language', 'name', 'country_code', 'registrant_code']
+	               'gender', 'genre_ids', 'artist_name', 'composer', 'lyricist', 'language', 'country_code',
+	               'registrant_code']
 	numerical = ['registration_init_time', 'song_length', 'registration_init_time', 'expiration_date', 'song_year']
 	file = 'samples/definitivo.csv'
 	X = pd.read_csv('../Data/' + file, header=0)
 	X_cat = X[categorical]
 	X_num = X[numerical]
-	DummiesX = to_dummies(X_cat)
-	DummiesX.to_csv('dummies.csv')
-	(X_train, X_test, X_val, y_train, y_test, y_val) = split(0.3, 'samples/definitivo.csv')
-	#
-	# new_X_train_cat, new_X_test_cat = my_mca(dumy_train, dumy_test)
-	# print(new_X_test_cat.shape)
-	#
-	# concaTrain= pd.concat([X_train_num, new_X_train_cat], axis=1, ignore_index=True)
-	# # concaTest = pd.concat([X_test_num, new_X_test_cat], axis=1, ignore_index=True)
-	#
-	# print(concaTrain.shape)
-	# print(concaTest.shape)
+	DummiesX = X
+	DummiesX= to_dummies(X[categorical])
+	print('dummies size: ', DummiesX.shape)
+	concaTrain = pd.concat([DummiesX, X_num], axis=1, ignore_index=True)
+
+# (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.3, 'samples/definitivo.csv')
+#
+# new_X_train_cat, new_X_test_cat = my_mca(dumy_train, dumy_test)
+# print(new_X_test_cat.shape)
+#
+# concaTrain= pd.concat([X_train_num, new_X_train_cat], axis=1, ignore_index=True)
+# # concaTest = pd.concat([X_test_num, new_X_test_cat], axis=1, ignore_index=True)
+#
+# print(concaTrain.shape)
+# print(concaTest.shape)
 
 
 
