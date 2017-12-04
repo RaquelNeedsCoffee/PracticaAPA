@@ -1,12 +1,18 @@
 import pandas as pd
 import numpy as np
-from mca import *
+from mca import diagsvd
 from time import time
 from sklearn.metrics import f1_score
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
-from Contest.Code.split_data import split
 import functools
+import sklearn.model_selection as ms
+from sklearn.preprocessing import StandardScaler as stdc
+
+categorical = ['source_system_tab', 'source_screen_name', 'source_type', 'city', 'registered_via',
+               'gender', 'genre_ids', 'artist_name', 'composer', 'lyricist', 'language', 'country_code',
+               'registrant_code']
+numerical = ['registration_init_time', 'song_length', 'registration_init_time', 'expiration_date', 'song_year']
 
 
 def Matrix_mult(*args):
@@ -30,9 +36,14 @@ def my_mca(X_train, X_test):
 	# Therefore, we are dividing by square root of Sums.
 	D_r = np.diag(Sum_r)
 	D_c = np.diag(Sum_c)
-
-	D_r_sqrt_mi = np.sqrt(np.diag(Sum_r ** -1))
-	D_c_sqrt_mi = np.sqrt(np.diag(Sum_c ** -1))
+	if Sum_r == 0:
+		D_r_sqrt_mi = 0
+	else:
+		D_r_sqrt_mi = np.sqrt(np.diag(Sum_r ** -1))
+	if Sum_c == 0:
+		D_c_sqrt_mi = 0
+	else:
+		D_c_sqrt_mi = np.sqrt(np.diag(Sum_c ** -1))
 
 	print(Z_residual.shape, Z.shape, D_r_sqrt_mi.shape, D_c_sqrt_mi.shape)
 	MCA_mat = Matrix_mult(D_r_sqrt_mi, Z_residual, D_c_sqrt_mi)
@@ -93,38 +104,49 @@ def to_dummies(X):
 	return pd.get_dummies(X)
 
 
-def split(X, proportion):
-	X = contest_data.ix[:, contest_data.columns != 'target']
-	y = contest_data.ix[:, contest_data.columns == 'target']
+def split(X,y, proportion):
 	print('Train \nRaw data: \n ', 'Shape: ', X.shape, 'Type: ', type(X))
 	print('Target \nRaw data: \n ', 'Shape: ', y.shape)
 	# I split the data between the X and the target value
 
 	# X is a dataframe not a np.array
 	print('Size of X: ', X.shape, '\nSize of y: ', y.shape)
-	(X_train, X_test, y_train, y_test) = ms.train_test_split(X, y, test_size=test_proportion, random_state=1,
-	                                                         stratify=y)
+	(X_train, X_test, y_train, y_test) = ms.train_test_split(X, y, test_size=proportion, random_state=1, stratify=y)
 	(X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
 	print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ',
 	      X_val.shape)
 	X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
 	X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+	return X_train, X_test, X_val, y_train, y_test, y_val
+
+
+def standarize_data(df):
+	df[numerical] = stdc().fit_transform(df[numerical])
+	return df
+
+
+def preprocess(X):
+	# todo: si no revienta probamso con el name
+	X_cat = X[categorical]
+	X_num = X[numerical]
+	X_num = standarize_data(X_num)
+	DummiesX = to_dummies(X_cat)
+	y = X['target']
+	print('dummies size: ', DummiesX.shape)
+	print('dummies nas:', np.sum(DummiesX.isnull().sum()) )
+	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
+	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
+	print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
+	my_mca(X_cat_train,X_cat_test)
+	concatX = pd.concat([DummiesX, X_num], axis=1, ignore_index=True)
+	print('concat X ', concatX.shape)
+	concatX.to_csv('bicho.csv')
 
 
 def main():
-	#todo: si no revienta probamso con el name
-	categorical = ['source_system_tab', 'source_screen_name', 'source_type', 'city', 'registered_via',
-	               'gender', 'genre_ids', 'artist_name', 'composer', 'lyricist', 'language', 'country_code',
-	               'registrant_code']
-	numerical = ['registration_init_time', 'song_length', 'registration_init_time', 'expiration_date', 'song_year']
 	file = 'samples/definitivo.csv'
 	X = pd.read_csv('../Data/' + file, header=0)
-	X_cat = X[categorical]
-	X_num = X[numerical]
-	DummiesX = X
-	DummiesX= to_dummies(X[categorical])
-	print('dummies size: ', DummiesX.shape)
-	concaTrain = pd.concat([DummiesX, X_num], axis=1, ignore_index=True)
+	preprocess(X)
 
 # (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.3, 'samples/definitivo.csv')
 #
