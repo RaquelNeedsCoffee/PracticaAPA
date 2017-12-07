@@ -130,6 +130,7 @@ def fill_na_gender_knn(members):
 def process_members():
 	print('Loading members')
 	members = pd.read_csv(data_path + 'members.csv')
+	# remove_less_common(members, threshold=100)
 	print('members loaded -> loaded {} rows'.format(len(members)))
 	print(':----- members -----:')
 	print_df_info(members)
@@ -157,6 +158,7 @@ def process_members():
 def process_songs():
 	print('Loading songs')
 	songs = pd.read_csv(data_path + 'songs.csv')
+	remove_less_common(songs)
 	print('songs loaded -> loaded {} rows'.format(len(songs)))
 	print(':----- songs -----:')
 	print_df_info(songs)
@@ -182,9 +184,17 @@ def process_songs():
 	return songs
 
 
+def remove_less_common(df, threshold = 200):
+	# Anything that occurs less than this will be removed.
+	value_counts = df.stack().value_counts()  # Entire DataFrame
+	to_remove = value_counts[value_counts <= threshold].index
+	df.replace(to_remove, np.nan, inplace=True)
+
+
 def process_song_extra():
 	print('Loading song_extra')
 	song_extra = pd.read_csv(data_path + 'song_extra_info.csv')
+	remove_less_common(song_extra)
 	print('song_extra loaded -> loaded {} rows'.format(len(song_extra)))
 	print(':----- song_extra -----:')
 	print_df_info(song_extra)
