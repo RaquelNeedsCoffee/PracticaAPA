@@ -109,15 +109,20 @@ def split(X, y, proportion, name):
 	(X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
 	print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ',
 	      X_val.shape)
-	np.savez('X_train'+name+'_matrix.npz',X_train )
-	np.savez('X_test'+name+'_matrix.npz', X_test)
-	np.savez('X_val_'+name+'matrix.npz',X_val)
-	np.savez('y_train' + name + '_matrix.npz', y_train)
-	np.savez('y_test' + name + '_matrix.npz', y_test)
-	np.savez('y_val_' + name + 'matrix.npz', y_val)
-	X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
-	X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
-	X_val = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+	np.savez('../Data/X_train'+name+'_matrix.npz',X_train )
+	np.savez('../Data/X_test'+name+'_matrix.npz', X_test)
+	np.savez('../Data/X_val_'+name+'matrix.npz',X_val)
+	np.savez('../Data/y_train' + name + '_matrix.npz', y_train)
+	np.savez('../Data/y_test' + name + '_matrix.npz', y_test)
+	np.savez('../Data/y_val_' + name + 'matrix.npz', y_val)
+	if name == 'num':
+		X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
+		X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+		X_val = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+	else:
+		X_train = pd.SparseDataFrame(data=X_train.values, columns=X_train.columns)
+		X_test = pd.SparseDataFrame(data=X_test.values, columns=X_test.columns)
+		X_val = pd.SparseDataFrame(data=X_test.values, columns=X_test.columns)
 	return X_train, X_test, X_val, y_train, y_test, y_val
 
 
