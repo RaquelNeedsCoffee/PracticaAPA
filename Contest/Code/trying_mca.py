@@ -24,8 +24,10 @@ def my_mca(X_train, X_test):
 	X_values = X_train.values
 	N_all = np.sum(X_values)
 	Z = X_values / N_all
+	print('zshape', Z.shape)
 	Sum_r = np.sum(Z, axis=1)
 	Sum_c = np.sum(Z, axis=0)
+	print('sumc', Sum_c)
 	print(X_values.shape, Sum_r.shape, Sum_c.shape, N_all)
 	# Compute residual
 	Z_expected = np.outer(Sum_r, Sum_c)
@@ -36,14 +38,9 @@ def my_mca(X_train, X_test):
 	# Therefore, we are dividing by square root of Sums.
 	D_r = np.diag(Sum_r)
 	D_c = np.diag(Sum_c)
-	if Sum_r == 0:
-		D_r_sqrt_mi = 0
-	else:
-		D_r_sqrt_mi = np.sqrt(np.diag(Sum_r ** -1))
-	if Sum_c == 0:
-		D_c_sqrt_mi = 0
-	else:
-		D_c_sqrt_mi = np.sqrt(np.diag(Sum_c ** -1))
+	D_r_sqrt_mi = np.sqrt(np.diag(Sum_r ** -1))
+
+	D_c_sqrt_mi = np.sqrt(np.diag(Sum_c ** -1))
 
 	print(Z_residual.shape, Z.shape, D_r_sqrt_mi.shape, D_c_sqrt_mi.shape)
 	MCA_mat = Matrix_mult(D_r_sqrt_mi, Z_residual, D_c_sqrt_mi)
@@ -136,8 +133,17 @@ def preprocess(X):
 	print('dummies nas:', np.sum(DummiesX.isnull().sum()) )
 	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
 	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
+	for feature in X_cat_train.columns:
+		if np.sum(X_cat_train[feature]) == 0 or np.sum(X_cat_test[feature]) == 0 or np.sum(X_cat_val[feature]) == 0:
+			# print(feature)
+			X_cat_train.drop(feature,axis=1)
+			X_cat_test.drop(feature,axis=1)
+			X_cat_val.drop(feature,axis=1)
+	for i in range(len(X_cat_train.values)):
+		if np.sum(X_cat_train.ix[i,:]) == 0:
+			print('PETA')
 	print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
-	my_mca(X_cat_train,X_cat_test)
+	my_mca(X_cat_train, X_cat_test)
 	concatX = pd.concat([DummiesX, X_num], axis=1, ignore_index=True)
 	print('concat X ', concatX.shape)
 	concatX.to_csv('bicho.csv')
