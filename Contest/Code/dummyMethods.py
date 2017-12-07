@@ -17,10 +17,12 @@ from sklearn.neural_network import MLPClassifier
 
 import pickle
 import gc
+import os
 
-
-global_path = '../Data/Models/0.2/'
-
+split_range = 0.2
+global_path = '../Data/Models/' + str(split_range) + '/'
+if not path.isdir(global_path):
+    os.mkdir(global_path)
 
 def lda(X_train, X_test, y_train, y_test):
     """
@@ -321,7 +323,7 @@ def run_all():
 
 
 def main():
-    split_range = 0.2
+
     print('El split range es: ', split_range)
     (X_train, X_test, X_val, y_train, y_test, y_val) = split(split_range)
     naive_bayes(X_train, X_test, y_train, y_test)

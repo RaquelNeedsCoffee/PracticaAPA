@@ -156,9 +156,9 @@ def preprocess(X):
 	print('concat X Train ', concat_Train.shape)
 	print('concat X ', concat_Test.shape)
 	print('concat X ', concat_Val.shape)
-	concat_Train.to_csv('preprocessedTrain.csv')
-	concat_Test.to_csv('preprocessedTest.csv')
-	concat_Val.to_csv('preprocessedVal.csv')
+	concat_Train.to_csv('../Data/preprocessedTrain.csv')
+	concat_Test.to_csv('../Data/preprocessedTest.csv')
+	concat_Val.to_csv('../Data/preprocessedVal.csv')
 
 
 def main():
