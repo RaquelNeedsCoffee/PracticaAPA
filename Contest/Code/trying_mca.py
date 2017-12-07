@@ -6,8 +6,8 @@ import sklearn.model_selection as ms
 from sklearn.preprocessing import StandardScaler as stdc
 
 categorical = ['source_system_tab', 'source_screen_name', 'source_type', 'city', 'registered_via',
-               'gender', 'genre_ids', 'artist_name', 'composer', 'lyricist', 'language', 'country_code',
-               'registrant_code']
+	'gender', 'genre_ids', 'artist_name', 'composer', 'language', 'country_code',
+	'registrant_code']  # , 'lyricist', 'age_range']
 numerical = ['registration_init_time', 'song_length', 'registration_init_time', 'expiration_date', 'song_year']
 
 
@@ -16,7 +16,7 @@ def Matrix_mult(*args):
 	return functools.reduce(np.dot, args)
 
 
-def my_mca(X_train, X_test):
+def my_mca(X_train, X_test, X_val):
 	X_values = X_train.values
 	N_all = np.sum(X_values)
 	Z = X_values / N_all
@@ -69,12 +69,12 @@ def my_mca(X_train, X_test):
 
 	print('Explained variance of eigen vectors after Greenacre correction are ', E / green_norm)
 	data = {'Iλ': pd.Series(Lam),
-	        'τI': pd.Series(Expl_var),
-	        'Zλ': pd.Series(E),
-	        'τZ': pd.Series(Expl_var_bn),
-	        'cλ': pd.Series(E),
-	        'τc': pd.Series(E / green_norm),
-	        }
+		'τI': pd.Series(Expl_var),
+		'Zλ': pd.Series(E),
+		'τZ': pd.Series(Expl_var_bn),
+		'cλ': pd.Series(E),
+		'τc': pd.Series(E / green_norm),
+	}
 	columns = ['Iλ', 'τI', 'Zλ', 'τZ', 'cλ', 'τc']
 	table2 = pd.DataFrame(data=data, columns=columns).fillna(0)
 	table2.index += 1
@@ -86,9 +86,10 @@ def my_mca(X_train, X_test):
 	## The projection can also be computed using vectorized form,
 	X_train = Matrix_mult(X_train.values, G[:, :45]) / S[:45] / 10
 	X_test = Matrix_mult(X_test.values, G[:, :45]) / S[:45] / 10
+	X_val = Matrix_mult(X_val.values, G[:, :45]) / S[:45] / 10
 	print('shape', X_test.shape)
 	names = ['V' + str(i) for i in range(45)]
-	return pd.DataFrame(X_train, columns=names), pd.DataFrame(X_test, columns=names)
+	return pd.DataFrame(X_train, columns=names), pd.DataFrame(X_test, columns=names), pd.DataFrame(X_val, columns=names)
 
 
 def to_dummies(X):
@@ -110,6 +111,7 @@ def split(X, y, proportion):
 	      X_val.shape)
 	X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
 	X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+	X_val = pd.DataFrame(data=X_test.values, columns=X_test.columns)
 	return X_train, X_test, X_val, y_train, y_test, y_val
 
 
@@ -117,38 +119,46 @@ def standarize_data(df):
 	df[numerical] = stdc().fit_transform(df[numerical])
 	return df
 
-def remove_minor_categories():
+
+def remove_minor_categories(X):
 	pass
 
-def preprocess(X):
-	# todo: si no revienta probamso con el name
-	# X_cat = X[categorical]
-	# X_num = X[numerical]
-	# X_num = standarize_data(X_num)
-	categorical = ['source_system_tab', 'source_screen_name', 'source_type', 'city', 'registered_via',
-	               'gender', 'genre_ids',  'country_code',
-	               'registrant_code']
 
-	DummiesX = pd.get_dummies(data=X,columns=categorical, prefix_sep='|', sparse=True)
-	# y = X['target']
-	# print('dummies size: ', DummiesX.shape)
-	# print('dummies nas:', np.sum(DummiesX.isnull().sum()))
-	# (X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
-	# (X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
+def preprocess(X):
+	# todo: si no revienta probamos con el name
+	X_num = X[numerical]
+	X_num = standarize_data(X_num)
+	DummiesX = pd.get_dummies(data=X, columns=categorical, prefix_sep='|', sparse=True)
+	y = X['target']
+	print('dummies size: ', DummiesX.shape)
+	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
+	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
+
+	X_train_sum = (X_cat_train.values.sum(axis=1) != 0)
+	X_test_sum = (X_cat_test.values.sum(axis=1) != 0)
+	X_val_sum = (X_cat_val.values.sum(axis=1) != 0)
+	index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
+	X_cat_train = X_cat_train.loc[:,index]
+	X_cat_test = X_cat_test.loc[:, index]
+	X_cat_val = X_cat_val.loc[:,index]
 	# for feature in X_cat_train.columns:
 	# 	if np.sum(X_cat_train[feature]) == 0 or np.sum(X_cat_test[feature]) == 0 or np.sum(X_cat_val[feature]) == 0:
 	# 		# print(feature)
 	# 		X_cat_train.drop(feature, axis=1)
 	# 		X_cat_test.drop(feature, axis=1)
 	# 		X_cat_val.drop(feature, axis=1)
-	# for i in range(len(X_cat_train.values)):
-	# 	if np.sum(X_cat_train.ix[i, :]) == 0:
-	# 		print('PETA')
-	# print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
-	# my_mca(X_cat_train, X_cat_test)
-	# concatX = pd.concat([DummiesX, X_num], axis=1, ignore_index=True)
-	# print('concat X ', concatX.shape)
-	# concatX.to_csv('bicho.csv')
+	print('droped columns')
+	print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
+	X_cat_train, X_cat_test, X_cat_val = my_mca(X_cat_train, X_cat_test, X_cat_val)
+	concat_Train = pd.concat([X_cat_train, X_num_train], axis=1, ignore_index=True)
+	concat_Test = pd.concat([X_cat_test, X_num_test], axis=1, ignore_index=True)
+	concat_Val = pd.concat([X_cat_val, X_num_val], axis=1, ignore_index=True)
+	print('concat X Train ', concat_Train.shape)
+	print('concat X ', concat_Test.shape)
+	print('concat X ', concat_Val.shape)
+	concat_Train.to_csv('preprocessedTrain.csv')
+	concat_Test.to_csv('preprocessedTest.csv')
+	concat_Val.to_csv('preprocessedVal.csv')
 
 
 def main():
