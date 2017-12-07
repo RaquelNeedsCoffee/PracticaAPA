@@ -98,7 +98,7 @@ def to_dummies(X):
 	return pd.get_dummies(X)
 
 
-def split(X, y, proportion):
+def split(X, y, proportion, name):
 	print('Train \nRaw data: \n ', 'Shape: ', X.shape, 'Type: ', type(X))
 	print('Target \nRaw data: \n ', 'Shape: ', y.shape)
 	# I split the data between the X and the target value
@@ -109,6 +109,12 @@ def split(X, y, proportion):
 	(X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
 	print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ',
 	      X_val.shape)
+	np.savez('X_train'+name+'_matrix.npz',X_train )
+	np.savez('X_test'+name+'_matrix.npz', X_test)
+	np.savez('X_val_'+name+'matrix.npz',X_val)
+	np.savez('y_train' + name + '_matrix.npz', y_train)
+	np.savez('y_test' + name + '_matrix.npz', y_test)
+	np.savez('y_val_' + name + 'matrix.npz', y_val)
 	X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
 	X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
 	X_val = pd.DataFrame(data=X_test.values, columns=X_test.columns)
@@ -121,6 +127,7 @@ def standarize_data(df):
 
 
 def remove_minor_categories(X):
+	# todo: borrar las categorías que salen menos
 	pass
 
 
@@ -128,19 +135,42 @@ def preprocess(X):
 	# todo: si no revienta probamos con el name
 	X_num = X[numerical]
 	X_num = standarize_data(X_num)
-	DummiesX = pd.get_dummies(data=X, columns=categorical, prefix_sep='|', sparse=True)
+	DummiesX = pd.get_dummies(data=X, columns=categorical, prefix_sep='|',sparse=True)
 	y = X['target']
 	print('dummies size: ', DummiesX.shape)
-	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
-	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
+	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.5, 'num')
+	X_num_train.to_csv('../Data/subset_num_Train.csv')
+	X_num_test.to_csv('../Data/subset_num_Test.csv')
+	X_num_val.to_csv('../Data/subset_num_Val.csv')
+	y_train.to_csv('../Data/preprocessed_y_Train.csv')
+	y_test.to_csv('../Data/preprocessed_y_Test.csv')
+	y_test.to_csv('../Data/preprocessed_y_Val.csv')
+	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.5, 'cat')
 
-	X_train_sum = (X_cat_train.values.sum(axis=1) != 0)
-	X_test_sum = (X_cat_test.values.sum(axis=1) != 0)
-	X_val_sum = (X_cat_val.values.sum(axis=1) != 0)
+	X_cat_train.to_csv('../Data/X_cat_Train.csv')
+	X_cat_test.to_csv('../Data/X_cat_Test.csv')
+	X_cat_val.to_csv('../Data/X_cat_Val.csv')
+
+
+
+	print('split end')
+	X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
+	print('xtrain sum end')
+	X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
+	print('x_test end')
+	X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
+	print('x val end')
 	index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
+	print('index end')
 	X_cat_train = X_cat_train.loc[:,index]
 	X_cat_test = X_cat_test.loc[:, index]
 	X_cat_val = X_cat_val.loc[:,index]
+	print('loc end')
+	X_cat_train.to_csv('../Data/subset_cat_Train.csv')
+	X_cat_test.to_csv('../Data/subset_cat_Test.csv')
+	X_cat_val.to_csv('../Data/subset_cat_Val.csv')
+
+	print('end csv')
 	# for feature in X_cat_train.columns:
 	# 	if np.sum(X_cat_train[feature]) == 0 or np.sum(X_cat_test[feature]) == 0 or np.sum(X_cat_val[feature]) == 0:
 	# 		# print(feature)
@@ -160,6 +190,25 @@ def preprocess(X):
 	concat_Test.to_csv('../Data/preprocessedTest.csv')
 	concat_Val.to_csv('../Data/preprocessedVal.csv')
 
+
+
+def data_from_files():
+	X_train = pd.read_csv('../Data/preprocessedTrain.csv')
+	X_test = pd.read_csv('../Data/preprocessedTest.csv')
+	X_val = pd.read_csv('../Data/preprocessedVal.csv')
+
+	print('\nLoaded data:')
+	print('Train shape: ', X_train.shape)
+	print('Test shape: ', X_test.shape)
+	print('Val shape: ', X_val.shape)
+
+	Y_train = X_train['Class']
+	X_train = X_train.drop('Class', 1)
+	Y_test = X_test['Class']
+	X_test = X_test.drop('Class', 1)
+	Y_val = X_val['Class']
+	X_val = X_val.drop('Class', 1)
+	return X_train, X_test, X_val, Y_train, Y_test, Y_val
 
 def main():
 	file = 'def_training.csv'

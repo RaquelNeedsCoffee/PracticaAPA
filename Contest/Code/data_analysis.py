@@ -1,5 +1,4 @@
 import gc
-import prince
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelBinarizer
