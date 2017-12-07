@@ -24,10 +24,10 @@ def my_mca(X_train, X_test):
 	X_values = X_train.values
 	N_all = np.sum(X_values)
 	Z = X_values / N_all
-	print('zshape', Z.shape)
+	# print('zshape', Z.shape)
 	Sum_r = np.sum(Z, axis=1)
 	Sum_c = np.sum(Z, axis=0)
-	print('sumc', Sum_c)
+	# print('sumc', Sum_c)
 	print(X_values.shape, Sum_r.shape, Sum_c.shape, N_all)
 	# Compute residual
 	Z_expected = np.outer(Sum_r, Sum_c)
@@ -101,7 +101,7 @@ def to_dummies(X):
 	return pd.get_dummies(X)
 
 
-def split(X,y, proportion):
+def split(X, y, proportion):
 	print('Train \nRaw data: \n ', 'Shape: ', X.shape, 'Type: ', type(X))
 	print('Target \nRaw data: \n ', 'Shape: ', y.shape)
 	# I split the data between the X and the target value
@@ -130,17 +130,17 @@ def preprocess(X):
 	DummiesX = to_dummies(X_cat)
 	y = X['target']
 	print('dummies size: ', DummiesX.shape)
-	print('dummies nas:', np.sum(DummiesX.isnull().sum()) )
+	print('dummies nas:', np.sum(DummiesX.isnull().sum()))
 	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
 	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
 	for feature in X_cat_train.columns:
 		if np.sum(X_cat_train[feature]) == 0 or np.sum(X_cat_test[feature]) == 0 or np.sum(X_cat_val[feature]) == 0:
 			# print(feature)
-			X_cat_train.drop(feature,axis=1)
-			X_cat_test.drop(feature,axis=1)
-			X_cat_val.drop(feature,axis=1)
+			X_cat_train.drop(feature, axis=1)
+			X_cat_test.drop(feature, axis=1)
+			X_cat_val.drop(feature, axis=1)
 	for i in range(len(X_cat_train.values)):
-		if np.sum(X_cat_train.ix[i,:]) == 0:
+		if np.sum(X_cat_train.ix[i, :]) == 0:
 			print('PETA')
 	print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
 	my_mca(X_cat_train, X_cat_test)
@@ -154,6 +154,7 @@ def main():
 	X = pd.read_csv('../Data/' + file, header=0)
 	preprocess(X)
 
+
 # (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.3, 'samples/definitivo.csv')
 #
 # new_X_train_cat, new_X_test_cat = my_mca(dumy_train, dumy_test)
@@ -164,7 +165,6 @@ def main():
 #
 # print(concaTrain.shape)
 # print(concaTest.shape)
-
 
 
 if __name__ == "__main__":
