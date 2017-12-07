@@ -1,10 +1,6 @@
 import pandas as pd
 import numpy as np
 from mca import diagsvd
-from time import time
-from sklearn.metrics import f1_score
-import matplotlib.pyplot as plt
-from sklearn import preprocessing
 import functools
 import sklearn.model_selection as ms
 from sklearn.preprocessing import StandardScaler as stdc
@@ -121,37 +117,43 @@ def standarize_data(df):
 	df[numerical] = stdc().fit_transform(df[numerical])
 	return df
 
+def remove_minor_categories():
+	pass
 
 def preprocess(X):
 	# todo: si no revienta probamso con el name
-	X_cat = X[categorical]
-	X_num = X[numerical]
-	X_num = standarize_data(X_num)
-	DummiesX = to_dummies(X_cat)
-	y = X['target']
-	print('dummies size: ', DummiesX.shape)
-	print('dummies nas:', np.sum(DummiesX.isnull().sum()))
-	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
-	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
-	for feature in X_cat_train.columns:
-		if np.sum(X_cat_train[feature]) == 0 or np.sum(X_cat_test[feature]) == 0 or np.sum(X_cat_val[feature]) == 0:
-			# print(feature)
-			X_cat_train.drop(feature, axis=1)
-			X_cat_test.drop(feature, axis=1)
-			X_cat_val.drop(feature, axis=1)
-	for i in range(len(X_cat_train.values)):
-		if np.sum(X_cat_train.ix[i, :]) == 0:
-			print('PETA')
-	print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
-	my_mca(X_cat_train, X_cat_test)
-	concatX = pd.concat([DummiesX, X_num], axis=1, ignore_index=True)
-	print('concat X ', concatX.shape)
-	concatX.to_csv('bicho.csv')
+	# X_cat = X[categorical]
+	# X_num = X[numerical]
+	# X_num = standarize_data(X_num)
+	categorical = ['source_system_tab', 'source_screen_name', 'source_type', 'city', 'registered_via',
+	               'gender', 'genre_ids',  'country_code',
+	               'registrant_code']
+
+	DummiesX = pd.get_dummies(data=X,columns=categorical, prefix_sep='|', sparse=True)
+	# y = X['target']
+	# print('dummies size: ', DummiesX.shape)
+	# print('dummies nas:', np.sum(DummiesX.isnull().sum()))
+	# (X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.3)
+	# (X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.3)
+	# for feature in X_cat_train.columns:
+	# 	if np.sum(X_cat_train[feature]) == 0 or np.sum(X_cat_test[feature]) == 0 or np.sum(X_cat_val[feature]) == 0:
+	# 		# print(feature)
+	# 		X_cat_train.drop(feature, axis=1)
+	# 		X_cat_test.drop(feature, axis=1)
+	# 		X_cat_val.drop(feature, axis=1)
+	# for i in range(len(X_cat_train.values)):
+	# 	if np.sum(X_cat_train.ix[i, :]) == 0:
+	# 		print('PETA')
+	# print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
+	# my_mca(X_cat_train, X_cat_test)
+	# concatX = pd.concat([DummiesX, X_num], axis=1, ignore_index=True)
+	# print('concat X ', concatX.shape)
+	# concatX.to_csv('bicho.csv')
 
 
 def main():
-	file = 'samples/definitivo.csv'
-	X = pd.read_csv('../Data/' + file, header=0)
+	file = 'def_training.csv'
+	X = pd.read_csv('../Data/' + file)
 	preprocess(X)
 
 
