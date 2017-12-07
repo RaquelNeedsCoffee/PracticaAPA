@@ -135,6 +135,7 @@ def process_members():
 	print_df_info(members)
 	print('Convert columns')
 	members['city'] = members['city'].astype(np.uint8)
+	# cambio bd a age_range
 	members['bd'] = members['bd'].astype(np.uint8)
 	# members['gender'] = members['gender'].astype('category')  # to uint in a moment
 	members['registered_via'] = members['registered_via'].astype(np.uint8)
@@ -144,6 +145,10 @@ def process_members():
 	print('"gender" to numeric')
 	members['gender'] = LabelBinarizer().fit_transform(members['gender'])
 	members['gender'] = members['gender'].astype(np.uint8)
+	members['age_range'] = pd.cut(members['bd'], bins=[5, 10, 18, 30, 45, 60, 80])
+	more_freq_age_range= members['age_range'].value_counts().idxmax()
+	members['age_range'] = members['age_range'].fillna(more_freq_age_range)
+	members.drop(['bd'], axis=1)
 	print_df_info(members)
 	print('\n')
 	return members
@@ -163,7 +168,7 @@ def process_songs():
 	# songs['artist_name'] = songs['artist_name'].astype('category')  # no memory reduction
 	songs['composer'] = songs['composer'].astype('category')  # no memory reduction
 	# drop col 'name'
-	songs = songs.drop('name', axis=1)
+	# songs = songs.drop('name', axis=1)
 	print('Drop "NaN" rows of "language"')  # low ammount of nan values (1 of 2M)
 	songs = songs.dropna(subset=['language'])
 	print('Add category "no_lyricist" into "lyricist" categories')  # a lot of NaN values
@@ -207,9 +212,9 @@ def process_song_extra():
 	return song_extra
 
 
-def final_preprocessing(df):
-	mca = prince.MCA(pd.DataFrame(df['genre_ids']), n_components=-1)
-	mca.plot_rows(show_points=True, show_labels=False, color_by='Position Al A', ellipse_fill=True)
+# def final_preprocessing(df):
+# 	mca = prince.MCA(pd.DataFrame(df['genre_ids']), n_components=-1)
+# 	mca.plot_rows(show_points=True, show_labels=False, color_by='Position Al A', ellipse_fill=True)
 
 
 def main():
@@ -241,9 +246,7 @@ def main():
 	print_df_info(df_training)
 	print('Convert columns')
 	# df_training['song_id'] = df_songs['song_id'].astype('category') # no memory reduction
-	df_training['language'] = df_training['language'].fillna(0)
-	df_training['language'] = df_training['language'].astype(np.int8)
-	df_training['language'] = df_training['language'].replace(0, np.nan)
+	df_training['language'] = df_training['language'].astype('category')
 	print_df_info(df_training)
 
 	print('Process genres and imput missing values:')
@@ -271,10 +274,11 @@ def main():
 	print('Drop rows with NaN values of df_training')
 	df_training = df_training.dropna()
 	print('merged df_training df_song_extra -> df_training {} rows'.format(len(df_training)))
+	df_training.drop(columns=['song_id', 'bd', 'lyricist'])
 	print_df_info(df_training)
 	df_training = pd.DataFrame(df_training)
 	df_training.to_csv('../Data/deftraining.csv')
-	final_preprocessing(df_training)
+	# final_preprocessing(df_training)
 
 	del df_song_extra
 	del df_training
