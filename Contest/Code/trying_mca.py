@@ -4,10 +4,10 @@ from mca import diagsvd
 import functools
 import sklearn.model_selection as ms
 from sklearn.preprocessing import StandardScaler as stdc
-
-categorical = ['source_system_tab', 'source_screen_name', 'source_type', 'city', 'registered_via',
-	'gender', 'genre_ids', 'artist_name', 'composer', 'language', 'country_code',
-	'registrant_code']  # , 'lyricist', 'age_range']
+import gc
+categorical = ['source_system_tab', 'source_screen_name', 'source_type',
+	'gender', 'genre_ids', 'language', 'country_code',
+	]  # 'artist_name', 'composer' , 'lyricist', 'age_range']'registrant_code' 'city', 'registered_via',
 numerical = ['registration_init_time', 'song_length', 'registration_init_time', 'expiration_date', 'song_year']
 
 
@@ -108,25 +108,18 @@ def split(X, y, proportion, name):
 	(X_train, X_test, y_train, y_test) = ms.train_test_split(X, y, test_size=proportion, random_state=1, stratify=y)
 	(X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
 	print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ',
-	      X_val.shape)
-	np.savez('../Data/X_train_'+name+'_matrix.npz',X_train )
-	np.savez('../Data/X_test_'+name+'_matrix.npz', X_test)
-	np.savez('../Data/X_val_'+name+'_matrix.npz',X_val)
-	np.savez('../Data/y_train_' + name + '_matrix.npz', y_train)
-	np.savez('../Data/y_test_' + name + '_matrix.npz', y_test)
-	np.savez('../Data/y_val_' + name + '_matrix.npz', y_val)
-	if name == 'num':
-		# todo:calcular otra vez las numericas
-		X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
-		X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
-		X_val = pd.DataFrame(data=X_val.values, columns=X_val.columns)
-	else:
-		np.savez('../Data/X_train_' + name + '_columns.npz', X_train.columns)
-		np.savez('../Data/X_test_' + name + '_columns.npz', X_test.columns)
-		np.savez('../Data/X_val_' + name + '_columns.npz', X_val.columns)
-		#X_train = pd.SparseDataFrame(data=X_train.values, columns=X_train.columns)
-		#X_test = pd.SparseDataFrame(data=X_test.values, columns=X_test.columns)
-		#X_val = pd.SparseDataFrame(data=X_val.values, columns=X_val.columns)
+	      X_val.shape, '\n Type: ',type(X_train))
+	# np.savez('../Data/X_train_'+name+'_matrix.npz',X_train )
+	# np.savez('../Data/X_test_'+name+'_matrix.npz', X_test)
+	# np.savez('../Data/X_val_'+name+'_matrix.npz',X_val)
+	# np.savez('../Data/y_train_' + name + '_matrix.npz', y_train)
+	# np.savez('../Data/y_test_' + name + '_matrix.npz', y_test)
+	# np.savez('../Data/y_val_' + name + '_matrix.npz', y_val)
+	# if name == 'cat':
+	# 	np.savez('../Data/X_train_' + name + '_columns.npz', X_train.columns)
+	# 	np.savez('../Data/X_test_' + name + '_columns.npz', X_test.columns)
+	# 	np.savez('../Data/X_val_' + name + '_columns.npz', X_val.columns)
+
 	return X_train, X_test, X_val, y_train, y_test, y_val
 
 
@@ -174,43 +167,44 @@ def preprocess(X):
 	# todo: si no revienta probamos con el name
 	X_num = X[numerical]
 	X_num = standarize_data(X_num)
-	DummiesX = pd.get_dummies(data=X, columns=categorical, prefix_sep='|',sparse=True)
+	DummiesX = pd.get_dummies(data=X, columns=categorical, prefix_sep='|')
 	y = X['target']
 	print('dummies size: ', DummiesX.shape)
-	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.5, 'num')
+	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.4, 'num')
+
 	X_num_train.to_csv('../Data/subset_num_Train.csv')
 	X_num_test.to_csv('../Data/subset_num_Test.csv')
 	X_num_val.to_csv('../Data/subset_num_Val.csv')
 	y_train.to_csv('../Data/preprocessed_y_Train.csv')
 	y_test.to_csv('../Data/preprocessed_y_Test.csv')
 	y_test.to_csv('../Data/preprocessed_y_Val.csv')
-	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.5, 'cat')
 
+	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.4, 'cat')
 	print('end split')
-	X_cat_train, X_cat_test, X_cat_val = clean_array()
+	# X_cat_train, X_cat_test, X_cat_val = clean_array()
 
-	# X_cat_train.to_csv('../Data/X_cat_Train.csv')
-	# X_cat_test.to_csv('../Data/X_cat_Test.csv')
-	# X_cat_val.to_csv('../Data/X_cat_Val.csv')
+	X_cat_train.to_csv('../Data/X_cat_Train.csv')
+	X_cat_test.to_csv('../Data/X_cat_Test.csv')
+	X_cat_val.to_csv('../Data/X_cat_Val.csv')
 
 
 
-	# print('split end')
-	# X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
-	# print('xtrain sum end')
-	# X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
-	# print('x_test end')
-	# X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
-	# print('x val end')
-	# index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
-	# print('index end')
-	# X_cat_train = X_cat_train.loc[:,index]
-	# X_cat_test = X_cat_test.loc[:, index]
-	# X_cat_val = X_cat_val.loc[:,index]
-	# print('loc end')
-	# X_cat_train.to_csv('../Data/subset_cat_Train.csv')
-	# X_cat_test.to_csv('../Data/subset_cat_Test.csv')
-	# X_cat_val.to_csv('../Data/subset_cat_Val.csv')
+	print('saved')
+	X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
+	print('xtrain sum end')
+	X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
+	print('x_test end')
+	X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
+	print('x val end')
+	index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
+	print('index end')
+	X_cat_train = X_cat_train.loc[:,index]
+	X_cat_test = X_cat_test.loc[:, index]
+	X_cat_val = X_cat_val.loc[:,index]
+	print('loc end')
+	X_cat_train.to_csv('../Data/subset_cat_Train.csv')
+	X_cat_test.to_csv('../Data/subset_cat_Test.csv')
+	X_cat_val.to_csv('../Data/subset_cat_Val.csv')
 
 	print('end csv')
 	# for feature in X_cat_train.columns:
@@ -238,6 +232,10 @@ def data_from_files():
 	X_train = pd.read_csv('../Data/preprocessedTrain.csv')
 	X_test = pd.read_csv('../Data/preprocessedTest.csv')
 	X_val = pd.read_csv('../Data/preprocessedVal.csv')
+
+	y_train = pd.read_csv('../Data/preprocessed_y_Train.csv')
+	y_test = pd.read_csv('../Data/preprocessed_y_Test.csv')
+	y_test = pd.read_csv('../Data/preprocessed_y_Val.csv')
 
 	print('\nLoaded data:')
 	print('Train shape: ', X_train.shape)
