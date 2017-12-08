@@ -109,20 +109,24 @@ def split(X, y, proportion, name):
 	(X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
 	print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ',
 	      X_val.shape)
-	np.savez('../Data/X_train'+name+'_matrix.npz',X_train )
-	np.savez('../Data/X_test'+name+'_matrix.npz', X_test)
-	np.savez('../Data/X_val_'+name+'matrix.npz',X_val)
-	np.savez('../Data/y_train' + name + '_matrix.npz', y_train)
-	np.savez('../Data/y_test' + name + '_matrix.npz', y_test)
-	np.savez('../Data/y_val_' + name + 'matrix.npz', y_val)
+	np.savez('../Data/X_train_'+name+'_matrix.npz',X_train )
+	np.savez('../Data/X_test_'+name+'_matrix.npz', X_test)
+	np.savez('../Data/X_val_'+name+'_matrix.npz',X_val)
+	np.savez('../Data/y_train_' + name + '_matrix.npz', y_train)
+	np.savez('../Data/y_test_' + name + '_matrix.npz', y_test)
+	np.savez('../Data/y_val_' + name + '_matrix.npz', y_val)
 	if name == 'num':
+		# todo:calcular otra vez las numericas
 		X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
 		X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
-		X_val = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+		X_val = pd.DataFrame(data=X_val.values, columns=X_val.columns)
 	else:
-		X_train = pd.SparseDataFrame(data=X_train.values, columns=X_train.columns)
-		X_test = pd.SparseDataFrame(data=X_test.values, columns=X_test.columns)
-		X_val = pd.SparseDataFrame(data=X_test.values, columns=X_test.columns)
+		np.savez('../Data/X_train_' + name + '_columns.npz', X_train.columns)
+		np.savez('../Data/X_test_' + name + '_columns.npz', X_test.columns)
+		np.savez('../Data/X_val_' + name + '_columns.npz', X_val.columns)
+		#X_train = pd.SparseDataFrame(data=X_train.values, columns=X_train.columns)
+		#X_test = pd.SparseDataFrame(data=X_test.values, columns=X_test.columns)
+		#X_val = pd.SparseDataFrame(data=X_val.values, columns=X_val.columns)
 	return X_train, X_test, X_val, y_train, y_test, y_val
 
 
@@ -135,6 +139,36 @@ def remove_minor_categories(X):
 	# todo: borrar las categorías que salen menos
 	pass
 
+def clean_array():
+	name = 'cat'
+	X_cat_train=np.load('../Data/X_train_' + name + '_matrix.npz')['arr_0']
+	X_cat_test = np.load('../Data/X_test_' + name + '_matrix.npz')['arr_0']
+	X_cat_val = np.load('../Data/X_val_' + name + '_matrix.npz')['arr_0']
+	X_cat_train_columns = np.load('../Data/X_train_' + name + '_matrix_columns.npz')['arr_0']
+	X_cat_test_columns = np.load('../Data/X_test_' + name + '_matrix_columns.npz')['arr_0']
+	X_cat_val_columns = np.load('../Data/X_val_' + name + '_matrix_columns.npz')['arr_0']
+	X_train_sum = (X_cat_train.sum(axis=0) != 0)
+	print('xtrain sum end')
+	X_test_sum = (X_cat_test.sum(axis=0) != 0)
+	print('x_test end')
+	X_val_sum = (X_cat_val.sum(axis=0) != 0)
+	print('x val end')
+	index = np.logical_and(X_train_sum, np.logical_and(X_test_sum, X_val_sum))
+	print('index end')
+	X_cat_train = X_cat_train[:, index]
+	X_cat_test = X_cat_test[:, index]
+	X_cat_val = X_cat_val[:, index]
+	np.savez('../Data/X_train_' + name + '_submatrix.npz', X_cat_train)
+	np.savez('../Data/X_test_' + name + '_submatrix.npz', X_cat_test)
+	np.savez('../Data/X_val_' + name + '_submatrix.npz', X_cat_val)
+
+	X_train = pd.SparseDataFrame(data=X_cat_train, columns=X_cat_train_columns)
+	X_test = pd.SparseDataFrame(data=X_cat_test, columns=X_cat_test_columns)
+	X_val = pd.SparseDataFrame(data=X_cat_val, columns=X_cat_val_columns)
+	X_train.to_csv('../Data/subset_cat_Train.csv')
+	X_test.to_csv('../Data/subset_cat_Test.csv')
+	X_val.to_csv('../Data/subset_cat_Val.csv')
+	return X_train,X_test,X_val
 
 def preprocess(X):
 	# todo: si no revienta probamos con el name
@@ -152,28 +186,31 @@ def preprocess(X):
 	y_test.to_csv('../Data/preprocessed_y_Val.csv')
 	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.5, 'cat')
 
-	X_cat_train.to_csv('../Data/X_cat_Train.csv')
-	X_cat_test.to_csv('../Data/X_cat_Test.csv')
-	X_cat_val.to_csv('../Data/X_cat_Val.csv')
+	print('end split')
+	X_cat_train, X_cat_test, X_cat_val = clean_array()
+
+	# X_cat_train.to_csv('../Data/X_cat_Train.csv')
+	# X_cat_test.to_csv('../Data/X_cat_Test.csv')
+	# X_cat_val.to_csv('../Data/X_cat_Val.csv')
 
 
 
-	print('split end')
-	X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
-	print('xtrain sum end')
-	X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
-	print('x_test end')
-	X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
-	print('x val end')
-	index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
-	print('index end')
-	X_cat_train = X_cat_train.loc[:,index]
-	X_cat_test = X_cat_test.loc[:, index]
-	X_cat_val = X_cat_val.loc[:,index]
-	print('loc end')
-	X_cat_train.to_csv('../Data/subset_cat_Train.csv')
-	X_cat_test.to_csv('../Data/subset_cat_Test.csv')
-	X_cat_val.to_csv('../Data/subset_cat_Val.csv')
+	# print('split end')
+	# X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
+	# print('xtrain sum end')
+	# X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
+	# print('x_test end')
+	# X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
+	# print('x val end')
+	# index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
+	# print('index end')
+	# X_cat_train = X_cat_train.loc[:,index]
+	# X_cat_test = X_cat_test.loc[:, index]
+	# X_cat_val = X_cat_val.loc[:,index]
+	# print('loc end')
+	# X_cat_train.to_csv('../Data/subset_cat_Train.csv')
+	# X_cat_test.to_csv('../Data/subset_cat_Test.csv')
+	# X_cat_val.to_csv('../Data/subset_cat_Val.csv')
 
 	print('end csv')
 	# for feature in X_cat_train.columns:

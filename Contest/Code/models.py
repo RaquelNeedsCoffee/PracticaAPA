@@ -19,7 +19,8 @@ import pickle
 import gc
 
 from Code.split_data import split
-from Code.main import global_path
+split_range = 0.5
+global_path = '../Data/Models/' + str(split_range) + '/'
 
 
 def lda(X_train, X_test, y_train, y_test):

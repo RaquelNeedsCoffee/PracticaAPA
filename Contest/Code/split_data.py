@@ -1,10 +1,10 @@
 import pandas as pd
 import sklearn.model_selection as ms
 from sklearn import preprocessing
-from Contest.Code.optimice_dataset import optimice
 
 
-def split(test_proportion, file='clean_train.csv'):
+
+def split(test_proportion, file='def_training.csv'):
     """
     This function does the stratified split of our data with a test size of 0.95 (as the teacher recommended )
     We will have a train file with the 5% of the data and the val and test with the rest
@@ -25,6 +25,7 @@ def split(test_proportion, file='clean_train.csv'):
     print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ', X_val.shape)
     X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
     X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
+    X_val = pd.DataFrame(data=X_val.values, columns=X_val.columns)
     return X_train, X_test, X_val, y_train, y_test, y_val
 
 
