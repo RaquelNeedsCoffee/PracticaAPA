@@ -12,6 +12,9 @@ from sklearn.linear_model import Perceptron
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint as sp_randint
+from scipy.stats import uniform
 
 import numpy as np
 from os import path
@@ -19,6 +22,7 @@ import pickle
 import gc
 
 from Code.split_data import split
+
 split_range = 0.5
 global_path = '../Data/Models/' + str(split_range) + '/'
 
@@ -53,7 +57,7 @@ def lda(X_train, X_test, y_train, y_test):
 	acc = metrics.accuracy_score(y_test, pred)
 	print("Accuracy:", acc)
 	print('Full report: \n', metrics.classification_report(y_test, pred))
-	repport.write('LDA ' + ' :' + '\n')
+	repport.write('LDA with test' + ' :' + '\n')
 	repport.write("Accuracy:" + str(acc) + '\n')
 	repport.write('Full report: \n' + str(metrics.classification_report(y_test, pred)) + '\n')
 	del lda, lda_trained
@@ -92,7 +96,7 @@ def qda(X_train, X_test, y_train, y_test):
 	acc = metrics.accuracy_score(y_test, pred)
 	print("Accuracy:", acc)
 	print('Full report: \n', metrics.classification_report(y_test, pred))
-	repport.write('QDA ' + ' :' + '\n')
+	repport.write('QDA with test' + ' :' + '\n')
 	repport.write("Accuracy:" + str(acc) + '\n')
 	repport.write('Full report: \n' + str(metrics.classification_report(y_test, pred)) + '\n')
 	del qda, qda_trained
@@ -100,10 +104,10 @@ def qda(X_train, X_test, y_train, y_test):
 	gc.collect()
 
 
-def val_rda(X_train, X_val, X_test, y_train, y_val, y_test):
-	reg = np.arange(0.01,2.0, 0.1)
+def val_rda(X_train, X_test, X_val, y_train, y_test, y_val):
+	reg = np.arange(0.01, 2.0, 0.1)
 	_report_path = global_path + 'rda_report' + '.txt'
-	repport = open(_report_path,'w')
+	repport = open(_report_path, 'w')
 	all_accuracies = []
 	best_index = 0
 	i = 0
@@ -122,20 +126,20 @@ def val_rda(X_train, X_val, X_test, y_train, y_val, y_test):
 		all_accuracies.append(acc)
 		if acc > all_accuracies[best_index]:
 			best_index = i
-		repport.write('RDA ' + str(r) + ' :'+ '\n')
-		repport.write("Accuracy:" + str(acc)+ '\n')
+		repport.write('RDA ' + str(r) + ' :' + '\n')
+		repport.write("Accuracy:" + str(acc) + '\n')
 		repport.write('Full report: \n' + str(metrics.classification_report(y_val, pred)) + '\n')
 		del rda, rda_trained
-		i +=1
+		i += 1
 	repport.write('In the test set with the best param we have: \n')
 	_path = global_path + 'rda_' + str(reg[best_index]) + '.plk'
 	rda_trained = pickle.load(open(_path, 'rb'))
 	pred = rda_trained.predict(X_test)
 	acc = metrics.accuracy_score(y_test, pred)
-	all_accuracies.append(acc)
 	repport.write("Accuracy:" + str(acc) + '\n')
 	repport.write('Full report: \n' + str(metrics.classification_report(y_test, pred)) + '\n')
 	repport.close()
+
 
 def rda(X_train, X_test, y_train, y_test, reg):
 	"""
@@ -154,7 +158,7 @@ def rda(X_train, X_test, y_train, y_test, reg):
 	print("RDA:")
 	# Importante estandarizar datos
 	rda = QuadraticDiscriminantAnalysis(reg_param=reg)
-	_path = global_path + 'rda'+reg+'.plk'
+	_path = global_path + 'rda' + reg + '.plk'
 	if path.isfile(_path):
 		rda_trained = pickle.load(open(_path, 'rb'))
 	else:
@@ -163,7 +167,7 @@ def rda(X_train, X_test, y_train, y_test, reg):
 		with open(_path, 'wb') as handle:
 			pickle.dump(rda_trained, handle)
 	pred = rda_trained.predict(X_test)
-	acc= metrics.accuracy_score(y_test, pred)
+	acc = metrics.accuracy_score(y_test, pred)
 	print("Accuracy:", acc)
 	print('Full report: \n', metrics.classification_report(y_test, pred))
 	del rda, rda_trained
@@ -185,6 +189,8 @@ def logistic_regresion(X_train, X_test, y_train, y_test):
 	:param y_test:
 	:return:
 	"""
+	_report_path = global_path + 'logreg_report' + '.txt'
+	repport = open(_report_path, 'w')
 	print("Regresion Lineal:")
 	# Importante estandarizar datos
 	lr = LogisticRegression(solver='saga', n_jobs=-1)
@@ -197,8 +203,13 @@ def logistic_regresion(X_train, X_test, y_train, y_test):
 		with open(_path, 'wb') as handle:
 			pickle.dump(lr_trained, handle)
 	pred = lr_trained.predict(X_test)
-	print("Accuracy:", metrics.accuracy_score(y_test, pred))
+	acc = metrics.accuracy_score(y_test, pred)
+	print("Accuracy:", acc)
 	print('Full report: \n', metrics.classification_report(y_test, pred))
+	repport.write('Logistic regression with test ' + ' :' + '\n')
+	repport.write("Accuracy:" + str(acc) + '\n')
+	repport.write('Full report: \n' + str(metrics.classification_report(y_test, pred)) + '\n')
+
 	del lr, lr_trained
 	gc.collect()
 
@@ -213,6 +224,8 @@ def naive_bayes(X_train, X_test, y_train, y_test):
 	:param y_test:
 	:return:
 	"""
+	_report_path = global_path + 'naive_report' + '.txt'
+	repport = open(_report_path, 'w')
 	print('Naive Bayes: ')
 	clf = GaussianNB()
 	if path.isfile(global_path + 'nb'):
@@ -224,10 +237,54 @@ def naive_bayes(X_train, X_test, y_train, y_test):
 			pickle.dump(clf_trained, handle)
 
 	pred = clf_trained.predict(X_test)
-	print("Accuracy:", metrics.accuracy_score(y_test, pred))
-	print('Full report: \n', metrics.classification_report(y_test, pred))
+	acc = metrics.accuracy_score(y_test, pred)
+	met = metrics.classification_report(y_test, pred)
+	print("Accuracy:", acc)
+	print('Full report: \n', met)
+	repport.write('Logistic regression with test ' + ' :' + '\n')
+	repport.write("Accuracy:" + str(acc) + '\n')
+	repport.write('Full report: \n' + str(met) + '\n')
 	del clf, clf_trained
 	gc.collect()
+
+
+def val_knn(X_train, X_test, X_val, y_train, y_test, y_val):
+	kvalues = np.arange(1, 31, 2)
+	_report_path = global_path + 'knn_report' + '.txt'
+	repport = open(_report_path, 'w')
+	all_accuracies = []
+	best_index = 0
+	i = 0
+	for k in kvalues:
+		knc = KNeighborsClassifier(algorithm='ball_tree', n_neighbors=k, n_jobs=-1)
+		_path = global_path + 'knn_' + str(k) + '.plk'
+		if path.isfile(_path):
+			knc_trained = pickle.load(open(_path, 'rb'))
+		else:
+			print('Training the model...')
+			knc_trained = knc.fit(X_train, y_train.values.ravel())
+			with open(_path, 'wb') as handle:
+				pickle.dump(knc_trained, handle)
+		pred = knc_trained.predict(X_val)
+		acc = metrics.accuracy_score(y_val, pred)
+		met = metrics.classification_report(y_val, pred)
+		all_accuracies.append(acc)
+		if acc > all_accuracies[best_index]:
+			best_index = i
+		repport.write('KNN with val and k = ' + str(k) + ' :' + '\n')
+		repport.write("Accuracy:" + str(acc) + '\n')
+		repport.write('Full report: \n' + str(met) + '\n')
+		del knc_trained, knc
+		i += 1
+	repport.write('In the test set with the best param we have: \n')
+	_path = global_path + 'rda_' + str(kvalues[best_index]) + '.plk'
+	knc_trained = pickle.load(open(_path, 'rb'))
+	pred = knc_trained.predict(X_test)
+	acc = metrics.accuracy_score(y_test, pred)
+	met = metrics.classification_report(y_test, pred)
+	repport.write("Accuracy:" + str(acc) + '\n')
+	repport.write('Full report: \n' + str(met) + '\n')
+	repport.close()
 
 
 def knn(X_train, X_test, y_train, y_test, neighbors):
@@ -261,6 +318,73 @@ def knn(X_train, X_test, y_train, y_test, neighbors):
 	print('Full report: \n: ', metrics.classification_report(y_test, pred))
 	del knc_trained, knc
 	gc.collect()
+
+
+def report(results, n_top=3):
+	for i in range(1, n_top + 1):
+		candidates = np.flatnonzero(results['rank_test_score'] == i)
+		for candidate in candidates:
+			print("Model with rank: {0}".format(i))
+			print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
+				results['mean_test_score'][candidate],
+				results['std_test_score'][candidate]))
+			print("Parameters: {0}".format(results['params'][candidate]))
+			print("")
+
+
+def val_model(model = RandomForestClassifier()):
+	param_dist = {"max_depth": [3, None],
+	              "max_features": sp_randint(1, 11),
+	              "min_samples_split": sp_randint(2, 11),
+	              "min_samples_leaf": sp_randint(1, 11),
+	              "bootstrap": [True, False],
+	              "criterion": ["gini", "entropy"],
+	              "n_estimators": sp_randint(10, 20)}
+	# run randomized search
+	n_iter_search = 20
+	random_search = RandomizedSearchCV(model, param_distributions=param_dist,
+	                                   n_iter=n_iter_search)
+
+
+def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
+	n_estimators = np.arange(10, 20, 2)
+	criterion = ["gini", "entropy"]
+	_report_path = global_path + 'rf_report' + '.txt'
+	repport = open(_report_path, 'w')
+	all_accuracies = []
+	best_index = 0
+	i = 0
+	for k in n_estimators:
+		for c in criterion:
+			knc = RandomForestClassifier(max_depth=3,n_estimators = k, n_jobs=-1)
+			_path = global_path + 'knn_' + str(k) + '.plk'
+			if path.isfile(_path):
+				knc_trained = pickle.load(open(_path, 'rb'))
+			else:
+				print('Training the model...')
+				knc_trained = knc.fit(X_train, y_train.values.ravel())
+				with open(_path, 'wb') as handle:
+					pickle.dump(knc_trained, handle)
+			pred = knc_trained.predict(X_val)
+			acc = metrics.accuracy_score(y_val, pred)
+			met = metrics.classification_report(y_val, pred)
+			all_accuracies.append(acc)
+			if acc > all_accuracies[best_index]:
+				best_index = i
+			repport.write('KNN with val and k = ' + str(k) + ' :' + '\n')
+			repport.write("Accuracy:" + str(acc) + '\n')
+			repport.write('Full report: \n' + str(met) + '\n')
+			del knc_trained, knc
+			i += 1
+	repport.write('In the test set with the best param we have: \n')
+	_path = global_path + 'rda_' + str(n_estimators[best_index]) + '.plk'
+	knc_trained = pickle.load(open(_path, 'rb'))
+	pred = knc_trained.predict(X_test)
+	acc = metrics.accuracy_score(y_test, pred)
+	met = metrics.classification_report(y_test, pred)
+	repport.write("Accuracy:" + str(acc) + '\n')
+	repport.write('Full report: \n' + str(met) + '\n')
+	repport.close()
 
 
 def random_forest(X_train, X_test, y_train, y_test, n_estimators):
@@ -352,7 +476,7 @@ def mlp(X_train, X_test, X_val, y_train, y_test, y_val, reg, size=(1, 20), act='
 def run_rf_knn(X_train, X_test, X_val, y_train, y_test, y_val):
 	for i in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]:
 		random_forest(X_train, X_test, y_train, y_test, i)
-		# knn(X_train, X_test, y_train, y_test, i)
+	# knn(X_train, X_test, y_train, y_test, i)
 
 
 def run_nn(X_train, X_test, X_val, y_train, y_test, y_val):
