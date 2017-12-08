@@ -23,9 +23,6 @@ def split(test_proportion, file='def_training.csv'):
     (X_train, X_test, y_train, y_test) = ms.train_test_split(X, y, test_size=test_proportion, random_state=1, stratify=y)
     (X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
     print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ', X_val.shape)
-    X_train = pd.DataFrame(data=X_train.values, columns=X_train.columns)
-    X_test = pd.DataFrame(data=X_test.values, columns=X_test.columns)
-    X_val = pd.DataFrame(data=X_val.values, columns=X_val.columns)
     return X_train, X_test, X_val, y_train, y_test, y_val
 
 
