@@ -277,7 +277,7 @@ def val_knn(X_train, X_test, X_val, y_train, y_test, y_val):
 		del knc_trained, knc
 		i += 1
 	repport.write('In the test set with the best param we have: \n')
-	_path = global_path + 'rda_' + str(kvalues[best_index]) + '.plk'
+	_path = global_path + 'knn_' + str(kvalues[best_index]) + '.plk'
 	knc_trained = pickle.load(open(_path, 'rb'))
 	pred = knc_trained.predict(X_test)
 	acc = metrics.accuracy_score(y_test, pred)
@@ -353,11 +353,12 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 	repport = open(_report_path, 'w')
 	all_accuracies = []
 	best_index = 0
+	best_criterion = ''
 	i = 0
 	for k in n_estimators:
 		for c in criterion:
-			knc = RandomForestClassifier(max_depth=3,n_estimators = k, n_jobs=-1)
-			_path = global_path + 'knn_' + str(k) + '.plk'
+			knc = RandomForestClassifier(max_depth=3,n_estimators = k,criterion=c, n_jobs=-1)
+			_path = global_path + 'rf_' + str(k) + c +'.plk'
 			if path.isfile(_path):
 				knc_trained = pickle.load(open(_path, 'rb'))
 			else:
@@ -371,15 +372,16 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 			all_accuracies.append(acc)
 			if acc > all_accuracies[best_index]:
 				best_index = i
-			repport.write('KNN with val and k = ' + str(k) + ' :' + '\n')
+				best_criterion = c
+			repport.write('Random Forest with val and k = ' + str(k) +'Criterion '+str(c) + ' :' + '\n')
 			repport.write("Accuracy:" + str(acc) + '\n')
 			repport.write('Full report: \n' + str(met) + '\n')
 			del knc_trained, knc
 			i += 1
 	repport.write('In the test set with the best param we have: \n')
-	_path = global_path + 'rda_' + str(n_estimators[best_index]) + '.plk'
-	knc_trained = pickle.load(open(_path, 'rb'))
-	pred = knc_trained.predict(X_test)
+	_path = global_path + 'rf_' + str(n_estimators[best_index]) + best_criterion + '.plk'
+	rf_trained = pickle.load(open(_path, 'rb'))
+	pred = rf_trained.predict(X_test)
 	acc = metrics.accuracy_score(y_test, pred)
 	met = metrics.classification_report(y_test, pred)
 	repport.write("Accuracy:" + str(acc) + '\n')
