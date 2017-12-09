@@ -180,6 +180,8 @@ def preprocess(X):
 	y_test.to_csv('../Data/preprocessed_y_Val.csv')
 
 	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.4, 'cat')
+	del X, DummiesX
+	gc.collect()
 	print('end split')
 	# X_cat_train, X_cat_test, X_cat_val = clean_array()
 
