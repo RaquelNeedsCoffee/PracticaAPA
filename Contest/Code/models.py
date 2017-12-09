@@ -113,7 +113,7 @@ def val_rda(X_train, X_test, X_val, y_train, y_test, y_val):
 	i = 0
 	for r in reg:
 		rda = QuadraticDiscriminantAnalysis(reg_param=r)
-		_path = global_path + 'rda_' + str(reg) + '.plk'
+		_path = global_path + 'rda_' + str(r) + '.plk'
 		if path.isfile(_path):
 			rda_trained = pickle.load(open(_path, 'rb'))
 		else:

@@ -2,6 +2,7 @@ from os import path
 from os import mkdir
 from time import time
 from Code.split_data import split
+from Code.trying_mca import data_from_files
 from Code.models import lda, qda, val_rda, logistic_regresion, naive_bayes, val_rf, val_knn
 import pickle
 import gc
@@ -14,13 +15,14 @@ def main():
 	if not path.isdir(global_path):
 		mkdir(global_path)
 	print('El split range es: ', split_range)
-
-	(X_train, X_test, X_val, y_train, y_test, y_val) = split(split_range)
-	lda(X_train, X_test, y_train, y_test)
-	print('lda time', time() -init)
-	init = time()
-	qda(X_train, X_test, y_train, y_test)
-	print('qda time', time() - init)
+	print('loading data...')
+	( X_train, X_test, X_val, y_train, y_test, y_val) = data_from_files()
+	# print('data loaded')
+	# lda(X_train, X_test, y_train, y_test)
+	# print('lda time', time() -init)
+	# init = time()
+	# qda(X_train, X_test, y_train, y_test)
+	# print('qda time', time() - init)
 	init = time()
 	val_rda(X_train, X_test, X_val, y_train, y_test, y_val)
 	print('rda time', time() - init)

@@ -175,7 +175,7 @@ def generate_partition(X):
 	X_num_val.to_csv('../Data/subset_num_Val.csv')
 	y_train.to_csv('../Data/preprocessed_y_Train.csv')
 	y_test.to_csv('../Data/preprocessed_y_Test.csv')
-	y_test.to_csv('../Data/preprocessed_y_Val.csv')
+	y_val.to_csv('../Data/preprocessed_y_Val.csv')
 
 	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.5, 'cat')
 	del  DummiesX
@@ -245,25 +245,31 @@ def preprocess():
 
 
 def data_from_files():
-	X_train = pd.read_csv('../Data/preprocessedTrain.csv')
-	X_test = pd.read_csv('../Data/preprocessedTest.csv')
-	X_val = pd.read_csv('../Data/preprocessedVal.csv')
+	X_train = pd.read_csv('../Data/preprocessedTrain.csv', compact_ints=True)
+	X_test = pd.read_csv('../Data/preprocessedTest.csv', compact_ints=True)
+	X_val = pd.read_csv('../Data/preprocessedVal.csv', compact_ints=True)
 
-	y_train = pd.read_csv('../Data/preprocessed_y_Train.csv')
-	y_test = pd.read_csv('../Data/preprocessed_y_Test.csv')
-	y_val = pd.read_csv('../Data/preprocessed_y_Val.csv')
-
+	y_train = X_train['target']
+	y_test = X_test['target']
+	y_val = X_val['target']
 	print('\nLoaded data:')
+	X_train.drop(columns=['target'])
+	X_test.drop(columns=['target'])
+	X_val.drop(columns=['target'])
 	print('Train shape: ', X_train.shape)
+	print('Train shape Y: ', y_train.shape)
 	print('Test shape: ', X_test.shape)
+	print('Test shape Y: ', y_test.shape)
 	print('Val shape: ', X_val.shape)
+	print('Test shape: ', y_val.shape)
 	return X_train, X_test, X_val, y_train, y_test, y_val
 
 def main():
 	file = 'def_training.csv'
-	X = pd.read_csv('../Data/' + file)
-	generate_partition(X)
-	preprocess()
+	# X = pd.read_csv('../Data/' + file)
+	# generate_partition(X)
+	# preprocess()
+	data_from_files()
 
 
 # (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.3, 'samples/definitivo.csv')
