@@ -271,6 +271,9 @@ def val_knn(X_train, X_test, X_val, y_train, y_test, y_val):
 		all_accuracies.append(acc)
 		if acc > all_accuracies[best_index]:
 			best_index = i
+		print('KNN with val and k = ' + str(k) + ' :' + '\n')
+		print("Accuracy:" + str(acc) + '\n')
+		print('Full report: \n' + str(met) + '\n')
 		repport.write('KNN with val and k = ' + str(k) + ' :' + '\n')
 		repport.write("Accuracy:" + str(acc) + '\n')
 		repport.write('Full report: \n' + str(met) + '\n')
@@ -353,7 +356,7 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 	repport = open(_report_path, 'w')
 	all_accuracies = []
 	best_index = 0
-	best_criterion = ''
+	best_criterion = criterion[0]
 	i = 0
 	for k in n_estimators:
 		for c in criterion:
@@ -407,6 +410,47 @@ def random_forest(X_train, X_test, y_train, y_test, n_estimators):
 	del rf, rf_trained
 	gc.collect()
 
+def val_perceptron(X_train, X_test, X_val, y_train, y_test, y_val):
+	alphas  = np.arange(0.01, 2.0, 0.1)
+	penalty = ["l1", "l2",'elasticnet']
+	_report_path = global_path + 'perceptron_report' + '.txt'
+	repport = open(_report_path, 'w')
+	all_accuracies = []
+	best_index = 0
+	best_penalty = penalty[0]
+	i = 0
+	for k in alphas:
+		for c in penalty:
+			per = Perceptron(penalty=c, alpha=k, n_jobs=-1)
+			_path = global_path + 'per_' + str(k) + c +'.plk'
+			if path.isfile(_path):
+				per_trained = pickle.load(open(_path, 'rb'))
+			else:
+				print('Training the model...')
+				per_trained = per.fit(X_train, y_train.values.ravel())
+				with open(_path, 'wb') as handle:
+					pickle.dump(per_trained, handle)
+			pred = per_trained.predict(X_val)
+			acc = metrics.accuracy_score(y_val, pred)
+			met = metrics.classification_report(y_val, pred)
+			all_accuracies.append(acc)
+			if acc > all_accuracies[best_index]:
+				best_index = i
+				best_penalty = c
+			repport.write('Perceptron with val and alpha = ' + str(k) +' penalty '+str(c) + ' :' + '\n')
+			repport.write("Accuracy:" + str(acc) + '\n')
+			repport.write('Full report: \n' + str(met) + '\n')
+			del per_trained, per
+			i += 1
+	repport.write('In the test set with the best param '+ str(alphas[best_index])+' '+ best_penalty+'we have: \n')
+	_path = global_path + 'per_' + str(alphas[best_index]) + best_penalty + '.plk'
+	rf_trained = pickle.load(open(_path, 'rb'))
+	pred = rf_trained.predict(X_test)
+	acc = metrics.accuracy_score(y_test, pred)
+	met = metrics.classification_report(y_test, pred)
+	repport.write("Accuracy:" + str(acc) + '\n')
+	repport.write('Full report: \n' + str(met) + '\n')
+	repport.close()
 
 def perceptron(X_train, X_test, X_val, y_train, y_test, y_val, reg, pen):
 	"""

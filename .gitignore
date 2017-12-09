@@ -62,3 +62,5 @@ venv/include/
 venv/
 
 Contest/Code/__pycache__/
+
+Contest/Code/\.ipynb_checkpoints/
