@@ -5,9 +5,8 @@ import functools
 import sklearn.model_selection as ms
 from sklearn.preprocessing import StandardScaler as stdc
 import gc
-categorical = ['source_system_tab', 'source_screen_name', 'source_type',
-	'gender', 'genre_ids', 'language', 'country_code',
-	]  # 'artist_name', 'composer' , 'lyricist', 'age_range']'registrant_code' 'city', 'registered_via',
+import _pickle as pickle
+categorical = ['source_type','gender', 'genre_ids']  #  ,'artist_name', 'composer' , 'lyricist', 'age_range']'registrant_code' 'city', 'registered_via','language', 'country_code',, 'source_screen_name''source_system_tab',
 numerical = ['registration_init_time', 'song_length', 'registration_init_time', 'expiration_date', 'song_year']
 
 
@@ -16,42 +15,50 @@ def Matrix_mult(*args):
 	return functools.reduce(np.dot, args)
 
 
-def my_mca(X_train, X_test, X_val):
-	X_values = X_train.values
-	N_all = np.sum(X_values)
-	Z = X_values / N_all
+def my_mca(X_train):
+	N_all = np.sum(X_train.values)
+	Z_residual = X_train.values / N_all
 	# print('zshape', Z.shape)
-	Sum_r = np.sum(Z, axis=1)
-	Sum_c = np.sum(Z, axis=0)
+	Sum_r = np.sum(Z_residual, axis=1)
+	Sum_c = np.sum(Z_residual, axis=0)
 	# print('sumc', Sum_c)
-	print(X_values.shape, Sum_r.shape, Sum_c.shape, N_all)
+	print(X_train.shape, Sum_r.shape, Sum_c.shape, N_all)
 	# Compute residual
 	Z_expected = np.outer(Sum_r, Sum_c)
-	Z_residual = Z - Z_expected
-
+	Z_residual -= Z_expected
+	del Z_expected
+	gc.collect()
+	print('Z res')
 	# Scale residual by the square root of column and row sums.
 	# Note we are computing SVD on residual matrix, not the analogous covariance matrix,
 	# Therefore, we are dividing by square root of Sums.
-	D_r = np.diag(Sum_r)
-	D_c = np.diag(Sum_c)
+	# D_r = np.diag(Sum_r)
+	# D_c = np.diag(Sum_c)
 	D_r_sqrt_mi = np.sqrt(np.diag(Sum_r ** -1))
-
+	del Sum_r
+	gc.collect()
 	D_c_sqrt_mi = np.sqrt(np.diag(Sum_c ** -1))
-
-	print(Z_residual.shape, Z.shape, D_r_sqrt_mi.shape, D_c_sqrt_mi.shape)
+	del Sum_c
+	gc.collect()
+	print('end DC Dr')
+	# print(Z_residual.shape, Z.shape, D_r_sqrt_mi.shape, D_c_sqrt_mi.shape)
 	MCA_mat = Matrix_mult(D_r_sqrt_mi, Z_residual, D_c_sqrt_mi)
 	## Apply SVD.
 	## IN np implementation, MCA_mat = P*S*Q, not P*S*Q'
 	P, S, Q = np.linalg.svd(MCA_mat)
 	print(P.shape, S.shape, Q.shape)
 	# Verify if MCA_mat = P*S*Q,
-	S_d = diagsvd(S, X_values.shape[0], X_values.shape[1])
-	sum_mca = np.sum((Matrix_mult(P, S_d, Q) - MCA_mat) ** 2)
-	print('Difference between SVD and the MCA matrix is %0.2f' % sum_mca)
+	S_d = diagsvd(S, X_train.shape[0], X_train.shape[1])
+	# sum_mca = np.sum((Matrix_mult(P, S_d, Q) - MCA_mat) ** 2)
+	# print('Difference between SVD and the MCA matrix is %0.2f' % sum_mca)
 	# Compute factor space, or row and column eigen space
 	F = Matrix_mult(D_r_sqrt_mi, P, S_d)  ## Column Space, contains linear combinations of columns
 	G = Matrix_mult(D_c_sqrt_mi, Q.T, S_d.T)  ## Row space, contains linear combinations of rows
-
+	pickle.dump(F, open('F.pkl','wb'))
+	pickle.dump(G, open('G.pkl', 'wb'))
+	pickle.dump(S, open('S.pkl', 'wb'))
+	del  Q, P, MCA_mat, S_d, D_r_sqrt_mi, D_c_sqrt_mi
+	gc.collect()
 	print(F.shape, G.shape)
 	Lam = S ** 2
 	Expl_var = Lam / np.sum(Lam)
@@ -81,11 +88,12 @@ def my_mca(X_train, X_test, X_val):
 	table2.loc['Σ'] = table2.sum()
 	table2.index.name = 'Factor'
 	np.round(table2.astype(float), 4)
-	# Todo: calcular cuantas features necesitamos para conservar x varianza
 	print('Varianza explicada tomando 45 features: ', table2['τZ'][0:45].sum())
 	## The projection can also be computed using vectorized form,
 	X_train = Matrix_mult(X_train.values, G[:, :45]) / S[:45] / 10
+	X_test = pd.read_csv('../Data/subset_cat_Test.csv', compact_ints=True)
 	X_test = Matrix_mult(X_test.values, G[:, :45]) / S[:45] / 10
+	X_val = pd.read_csv('../Data/subset_cat_Val.csv', compact_ints=True)
 	X_val = Matrix_mult(X_val.values, G[:, :45]) / S[:45] / 10
 	print('shape', X_test.shape)
 	names = ['V' + str(i) for i in range(45)]
@@ -159,7 +167,7 @@ def generate_partition(X):
 	DummiesX = pd.get_dummies(data=X[categorical], prefix_sep='|')
 	y = X['target']
 	print('dummies size: ', DummiesX.shape)
-	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.4, 'num')
+	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.5, 'num')
 	del X_num, X
 	gc.collect()
 	X_num_train.to_csv('../Data/subset_num_Train.csv')
@@ -169,7 +177,7 @@ def generate_partition(X):
 	y_test.to_csv('../Data/preprocessed_y_Test.csv')
 	y_test.to_csv('../Data/preprocessed_y_Val.csv')
 
-	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.4, 'cat')
+	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.5, 'cat')
 	del  DummiesX
 	gc.collect()
 	print('end split')
@@ -180,10 +188,6 @@ def generate_partition(X):
 	X_cat_train.to_csv('../Data/X_cat_Train.csv')
 	X_cat_test.to_csv('../Data/X_cat_Test.csv')
 	X_cat_val.to_csv('../Data/X_cat_Val.csv')
-	del X_cat_val,X_cat_train, X_cat_test, X_num_test, X_num_train, X_num_val
-	gc.collect()
-
-def preprocess():
 	print('loading X train... ')
 	X_cat_train = pd.read_csv('../Data/X_cat_Train.csv', compact_ints=True)
 	print('loaded')
@@ -191,35 +195,37 @@ def preprocess():
 	X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
 	print('xtrain sum end')
 	print('loading X test... ')
-	X_cat_test = pd.read_csv('../Data/X_cat_Test.csv',compact_ints=True)
+	X_cat_test = pd.read_csv('../Data/X_cat_Test.csv', compact_ints=True)
 	print('loaded')
 	X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
 	print('x_test end')
 	print('loading X val... ')
-	X_cat_val = pd.read_csv('../Data/X_cat_Val.csv',compact_ints=True)
+	X_cat_val = pd.read_csv('../Data/X_cat_Val.csv', compact_ints=True)
 	print('loaded')
 	X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
 	print('x val end')
-	index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
+	index = np.logical_and(X_train_sum, np.logical_and(X_test_sum, X_val_sum))
 	print('index end')
-	X_cat_train = X_cat_train.loc[:,index]
+	X_cat_train = X_cat_train.loc[:, index]
 	X_cat_test = X_cat_test.loc[:, index]
-	X_cat_val = X_cat_val.loc[:,index]
+	X_cat_val = X_cat_val.loc[:, index]
 	gc.collect()
 	print('loc end')
 	X_cat_train.to_csv('../Data/subset_cat_Train.csv')
 	X_cat_test.to_csv('../Data/subset_cat_Test.csv')
 	X_cat_val.to_csv('../Data/subset_cat_Val.csv')
+	del X_cat_val,X_cat_train, X_cat_test, X_num_test, X_num_train, X_num_val
+	gc.collect()
+
+def preprocess():
+
+	X_cat_train = pd.read_csv('../Data/subset_cat_Train.csv', compact_ints=True)
+	X_cat_test = pd.read_csv('../Data/subset_cat_Test.csv', compact_ints=True)
+	X_cat_val = pd.read_csv('../Data/subset_cat_Val.csv', compact_ints=True)
 
 	print('end csv')
-	# for feature in X_cat_train.columns:
-	# 	if np.sum(X_cat_train[feature]) == 0 or np.sum(X_cat_test[feature]) == 0 or np.sum(X_cat_val[feature]) == 0:
-	# 		# print(feature)
-	# 		X_cat_train.drop(feature, axis=1)
-	# 		X_cat_test.drop(feature, axis=1)
-	# 		X_cat_val.drop(feature, axis=1)
 	print('droped columns')
-	X_cat_train, X_cat_test, X_cat_val = my_mca(X_cat_train, X_cat_test, X_cat_val)
+	# X_cat_train, X_cat_test, X_cat_val = my_mca(X_cat_train)
 
 	X_num_train = pd.read_csv('../Data/subset_num_Train.csv')
 	X_num_test = pd.read_csv('../Data/subset_num_Test.csv')
