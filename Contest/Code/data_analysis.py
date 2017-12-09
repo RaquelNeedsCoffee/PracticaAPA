@@ -7,9 +7,9 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.neighbors import KNeighborsClassifier
 
 # globals
-#data_path = 'D:\\FIB\\PracticaAPA\\Data\\'
+data_path = 'D:\\FIB\\PracticaAPA\\Data\\'
 
-data_path = '../Data/'
+# data_path = '../Data/'
 
 
 def split_isrc(isrc):
@@ -82,14 +82,17 @@ def get_test_genres(df):
     return genres_set
 
 
-def process_genres(song_genres, genres):
+def process_genres(song_genres, genres, genres_count):
     if song_genres is np.nan:
         return np.nan
     sg_list = [g for g in song_genres.split('|') if g in genres]
-    if len(sg_list) > 0:
-        return str.join('|', sg_list)
-    else:
+    sg_dict = {}
+    for g in sg_list:
+        if g in genres_count:
+            sg_dict[g] = genres_count[g]
+    if len(sg_dict) <= 0:
         return np.nan
+    return max(sg_dict, key=sg_dict.get)
 
 
 def print_df_info(df):
@@ -274,51 +277,65 @@ def main():
 
     # Merge and preprocess train and members into training
     df_train = process_train()
-    # df_test = process_test() # test
+    # # test
+    df_test = process_test()
 
     df_members = process_members()
 
     df_training = df_train.merge(df_members, on='msno', how='left')
     print('merged df_train df_members -> df_training {} rows'.format(len(df_training)))
-    # df_training['msno'] = df_training['msno'].astype('category')# drop msno later
     print_df_info(df_training)
 
-    # Drop msno
-    print('drop msno')
-    df_training = df_training.drop('msno', axis=1)
-    print_df_info(df_training)
+    # # test
+    df_test = df_test.merge(df_members, on='msno', how='left')
+    print('merged df_test df_members -> df_test {} rows'.format(len(df_test)))
+    print_df_info(df_test)
 
     del df_train
     del df_members
     gc.collect()
 
+    # Drop msno
+    print('drop msno')
+    df_training = df_training.drop('msno', axis=1)
+    print_df_info(df_training)
+    # # test
+    print('drop msno test')
+    df_test = df_test.drop('msno', axis=1)
+    print_df_info(df_test)
+
     # # Merge and preprocess songs and training
     df_songs = process_songs()
+
+    # # test
+    df_test = df_test.merge(df_songs, on='song_id', how='left')
+    print('merged df_test df_songs -> df_test {} rows'.format(len(df_test)))
+    print_df_info(df_test)
+    print('Convert columns test')
+    df_test['language'] = df_test['language'].astype('category')
+    print_df_info(df_test)
 
     df_training = df_training.merge(df_songs, on='song_id', how='left')
     print('merged df_training df_songs -> df_training {} rows'.format(len(df_training)))
     print_df_info(df_training)
     print('Convert columns')
-    # df_training['song_id'] = df_songs['song_id'].astype('category') # no memory reduction
     df_training['language'] = df_training['language'].astype('category')
     print_df_info(df_training)
 
-    # df_test = df_test.merge(df_songs, on='song_id', how='left') # test
-    # print('merged df_test df_songs -> df_test {} rows'.format(len(df_test))) # test
-    # print_df_info(df_test) # test
+    del df_songs
+    gc.collect()
 
-    print('Remove less common genres that doesn\'t appear in test:')
+    print('Remove less common genres that doesn\'t appear in test and limit categories per song to 1:')
     genres_count = count_genres_freq(df_training)
     sorted_genres_count = sorted(genres_count.items(), key=operator.itemgetter(1), reverse=True)
-    print(len(sorted_genres_count))
     portion_keep_genres = 0.5
     num_genres = math.floor(portion_keep_genres * len(sorted_genres_count))
     genres_train = sorted_genres_count[:num_genres]
     genres_train = list(map(lambda x: x[0], genres_train))
     final_genres = set()
-    # final_genres.update(get_test_genres(df_test)) # test
+    final_genres.update(get_test_genres(df_test))  # test
     final_genres.update(genres_train)
-    df_training['genre_ids'] = df_training['genre_ids'].apply(lambda i: process_genres(i, final_genres))
+    df_training['genre_ids'] = df_training['genre_ids'].apply(lambda i: process_genres(i, final_genres, genres_count))
     df_training['genre_ids'] = df_training['genre_ids'].astype('category')
     print_df_info(df_training)
 
@@ -328,18 +345,52 @@ def main():
         max_count_genre = max(genres_count, key=genres_count.get)
     if max_count_genre is not np.nan:
         df_training['genre_ids'] = df_training['genre_ids'].fillna(max_count_genre)
-
     print_df_info(df_training)
 
-    del df_songs
-    gc.collect()
+    # # test
+    print('Limit categories per song to 1 in test:')
+    df_test['genre_ids'] = df_test['genre_ids'].apply(lambda i: process_genres(i, final_genres, genres_count))
+    print_df_info(df_test)
+    print('Imput missing values test:')
+    if max_count_genre is not np.nan:
+        df_test['genre_ids'] = df_test['genre_ids'].fillna(max_count_genre)
+    print_df_info(df_test)
 
     # # Merge and preprocess song_extra and training
     df_song_extra = process_song_extra()
 
+    # # test
+    df_test = df_test.merge(df_song_extra, on='song_id', how='left')
+    print('merged df_test df_song_extra -> df_test {} rows'.format(len(df_test)))
+    print_df_info(df_test)
+    print('Imput missing values of df_test:')
+    song_length_median = df_test['song_length'].mean()
+    print(song_length_median)
+    df_test['song_length'] = df_test['song_length'].fillna(song_length_median)
+    more_freq_artist_name = df_test['artist_name'].value_counts().idxmax()
+    df_test['artist_name'] = df_test['artist_name'].fillna(more_freq_artist_name)
+    more_freq_composer = df_test['composer'].value_counts().idxmax()
+    df_test['composer'] = df_test['composer'].fillna(more_freq_composer)
+    more_freq_lyricist = df_test['lyricist'].value_counts().idxmax()
+    df_test['lyricist'] = df_test['lyricist'].fillna(more_freq_lyricist)
+    more_freq_language = df_test['language'].value_counts().idxmax()
+    df_test['language'] = df_test['language'].fillna(more_freq_language)
+    more_freq_name = df_test['name'].value_counts().idxmax()
+    df_test['name'] = df_test['name'].fillna(more_freq_name)
+    more_freq_country_code = df_test['country_code'].value_counts().idxmax()
+    df_test['country_code'] = df_test['country_code'].fillna(more_freq_country_code)
+    more_freq_registrant_code = df_test['registrant_code'].value_counts().idxmax()
+    df_test['registrant_code'] = df_test['registrant_code'].fillna(more_freq_registrant_code)
+    more_freq_song_year = df_test['song_year'].value_counts().idxmax()
+    df_test['song_year'] = df_test['song_year'].fillna(more_freq_song_year)
+    print_df_info(df_test)
+
     df_training = df_training.merge(df_song_extra, on='song_id', how='left')
     print('merged df_training df_song_extra -> df_training {} rows'.format(len(df_training)))
     print_df_info(df_training)
+
+    del df_song_extra
+    gc.collect()
 
     print('Drop rows with NaN values of df_training')
     df_training = df_training.dropna()
@@ -349,10 +400,11 @@ def main():
     df_training = pd.DataFrame(df_training)
     print('writing csv')
     df_training.to_csv(data_path + 'def_training.csv')
-    # final_preprocessing(df_training)
+    df_test.to_csv(data_path + 'def_test.csv')
+    final_preprocessing(df_training)
 
-    del df_song_extra
     del df_training
+    del df_test
     gc.collect()
 
     print('Done loading...')
