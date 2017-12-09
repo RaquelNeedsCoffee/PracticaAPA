@@ -7,9 +7,9 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.neighbors import KNeighborsClassifier
 
 # globals
-data_path = 'D:\\FIB\\PracticaAPA\\Data\\'
+#data_path = 'D:\\FIB\\PracticaAPA\\Data\\'
 
-# data_path = '../Data/'
+data_path = '../Data/'
 
 
 def split_isrc(isrc):

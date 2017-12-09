@@ -249,7 +249,7 @@ def naive_bayes(X_train, X_test, y_train, y_test):
 
 
 def val_knn(X_train, X_test, X_val, y_train, y_test, y_val):
-	kvalues = np.arange(1, 31, 2)
+	kvalues = np.arange(1, 15, 2)
 	_report_path = global_path + 'knn_report' + '.txt'
 	repport = open(_report_path, 'w')
 	all_accuracies = []
@@ -352,7 +352,7 @@ def val_model(model = RandomForestClassifier()):
 def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 	n_estimators = np.arange(10, 20, 2)
 	criterion = ["gini", "entropy"]
-	_report_path = global_path + 'rf_report' + '.txt'
+	_report_path = global_path + 'rf_reportdeph' + '.txt'
 	repport = open(_report_path, 'w')
 	all_accuracies = []
 	best_index = 0
@@ -360,8 +360,8 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 	i = 0
 	for k in n_estimators:
 		for c in criterion:
-			knc = RandomForestClassifier(max_depth=3,n_estimators = k,criterion=c, n_jobs=-1)
-			_path = global_path + 'rf_' + str(k) + c +'.plk'
+			knc = RandomForestClassifier(n_estimators = k,criterion=c, n_jobs=-1)
+			_path = global_path + 'rfd_' + str(k) + c +'.plk'
 			if path.isfile(_path):
 				knc_trained = pickle.load(open(_path, 'rb'))
 			else:
@@ -382,7 +382,7 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 			del knc_trained, knc
 			i += 1
 	repport.write('In the test set with the best param we have: \n')
-	_path = global_path + 'rf_' + str(n_estimators[best_index]) + best_criterion + '.plk'
+	_path = global_path + 'rfd_' + str(n_estimators[best_index]) + best_criterion + '.plk'
 	rf_trained = pickle.load(open(_path, 'rb'))
 	pred = rf_trained.predict(X_test)
 	acc = metrics.accuracy_score(y_test, pred)

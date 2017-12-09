@@ -253,9 +253,9 @@ def data_from_files():
 	y_test = X_test['target']
 	y_val = X_val['target']
 	print('\nLoaded data:')
-	X_train.drop(columns=['target'])
-	X_test.drop(columns=['target'])
-	X_val.drop(columns=['target'])
+	X_train = X_train.drop(columns=['target'])
+	X_test = X_test.drop(columns=['target'])
+	X_val = X_val.drop(columns=['target'])
 	print('Train shape: ', X_train.shape)
 	print('Train shape Y: ', y_train.shape)
 	print('Test shape: ', X_test.shape)
