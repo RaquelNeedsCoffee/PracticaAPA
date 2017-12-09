@@ -109,16 +109,6 @@ def split(X, y, proportion, name):
 	(X_test, X_val, y_test, y_val) = ms.train_test_split(X_test, y_test, test_size=.5, random_state=1, stratify=y_test)
 	print('\n New train shape: ', X_train.shape, ' \n New test shape: ', X_test.shape, '\n New val shape: ',
 	      X_val.shape, '\n Type: ',type(X_train))
-	# np.savez('../Data/X_train_'+name+'_matrix.npz',X_train )
-	# np.savez('../Data/X_test_'+name+'_matrix.npz', X_test)
-	# np.savez('../Data/X_val_'+name+'_matrix.npz',X_val)
-	# np.savez('../Data/y_train_' + name + '_matrix.npz', y_train)
-	# np.savez('../Data/y_test_' + name + '_matrix.npz', y_test)
-	# np.savez('../Data/y_val_' + name + '_matrix.npz', y_val)
-	# if name == 'cat':
-	# 	np.savez('../Data/X_train_' + name + '_columns.npz', X_train.columns)
-	# 	np.savez('../Data/X_test_' + name + '_columns.npz', X_test.columns)
-	# 	np.savez('../Data/X_val_' + name + '_columns.npz', X_val.columns)
 
 	return X_train, X_test, X_val, y_train, y_test, y_val
 
@@ -166,11 +156,12 @@ def clean_array():
 def generate_partition(X):
 	X_num = X[numerical]
 	X_num = standarize_data(X_num)
-	DummiesX = pd.get_dummies(data=X[categorical], columns=categorical, prefix_sep='|')
+	DummiesX = pd.get_dummies(data=X[categorical], prefix_sep='|')
 	y = X['target']
 	print('dummies size: ', DummiesX.shape)
 	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.4, 'num')
-
+	del X_num, X
+	gc.collect()
 	X_num_train.to_csv('../Data/subset_num_Train.csv')
 	X_num_test.to_csv('../Data/subset_num_Test.csv')
 	X_num_val.to_csv('../Data/subset_num_Val.csv')
@@ -179,28 +170,34 @@ def generate_partition(X):
 	y_test.to_csv('../Data/preprocessed_y_Val.csv')
 
 	(X_cat_train, X_cat_test, X_cat_val, y_train, y_test, y_val) = split(DummiesX, y, 0.4, 'cat')
-	del X, DummiesX
+	del  DummiesX
 	gc.collect()
 	print('end split')
 	# X_cat_train, X_cat_test, X_cat_val = clean_array()
-
+	X_cat_train[X_cat_train.columns] = X_cat_train[X_cat_train.columns].astype(np.uint8)
+	X_cat_test[X_cat_test.columns] = X_cat_test[X_cat_test.columns].astype(np.uint8)
+	X_cat_val[X_cat_val.columns] = X_cat_val[X_cat_val.columns].astype(np.uint8)
 	X_cat_train.to_csv('../Data/X_cat_Train.csv')
 	X_cat_test.to_csv('../Data/X_cat_Test.csv')
 	X_cat_val.to_csv('../Data/X_cat_Val.csv')
+	del X_cat_val,X_cat_train, X_cat_test, X_num_test, X_num_train, X_num_val
+	gc.collect()
 
-def preprocess(X):
-	print('loading... ')
-	X_cat_train = pd.read_csv('../Data/X_cat_Train.csv')
-
-
+def preprocess():
+	print('loading X train... ')
+	X_cat_train = pd.read_csv('../Data/X_cat_Train.csv', compact_ints=True)
 	print('loaded')
 
 	X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
 	print('xtrain sum end')
-	X_cat_test = pd.read_csv('../Data/X_cat_Test.csv')
+	print('loading X test... ')
+	X_cat_test = pd.read_csv('../Data/X_cat_Test.csv',compact_ints=True)
+	print('loaded')
 	X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
 	print('x_test end')
-	X_cat_val = pd.read_csv('../Data/X_cat_Val.csv')
+	print('loading X val... ')
+	X_cat_val = pd.read_csv('../Data/X_cat_Val.csv',compact_ints=True)
+	print('loaded')
 	X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
 	print('x val end')
 	index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
@@ -259,7 +256,8 @@ def data_from_files():
 def main():
 	file = 'def_training.csv'
 	X = pd.read_csv('../Data/' + file)
-	preprocess(X)
+	generate_partition(X)
+	preprocess()
 
 
 # (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.3, 'samples/definitivo.csv')
