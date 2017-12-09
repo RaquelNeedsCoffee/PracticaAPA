@@ -163,11 +163,10 @@ def clean_array():
 	X_val.to_csv('../Data/subset_cat_Val.csv')
 	return X_train,X_test,X_val
 
-def preprocess(X):
-	# todo: si no revienta probamos con el name
+def generate_partition(X):
 	X_num = X[numerical]
 	X_num = standarize_data(X_num)
-	DummiesX = pd.get_dummies(data=X, columns=categorical, prefix_sep='|')
+	DummiesX = pd.get_dummies(data=X[categorical], columns=categorical, prefix_sep='|')
 	y = X['target']
 	print('dummies size: ', DummiesX.shape)
 	(X_num_train, X_num_test, X_num_val, y_train, y_test, y_val) = split(X_num, y, 0.4, 'num')
@@ -189,13 +188,19 @@ def preprocess(X):
 	X_cat_test.to_csv('../Data/X_cat_Test.csv')
 	X_cat_val.to_csv('../Data/X_cat_Val.csv')
 
+def preprocess(X):
+	print('loading... ')
+	X_cat_train = pd.read_csv('../Data/X_cat_Train.csv')
 
 
-	print('saved')
+	print('loaded')
+
 	X_train_sum = (X_cat_train.values.sum(axis=0) != 0)
 	print('xtrain sum end')
+	X_cat_test = pd.read_csv('../Data/X_cat_Test.csv')
 	X_test_sum = (X_cat_test.values.sum(axis=0) != 0)
 	print('x_test end')
+	X_cat_val = pd.read_csv('../Data/X_cat_Val.csv')
 	X_val_sum = (X_cat_val.values.sum(axis=0) != 0)
 	print('x val end')
 	index = np.logical_and(X_train_sum,np.logical_and(X_test_sum,X_val_sum))
@@ -203,6 +208,7 @@ def preprocess(X):
 	X_cat_train = X_cat_train.loc[:,index]
 	X_cat_test = X_cat_test.loc[:, index]
 	X_cat_val = X_cat_val.loc[:,index]
+	gc.collect()
 	print('loc end')
 	X_cat_train.to_csv('../Data/subset_cat_Train.csv')
 	X_cat_test.to_csv('../Data/subset_cat_Test.csv')
@@ -216,11 +222,16 @@ def preprocess(X):
 	# 		X_cat_test.drop(feature, axis=1)
 	# 		X_cat_val.drop(feature, axis=1)
 	print('droped columns')
-	print('X_cat nas:', np.sum(X_cat_train.isnull().sum()))
 	X_cat_train, X_cat_test, X_cat_val = my_mca(X_cat_train, X_cat_test, X_cat_val)
+
+	X_num_train = pd.read_csv('../Data/subset_num_Train.csv')
+	X_num_test = pd.read_csv('../Data/subset_num_Test.csv')
+	X_num_val = pd.read_csv('../Data/subset_num_Val.csv')
+
 	concat_Train = pd.concat([X_cat_train, X_num_train], axis=1, ignore_index=True)
 	concat_Test = pd.concat([X_cat_test, X_num_test], axis=1, ignore_index=True)
 	concat_Val = pd.concat([X_cat_val, X_num_val], axis=1, ignore_index=True)
+
 	print('concat X Train ', concat_Train.shape)
 	print('concat X ', concat_Test.shape)
 	print('concat X ', concat_Val.shape)
@@ -237,20 +248,13 @@ def data_from_files():
 
 	y_train = pd.read_csv('../Data/preprocessed_y_Train.csv')
 	y_test = pd.read_csv('../Data/preprocessed_y_Test.csv')
-	y_test = pd.read_csv('../Data/preprocessed_y_Val.csv')
+	y_val = pd.read_csv('../Data/preprocessed_y_Val.csv')
 
 	print('\nLoaded data:')
 	print('Train shape: ', X_train.shape)
 	print('Test shape: ', X_test.shape)
 	print('Val shape: ', X_val.shape)
-
-	Y_train = X_train['Class']
-	X_train = X_train.drop('Class', 1)
-	Y_test = X_test['Class']
-	X_test = X_test.drop('Class', 1)
-	Y_val = X_val['Class']
-	X_val = X_val.drop('Class', 1)
-	return X_train, X_test, X_val, Y_train, Y_test, Y_val
+	return X_train, X_test, X_val, y_train, y_test, y_val
 
 def main():
 	file = 'def_training.csv'
