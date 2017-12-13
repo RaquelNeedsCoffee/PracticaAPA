@@ -380,7 +380,7 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 			repport.write("Accuracy:" + str(acc) + '\n')
 			repport.write('Full report: \n' + str(met) + '\n')
 			del knc_trained, knc
-			i += 1
+		i += 1
 	repport.write('In the test set with the best param we have: \n')
 	_path = global_path + 'rfd_' + str(n_estimators[best_index]) + best_criterion + '.plk'
 	rf_trained = pickle.load(open(_path, 'rb'))
@@ -410,8 +410,9 @@ def random_forest(X_train, X_test, y_train, y_test, n_estimators):
 	del rf, rf_trained
 	gc.collect()
 
+
 def val_perceptron(X_train, X_test, X_val, y_train, y_test, y_val):
-	alphas  = np.arange(0.01, 2.0, 0.1)
+	alphas = np.arange(0.01, 2.0, 0.1)
 	penalty = ["l1", "l2",'elasticnet']
 	_report_path = global_path + 'perceptron_report' + '.txt'
 	repport = open(_report_path, 'w')
@@ -451,6 +452,7 @@ def val_perceptron(X_train, X_test, X_val, y_train, y_test, y_val):
 	repport.write("Accuracy:" + str(acc) + '\n')
 	repport.write('Full report: \n' + str(met) + '\n')
 	repport.close()
+
 
 def perceptron(X_train, X_test, X_val, y_train, y_test, y_val, reg, pen):
 	"""

@@ -6,9 +6,8 @@ import sklearn.model_selection as ms
 from sklearn.preprocessing import StandardScaler as stdc
 import gc
 import _pickle as pickle
-categorical = ['source_type','gender', 'genre_ids']  #  ,'artist_name', 'composer' , 'lyricist', 'age_range']'registrant_code' 'city', 'registered_via','language', 'country_code',, 'source_screen_name''source_system_tab',
-numerical = ['registration_init_time', 'song_length', 'registration_init_time', 'expiration_date', 'song_year']
-
+categorical = ['source_system_tab','source_type','gender','city']
+numerical = ['song_length', 'song_year']
 
 def Matrix_mult(*args):
 	"""An internal method to multiply matrices."""
@@ -88,7 +87,7 @@ def my_mca(X_train):
 	table2.loc['Σ'] = table2.sum()
 	table2.index.name = 'Factor'
 	np.round(table2.astype(float), 4)
-	print('Varianza explicada tomando 45 features: ', table2['τZ'][0:45].sum())
+	print('Varianza explicada tomando 45 features: ', table2['τZ'][0:20].sum())
 	## The projection can also be computed using vectorized form,
 	X_train = Matrix_mult(X_train.values, G[:, :45]) / S[:45] / 10
 	X_test = pd.read_csv('../Data/subset_cat_Test.csv', compact_ints=True)
@@ -225,7 +224,7 @@ def preprocess():
 
 	print('end csv')
 	print('droped columns')
-	# X_cat_train, X_cat_test, X_cat_val = my_mca(X_cat_train)
+	X_cat_train, X_cat_test, X_cat_val = my_mca(X_cat_train)
 
 	X_num_train = pd.read_csv('../Data/subset_num_Train.csv')
 	X_num_test = pd.read_csv('../Data/subset_num_Test.csv')
@@ -238,9 +237,9 @@ def preprocess():
 	print('concat X Train ', concat_Train.shape)
 	print('concat X ', concat_Test.shape)
 	print('concat X ', concat_Val.shape)
-	concat_Train.to_csv('../Data/preprocessedTrain.csv')
-	concat_Test.to_csv('../Data/preprocessedTest.csv')
-	concat_Val.to_csv('../Data/preprocessedVal.csv')
+	concat_Train.to_csv('../Data/preprocessedTrainMCA.csv')
+	concat_Test.to_csv('../Data/preprocessedTestMCA.csv')
+	concat_Val.to_csv('../Data/preprocessedValMCA.csv')
 
 
 
@@ -266,10 +265,10 @@ def data_from_files():
 
 def main():
 	file = 'def_training.csv'
-	# X = pd.read_csv('../Data/' + file)
-	# generate_partition(X)
-	# preprocess()
-	data_from_files()
+	X = pd.read_csv('../Data/' + file)
+	generate_partition(X)
+	preprocess()
+	# data_from_files()
 
 
 # (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.3, 'samples/definitivo.csv')
