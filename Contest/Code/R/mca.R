@@ -2,7 +2,7 @@ library(data.table) #
 library(FactoMineR)
 library(factoextra)
 
-dt <- fread("Contest/Data/samples/definitivo.csv",stringsAsFactors = TRUE)
+dt <- fread("Contest/Data/samples/def_train.csv",stringsAsFactors = TRUE)
 
 #set a list of numerical variables
 attach(dt)
