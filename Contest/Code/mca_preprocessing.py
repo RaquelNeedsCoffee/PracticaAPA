@@ -85,6 +85,10 @@ def main():
     df_songs['language'] = df_songs['language'].astype('category')
     print_df_info(df_songs)
 
+    df_songs.to_csv(data_path + 'df_songs.csv')
+    del df_songs
+    gc.collect()
+
     # # members
     df_members = (pd.read_csv(data_path + 'members.csv'))[['msno', 'city', 'bd', 'gender']]
     df_members = fill_na_gender_knn(df_members)
@@ -92,16 +96,27 @@ def main():
     more_freq_age_range = df_members['age_range'].value_counts().idxmax()
     df_members['age_range'] = df_members['age_range'].fillna(more_freq_age_range)
     df_members = df_members.drop(['bd'], axis=1)
+    # df_members = pd.get_dummies(data=df_members, columns=['age_range'])
     df_members['city'] = df_members['city'].astype('category')
     df_members['gender'] = df_members['gender'].astype('category')
-    df_members['age_range'] = df_members['age_range'].astype('category')
     print_df_info(df_members)
+
+    df_members.to_csv(data_path + 'df_members.csv')
+    del df_members
+    gc.collect()
 
     # # test
     df_test = pd.read_csv(data_path + 'test.csv')
     df_test = df_test.drop(['source_screen_name'], axis=1)
+    more_freq_source_system_tab = df_test['source_system_tab'].value_counts().idxmax()
+    df_test['source_system_tab'] = df_test['source_system_tab'].fillna(more_freq_source_system_tab)
+    more_freq_source_type = df_test['source_type'].value_counts().idxmax()
+    df_test['source_type'] = df_test['source_type'].fillna(more_freq_source_type)
     print_df_info(df_test)
 
+    df_test.to_csv(data_path + 'df_test.csv')
+    del df_test
+    gc.collect()
 
 if __name__ == "__main__":
     main()
