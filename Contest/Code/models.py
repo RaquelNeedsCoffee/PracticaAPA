@@ -357,6 +357,7 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 	all_accuracies = []
 	best_index = 0
 	best_criterion = criterion[0]
+	print('Random forest:')
 	i = 0
 	for k in n_estimators:
 		for c in criterion:
@@ -379,6 +380,11 @@ def val_rf(X_train, X_test, X_val, y_train, y_test, y_val):
 			repport.write('Random Forest with val and k = ' + str(k) +'Criterion '+str(c) + ' :' + '\n')
 			repport.write("Accuracy:" + str(acc) + '\n')
 			repport.write('Full report: \n' + str(met) + '\n')
+
+			print('Random Forest with val and k = ' + str(k) + 'Criterion ' + str(c) + ' :' + '\n')
+			print("Accuracy:" + str(acc) + '\n')
+			print('Full report: \n' + str(met) + '\n')
+
 			del knc_trained, knc
 		i += 1
 	repport.write('In the test set with the best param we have: \n')

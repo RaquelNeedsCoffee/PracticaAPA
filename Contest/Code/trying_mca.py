@@ -90,21 +90,29 @@ def my_mca(X_train):
 	table2.index.name = 'Factor'
 	np.round(table2.astype(float), 4)
 	table2.to_csv('table2.csv')
-	columns_keep = 10
-	print('Varianza explicada tomando 5 features: ', table2['τI'][0:columns_keep].sum())
+	columns_keep = 30
+	print('Varianza explicada tomando ' + str(columns_keep) + ' features: ', table2['τI'][0:columns_keep].sum())
 	## The projection can also be computed using vectorized form,
 
-	X_train = Matrix_mult(X_train.values, G[:, :columns_keep]) / S[:columns_keep] / 10
-	X_test = pd.read_csv('../Data/subset_cat_Test.csv', compact_ints=True)
-	X_test = Matrix_mult(X_test.values, G[:, :columns_keep]) / S[:columns_keep] / 10
-	X_val = pd.read_csv('../Data/subset_cat_Val.csv', compact_ints=True)
-	X_val = Matrix_mult(X_val.values, G[:, :columns_keep]) / S[:columns_keep] / 10
-	T_cat = pd.read_csv('../Data/subset_cat_T.csv')
-	T_cat = Matrix_mult(T_cat.values, G[:, :columns_keep]) / S[:columns_keep] / 10
-	print('shape', X_test.shape)
-	names = ['V' + str(i) for i in range(columns_keep)]
-	return pd.DataFrame(X_train, columns=names), pd.DataFrame(X_test, columns=names), pd.DataFrame(X_val, columns=names),  pd.DataFrame(T_cat, columns=names)
 
+	X_cat_test = pd.read_csv('../Data/subset_cat_Test.csv', compact_ints=True)
+
+	X_cat_val = pd.read_csv('../Data/subset_cat_Val.csv', compact_ints=True)
+
+	T_cat = pd.read_csv('../Data/subset_cat_T.csv')
+
+	X_cat_trainMatrix = Matrix_mult(X_train.values, G[:, :columns_keep]) / S[:columns_keep] / 10
+	X_cat_testMatrix = Matrix_mult(X_cat_test.values, G[:, :columns_keep]) / S[:columns_keep] / 10
+	X_cat_valMatrix = Matrix_mult(X_cat_val.values, G[:, :columns_keep]) / S[:columns_keep] / 10
+	T_catMatrix = Matrix_mult(T_cat.values, G[:, :columns_keep]) / S[:columns_keep] / 10
+
+	print('shape', X_cat_test.shape)
+	names = ['V' + str(i) for i in range(columns_keep)]
+	X_cat_train = pd.DataFrame(X_cat_trainMatrix, columns=names, index=X_train.index)
+	X_cat_test = pd.DataFrame(X_cat_testMatrix, columns=names, index=X_cat_test.index)
+	X_cat_val = pd.DataFrame(X_cat_valMatrix, columns=names, index=X_cat_val.index)
+	T_cat = pd.DataFrame(T_catMatrix, columns=names, index=T_cat.index)
+	return
 
 def to_dummies(X):
 	for column in X.columns:
@@ -305,24 +313,20 @@ def data_from_filesMCA():
 	X_test = pd.read_csv('../Data/preprocessedTestMCA.csv', compact_ints=True)
 	X_val = pd.read_csv('../Data/preprocessedValMCA.csv', compact_ints=True)
 
-	X_train = X_train.rename(columns={'9': 'target'})
-	X_test = X_test.rename(columns={'9': 'target'})
-	X_val = X_val.rename(columns={'9': 'target'})
-
 	y_train = X_train['target']
 	y_test = X_test['target']
 	y_val = X_val['target']
 	print('\nLoaded data:')
-	X_train = X_train.drop(columns=['target','Unnamed: 0'])
-	X_test = X_test.drop(columns=['target','Unnamed: 0'])
-	X_val = X_val.drop(columns=['target','Unnamed: 0'])
+	X_train = X_train.drop(columns=['target'])
+	X_test = X_test.drop(columns=['target'])
+	X_val = X_val.drop(columns=['target'])
 	print('Train shape: ', X_train.shape)
 	print('Train shape Y: ', y_train.shape)
 	print('Test shape: ', X_test.shape)
 	print('Test shape Y: ', y_test.shape)
 	print('Val shape: ', X_val.shape)
 	print('Test shape: ', y_val.shape)
-	return stdc().fit_transform(X_train), stdc().fit_transform(X_test), stdc().fit_transform(X_val), y_train, y_test, y_val
+	return X_train, X_test, X_val, y_train, y_test, y_val
 
 def main():
 	file = 'def_training.csv'
