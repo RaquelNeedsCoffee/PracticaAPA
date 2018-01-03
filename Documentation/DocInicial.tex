@@ -19,16 +19,27 @@
 
 \begin{document}
 \maketitle
+\tableofcontents
 
-\section*{Posibles Métodos}
-\begin{itemize}
-\item logistic regression, multinomial regression
-(single-layer MLP), LDA, QDA, RDA, \textbf{Naive Bayes}, \textbf{nearest-neighbours},\textbf{linear SVM}, quadratic SVM
-\item one-hidden-layer MLP, the RBFNN, the SVM with RBF kernel, a
-Random Forest
-\end{itemize}
+\section{Descripción del trabajo}
 
-\section*{Preprocessing}
+
+\subsection{Notas sobre el lenguaje de programación escogido}
+
+
+\section{Trabajo Relacionado}
+
+
+%\section{Posibles Métodos}
+%\begin{itemize}
+%\item logistic regression, multinomial regression
+%(single-layer MLP), LDA, QDA, RDA, \textbf{Naive Bayes}, \textbf{nearest-neighbours},\textbf{linear SVM}, quadratic SVM
+%\item one-hidden-layer MLP, the RBFNN, the SVM with RBF kernel, a
+%Random Forest
+%\end{itemize}
+
+
+\section{Data exploration and Preprocessing}
 
 Los datos iniciales son: 
 \begin{itemize}
@@ -41,7 +52,7 @@ Los datos iniciales son:
 
 La idea inicial es mejorar train utilizando songs, members y song\_extra\_info y convertirlo en un único train y test. 
 
-Después pasar todas las variables categóricasa numéricas y aplicarle un PCA.
+Después pasar todas las variables categóricasa numéricas y aplicarle un MCA.
 
 Debería quedar: 
 \begin{itemize}
@@ -49,5 +60,33 @@ Debería quedar:
 \item clean\_test.csv
 \end{itemize}
 
+
+\subsection{Tratamiento de valores perdidos}
+
+\subsection{Tratamiento de outliers}
+
+\subsection{Tratamiento de valores incorrectos}
+
+\subsection{Codificación de variables categóricas}
+
+\subsection{Selección de features}
+
+\subsection{Creación de nuevas variables}
+
+\subsection{Estandarización}
+
+\subsection{Transformación de variables}
+
+\section{Resampling Protocol}
+
+\section{Resultados de los métodos lineales}
+logistic regression, multinomial regression
+(single-layer MLP), LDA, QDA, RDA, \textbf{Naive Bayes}, \textbf{nearest-neighbours},\textbf{linear SVM}, quadratic SVM
+\section{Resultados de los métodos no lineales}
+one-hidden-layer MLP, the RBFNN, the SVM with RBF kernel, a
+Random Forest
+\section{Descripción y justificación del modelo escogido}
+
+\section{Conclusiones}
 
 \end{document}
