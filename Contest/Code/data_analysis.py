@@ -101,6 +101,7 @@ def print_df_info(df):
     print('\nNull values:')
     print(df.isnull().sum())
     print('Memory consumed by dataframe : {} MB\n'.format(df.memory_usage(index=True).sum() / 1024 ** 2))
+    print('nrows: {}\n'.format(len(df)))
 
 
 def process_train():

@@ -2,13 +2,14 @@ library(data.table) #
 library(FactoMineR)
 library(factoextra)
 
-dt <- fread("../../Data/def_training.csv",stringsAsFactors = TRUE)
+dt <- fread("Contest/Data/samples/def_train.csv",stringsAsFactors = TRUE)
 
 #set a list of numerical variables
 attach(dt)
-
-dnum <- data.frame (bd,registration_init_time,expiration_date,song_length,song_year)
-dcat <- data.frame (source_system_tab,source_type,factor(city),factor(gender),factor(language),country_code)
+#categorical = ['source_system_tab','source_type','gender','city']
+#numerical = ['song_length', 'song_year']
+dnum <- data.frame (song_length,song_year)
+dcat <- data.frame (source_system_tab,source_type,factor(city),factor(gender),factor(language))
 
 mca <-   MCA(dcat,ncp = 88)
 summary(mca)
