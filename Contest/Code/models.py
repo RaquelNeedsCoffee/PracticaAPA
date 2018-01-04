@@ -15,6 +15,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from scipy.stats import randint as sp_randint
 from scipy.stats import uniform
+import xgboost as xgb
 
 import numpy as np
 from os import path
@@ -102,6 +103,24 @@ def qda(X_train, X_test, y_train, y_test):
 	del qda, qda_trained
 	repport.close()
 	gc.collect()
+
+def xgboost(X_train, X_test, y_train, y_test):
+	print("XGBoost:")
+
+
+	model = xgb.XGBClassifier(learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=250)
+
+	_path = global_path + 'xgboost.plk'
+	if path.isfile(_path):
+		xgb_trained = pickle.load(open(_path, 'rb'))
+	else:
+		print('Training the model...')
+		xgb_trained = model.fit(X_train, y_train)
+		with open(_path, 'wb') as handle:
+			pickle.dump(xgb_trained, handle)
+
+	predict_labels = xgb_trained.predict(X_test)
+	print(metrics.classification_report(y_test, predict_labels))
 
 
 def val_rda(X_train, X_test, X_val, y_train, y_test, y_val):
@@ -491,6 +510,55 @@ def perceptron(X_train, X_test, X_val, y_train, y_test, y_val, reg, pen):
 	del per, per_trained
 	gc.collect()
 
+def val_mlp(X_train, X_test, X_val, y_train, y_test, y_val):
+	alphas = np.arange(0.01, 2.0, 0.1)
+	lr = ['constant', 'adaptive']
+	penalty = ["l1", "l2",'elasticnet']
+	activation = ['identity', 'relu']
+	_report_path = global_path + 'mlp_report' + '.txt'
+	repport = open(_report_path, 'w')
+	all_accuracies = []
+	best_index = 0
+	best_penalty = penalty[0]
+	i = 0
+	for size in range(3, 30):
+		for k in alphas:
+			for c in activation:
+				for l in lr:
+					per = MLPClassifier(hidden_layer_sizes=size, activation=c, alpha=k, learning_rate=l, verbose=True)
+					_path = global_path + 'mlp_' + str(k) + c +str(size)+str(l) + '.plk'
+					if path.isfile(_path):
+						per_trained = pickle.load(open(_path, 'rb'))
+					else:
+						print('Training the model...')
+						per_trained = per.fit(X_train, y_train.values.ravel())
+						with open(_path, 'wb') as handle:
+							pickle.dump(per_trained, handle)
+					pred = per_trained.predict(X_val)
+					acc = metrics.accuracy_score(y_val, pred)
+					met = metrics.classification_report(y_val, pred)
+					all_accuracies.append(acc)
+					if acc > all_accuracies[best_index]:
+						best_index = i
+						best_penalty = c
+					repport.write('mlp with val and alpha = ' + str(k) +' penalty '+str(c) +' and size '+ str(size)+ ' and learning rate '+ str(l)+' :' + '\n')
+					repport.write("Accuracy:" + str(acc) + '\n')
+					repport.write('Full report: \n' + str(met) + '\n')
+					print('mlp with val and alpha = ' + str(k) + ' penalty ' + str(c) + ' and size ' + str(
+						size) + ' :' + '\n')
+					print("Accuracy:" + str(acc) + '\n')
+					print('Full report: \n' + str(met) + '\n')
+					del per_trained, per
+					i += 1
+	repport.write('In the test set with the best param '+ str(alphas[best_index])+' '+ best_penalty+'we have: \n')
+	_path = global_path + 'per_' + str(alphas[best_index]) + best_penalty + '.plk'
+	rf_trained = pickle.load(open(_path, 'rb'))
+	pred = rf_trained.predict(X_test)
+	acc = metrics.accuracy_score(y_test, pred)
+	met = metrics.classification_report(y_test, pred)
+	repport.write("Accuracy:" + str(acc) + '\n')
+	repport.write('Full report: \n' + str(met) + '\n')
+	repport.close()
 
 def mlp(X_train, X_test, X_val, y_train, y_test, y_val, reg, size=(1, 20), act='logistic'):
 	"""

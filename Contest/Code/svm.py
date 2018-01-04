@@ -1,18 +1,15 @@
 """
 This file contains the svm of our credit card data
 """
-import pandas as pd
-import sklearn.model_selection as ms
-import sklearn.neighbors as nb  # knn
-from sklearn.naive_bayes import GaussianNB
+
 from sklearn import metrics
-from sklearn.preprocessing import MinMaxScaler
 from os import path
 from sklearn.svm import SVC
 import _pickle as pickle
 import gc
+from Code.trying_mca import data_from_filesMCA
 
-from Contest.Code.split_data import split
+from Code.split_data import split
 
 
 def linear_svm():
@@ -20,8 +17,9 @@ def linear_svm():
     This function reads the data from the split function and calculates the linear svm model
     :return:
     """
-    print('We are spliting the data: ')
-    (X_train, X_test, X_val, y_train, y_test, y_val) = split(0.999)
+    print('loading data...')
+    (X_train, X_test, X_val, y_train, y_test, y_val) = data_from_filesMCA()
+    print('data loaded')
 
     print('linear SVM: ')
     knc = SVC(kernel='linear')
