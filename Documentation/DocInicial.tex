@@ -63,7 +63,7 @@ Contiene información de los usuarios. Tiene las siguientes variables:
 
 \subsection*{songs.csv}
 Contiene información de las canciones. Tiene las siguientes variables:
-\begin{labeling}{registration\_init\_time}
+\begin{labeling}{song\_length}
 \item [song\_id] identificador de la canción.
 \item [song\_length] duración de la canción en milisegundos.
 \item [genre\_ids] género musical de la canción. Hay canciones con más de un genero, donde el carácter | hace de separador.
@@ -75,7 +75,7 @@ Contiene información de las canciones. Tiene las siguientes variables:
 
 \subsection*{song\_extra\_info.csv}
 Contiene información extra de las canciones. Tiene las siguientes variables:
-\begin{labeling}{registration\_init\_time}
+\begin{labeling}{song\_name}
 \item [song\_id] identificador de la canción.
 \item [song\_name] nombre de la canción.
 \item [isrc] \href{https://en.wikipedia.org/wiki/International_Standard_Recording_Code}{International Standard Recording Code}. En teoría se puede usar como identificador de la canción, pero hay codigos ISRC sin verificar. Contiene información de la canción aunque puede ser erronea o confusa como el country code, que no se refiere a la canción si no a la agencia que proporciona el codigo ISRC.
