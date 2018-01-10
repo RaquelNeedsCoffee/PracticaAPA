@@ -13,6 +13,8 @@
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{scrextend} % lists
+\addtokomafont{labelinglabel}{\bfseries}
 
 \title{Music recomendation}
 \author{Raquel Leandra Pérez Arnal i Adrián Sánchez Albanell}
@@ -20,13 +22,65 @@
 
 \begin{document}
 \maketitle
+\clearpage
+
 \tableofcontents
+\clearpage
 
 \section{Descripción del trabajo}
+
 
 \subsection{Introducción}
 Este trabajo consiste en elegir un problema de regresión o clasificación y generar un modelo para resolverlo, usando algunos de los métodos lineales y no lineales vistos en clase durante el curso de Aprendizaje Autónomo.\\
 Hemos elegido un problema de \href{https://www.kaggle.com/competitions}{kaggle competitions} sobre recomendación de música llamado \href{https://www.kaggle.com/c/kkbox-music-recommendation-challenge}{WSDM - KKBox's Music Recommendation Challenge}. Consiste en un dataset, proporcionado por \href{https://www.kkbox.com/intl/index.php?area=intl}{KKBOX} - servició de streaming de música asiático - con información sobre diferentes canciones, usuarios y como ha sido el acceso de los usuarios a dichas canciones. El objetivo es predecir si un usuario que ha escuchado una canción lo volverá a hacer en un periodo de tiempo determinado, ergo se trata de un problema de clasificación binaria (si el usuario volverá o no a escuchar una canción que ya ha escuchado anteriormente).
+
+
+\subsection{Conjunto de datos disponible}
+Kaggle nos ha proporcionado los datos en seis ficheros CSV, de los cuales usaremos cuatro para la práctica, ya que los otros dos són un conjunto de datos de muestra sobre como enviar los datos para el concurso y los datos de test también para el concurso (que no podemos usar ya que vienen sin los targets).
+
+\subsection*{train.csv}
+Contiene la información de las reproducciones de canciones por parte del usuario. Tiene las siguientes variables:
+\begin{labeling}{source\_screen\_name}
+\item [msno] identificador del usuario.
+\item [song\_id] identificador de la canción.
+\item [source\_system\_tab] nombre de la pestaña donde se selecciono el evento.\\ Ejemplos: \textit{my library}, \textit{search}, etc.
+\item [source\_screen\_name] nombre de la pantalla que ve el usuario.
+\item [source\_type] des de donde se ha reproducido la canción.\\ Ejemplos: \textit{album}, \textit{online-playlist}, \textit{song}, etc.
+\item [target] variable de target. Si el usuario ha escuchado la canción más de una vez en un intervalo de un mes target es 1, si no es 0.
+\end{labeling}
+
+\subsection*{members.csv}
+Contiene información de los usuarios. Tiene las siguientes variables:
+\begin{labeling}{registration\_init\_time}
+\item [msno] identificador del usuario.
+\item [city] identificador de ciudad.
+\item [bd] edad del usuario. Contiene valores outlier.
+\item [gender] genero del usuario. Puede ser \textit{female} o \textit{male}.
+\item [registered\_via] identificador del método de registro de usuario.
+\item [registration\_init\_time] día del registro de usuario, en formato \textit{\%Y\%m\%d}.
+\item [expiration\_date] día de expiración del registro de usuario, en formato \textit{\%Y\%m\%d}.
+\end{labeling}
+
+\subsection*{songs.csv}
+Contiene información de las canciones. Tiene las siguientes variables:
+\begin{labeling}{registration\_init\_time}
+\item [song\_id] identificador de la canción.
+\item [song\_length] duración de la canción en milisegundos.
+\item [genre\_ids] género musical de la canción. Hay canciones con más de un genero, donde el carácter | hace de separador.
+\item [artist\_name] nombre del artista.
+\item [composer] nombre del compositor o compositores. Si hay más de uno el carácter | hace de separador.
+\item [lyricist] nombre del escritor o escritores de la canción. Si hay más de uno el carácter | hace de separador.
+\item [language] identificador del lenguaje de la canción.
+\end{labeling}
+
+\subsection*{song\_extra\_info.csv}
+Contiene información extra de las canciones. Tiene las siguientes variables:
+\begin{labeling}{registration\_init\_time}
+\item [song\_id] identificador de la canción.
+\item [song\_name] nombre de la canción.
+\item [isrc] \href{https://en.wikipedia.org/wiki/International_Standard_Recording_Code}{International Standard Recording Code}. En teoría se puede usar como identificador de la canción, pero hay codigos ISRC sin verificar. Contiene información de la canción aunque puede ser erronea o confusa como el country code, que no se refiere a la canción si no a la agencia que proporciona el codigo ISRC.
+\end{labeling}
+
 
 \subsection{Notas sobre el lenguaje de programación escogido}
 
