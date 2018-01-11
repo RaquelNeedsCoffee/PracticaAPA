@@ -22,9 +22,8 @@ def print_df_info(df):
 
 
 def plot_lost_values(df):
-    nrows = len(df)
-    nulls_serie = df.isnull().sum()
 
+    nulls_serie = df.isnull().sum()
     # These are the "Tableau 20" colors as RGB.
     tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
                  (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
@@ -53,19 +52,21 @@ def plot_lost_values(df):
     nulls_serie.plot.bar(color=tableau20)
 
 
-
-
 def main():
     # load data
     print("Loading data:")
     print("\t-- loading train.csv --")
-    df_train = pd.read_csv(data_path + 'train.csv', nrows=100000, dtype={'target': np.uint8})
+    df_train = pd.read_csv(data_path + 'train.csv', nrows=None, dtype={'target': np.uint8})
+    print_df_info(df_train)
     print("\t-- loading members.csv --")
     df_members = pd.read_csv(data_path + 'members.csv')
+    print_df_info(df_members)
     print("\t-- loading songs.csv --")
-    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=100000)
+    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=None)
+    print_df_info(df_songs)
     print("\t-- loading song_extra_info.csv --")
-    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=100000)
+    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=None)
+    print_df_info(df_song_extra)
     print("Data loaded")
 
     # Grafica lost values
