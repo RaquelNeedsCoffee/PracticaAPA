@@ -65,6 +65,8 @@ Contest/Code/__pycache__/
 
 Contest/Code/\.ipynb_checkpoints/
 
+Contest/Code/Code\.Rproj
+
 Documentation/*.aux
 Documentation/*.log
 Documentation/*.out
