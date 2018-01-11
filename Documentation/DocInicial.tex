@@ -121,11 +121,14 @@ Debería quedar:
 \item clean\_test.csv
 \end{itemize}
 
-
 \subsection{Selección de features}
 
-Eliminamos las siguientes variables por los siguientes motivos
+Hay dos grandes motivos por los que hemos eliminado features: 
 
+\begin{itemize}
+\item La feature en cuestión es un \textbf{identificador}, es decir, es una variable cuyo único objetivo es identificar la muestra o alguna de sus partes. Los hemos utilizado para unir los distintos conjuntos de datos, pero de cara al análisis no tienen utilidad.
+\item Algunas de las variables eran \textbf{computacionalmente intratatable}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
+\end{itemize}
 
 \begin{table}[H]
 \centering
