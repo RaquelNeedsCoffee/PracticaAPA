@@ -121,9 +121,9 @@ Debería quedar:
 \item clean\_test.csv
 \end{itemize}
 
-
 \subsection{Selección de features}
 
+<<<<<<< HEAD
 Eliminamos las siguientes variables por los siguientes motivos
 
 
@@ -153,10 +153,48 @@ isrc                     & Es solo un identificador    \\ \hline
 \includegraphics[width=1\textwidth]{Images/missings.png}
 \caption{En esta gráfica podemos ver la cantidad de valores perdidos que tiene el conjunto de datos final}
 \end{figure}
+=======
+Hay dos grandes motivos por los que hemos eliminado features: 
+
+\begin{itemize}
+\item La feature en cuestión es un \textbf{identificador}, es decir, es una variable cuyo único objetivo es identificar la muestra o alguna de sus partes. Los hemos utilizado para unir los distintos conjuntos de datos, pero de cara al análisis no tienen utilidad.
+\item Algunas de las variables eran \textbf{computacionalmente intratatable}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
+\end{itemize}
+>>>>>>> d6b797c0bd984f11aee7c4a3a966a04e700ce8f4
 
 \begin{table}[H]
 \centering
 \caption{My caption}
+<<<<<<< HEAD
+=======
+\label{my-label}
+\begin{tabular}{|l|l|}
+\hline
+Nombre                   & Motivo \\ \hline
+msno                     & Es solo un identificador \\ \hline
+song\_id                 & Es solo un identificadors \\ \hline
+artist\_name             & Computacionalmente intratable \\ \hline
+composer                 & Computacionalmente intratable \\ \hline
+lyricist                 & Computacionalmente intratable    \\ \hline
+name                     & Computacionalmente intratable     \\ \hline
+isrc                     & Es solo un identificador    \\ \hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Tratamiento de valores perdidos}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{Images/missings.png}
+\caption{En esta gráfica podemos ver la cantidad de valores perdidos que tiene el conjunto de datos final}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{My caption}
+>>>>>>> d6b797c0bd984f11aee7c4a3a966a04e700ce8f4
 \label{my-label}
 \begin{tabular}{|l|l|}
 \hline
