@@ -64,3 +64,10 @@ venv/
 Contest/Code/__pycache__/
 
 Contest/Code/\.ipynb_checkpoints/
+
+Documentation/*.aux
+Documentation/*.log
+Documentation/*.out
+Documentation/*.pdf
+Documentation/*.synctex.gz
+Documentation/*.toc

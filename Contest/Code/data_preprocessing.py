@@ -9,16 +9,21 @@ plt.interactive(True)
 
 
 def print_df_info(df):
+    sum_nulls = df.isnull().sum()
+    nrows = len(df)
     print('Types:')
     print(df.dtypes)
     print('\nNull values:')
-    print(df.isnull().sum())
+    print(sum_nulls)
+    print('\nPercentage of null values:')
+    print(sum_nulls.apply(lambda x: (100*x)/nrows))
     print('Memory consumed by dataframe : {} MB\n'.format(df.memory_usage(index=True).sum() / 1024 ** 2))
-    print('nrows: {}\n'.format(len(df)))
+    print('nrows: {}\n'.format(nrows))
 
 
-def lost_values_info(df):
-    sm = df.isnull().sum()
+def plot_lost_values(df):
+    nrows = len(df)
+    nulls_serie = df.isnull().sum()
 
     # These are the "Tableau 20" colors as RGB.
     tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
@@ -31,21 +36,23 @@ def lost_values_info(df):
     for i in range(len(tableau20)):
         r, g, b = tableau20[i]
         tableau20[i] = (r / 255., g / 255., b / 255.)
+
     plt.figure(figsize=(20, 15))
     ax = plt.subplot(111)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
-    max_range_x = len(sm.values) + 1
-    # range_values_y = range(10000, 80001, 10000)
+    max_range_x = len(nulls_serie.values) + 1
     range_values_y = range(500000, 3000001, 500000)
     for y in range_values_y:
         plt.plot(range(0, max_range_x), [y] * len(range(0, max_range_x)), "--", lw=0.5, color="black", alpha=0.3)
     plt.tick_params(axis="both", which="both", bottom="off", top="off",
                     labelbottom="on", left="off", right="off", labelleft="on")
     plt.title("Missing values per feature in the dataset")
-    sm.plot.bar(color=tableau20)
+    nulls_serie.plot.bar(color=tableau20)
+
+
 
 
 def main():
@@ -74,7 +81,7 @@ def main():
     gc.collect()
     print("fmerge")
     print_df_info(df_merged)
-    lost_values_info(df_merged)
+    plot_lost_values(df_merged)
 
 
 if __name__ == "__main__":
