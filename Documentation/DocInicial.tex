@@ -119,6 +119,52 @@ Debería quedar:
 \end{itemize}
 
 
+\subsection{Selección de features}
+
+\begin{table}[H]
+\centering
+\caption{Nos quedaremos con estas variables para el análisis}
+\label{my-label}
+\begin{tabular}{|l|l|}
+\hline
+Nombre                   & Porcentage \\ \hline
+source\_system\_tab      & 0.3368     \\ \hline
+source\_screen\_name     & 5.6226     \\ \hline
+source\_type             & 0.2919     \\ \hline
+target                   & 0          \\ \hline
+city                     & 0          \\ \hline
+bd                       & 0          \\ \hline
+gender                   & 40.142     \\ \hline
+registered\_via          & 0          \\ \hline
+registration\_init\_time & 0          \\ \hline
+expiration\_date         & 0          \\ \hline
+song\_length             & 0.0015     \\ \hline
+genre\_ids               & 1.605      \\ \hline
+\end{tabular}
+\end{table}
+
+Eliminamos las siguientes variables por los siguientes motivos
+
+
+\begin{table}[H]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{|l|l|}
+\hline
+Nombre                   & Motivo \\ \hline
+msno                     & Es solo un identificador, no sirve para el análisis \\ \hline
+song\_id                 & Es solo un identificador, no sirve para el análisis \\ \hline
+artist\_name             & Computacionalmente imposible \\ \hline
+composer                 & 22.7139    \\ \hline
+lyricist                 & 43.0882    \\ \hline
+language                 & 0.0020     \\ \hline
+name                     & 0.0197     \\ \hline
+isrc                     & 7.8327     \\ \hline
+\end{tabular}
+\end{table}
+
+
 \subsection{Tratamiento de valores perdidos}
 
 \subsection{Tratamiento de outliers}
@@ -126,6 +172,7 @@ Debería quedar:
 \subsection{Tratamiento de valores incorrectos}
 
 \subsection{Codificación de variables categóricas}
+
 
 \subsection{Selección de features}
 
