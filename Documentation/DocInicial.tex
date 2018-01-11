@@ -14,7 +14,6 @@
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{scrextend} % lists
-\usepackage{float}
 \addtokomafont{labelinglabel}{\bfseries}
 
 \title{Music recomendation}
@@ -63,8 +62,6 @@ Contiene información de los usuarios. Tiene las siguientes variables:
 \end{labeling}
 
 \subsection*{songs.csv}
-Tiene tamaño: (2,286,220 , 7)
-
 Contiene información de las canciones. Tiene las siguientes variables:
 \begin{labeling}{song\_length}
 \item [song\_id] identificador de la canción.
@@ -147,58 +144,14 @@ isrc                     & Es solo un identificador    \\ \hline
 
 \subsection{Tratamiento de valores perdidos}
 
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=1\textwidth]{Images/missings.png}
-\caption{En esta gráfica podemos ver la cantidad de valores perdidos que tiene el conjunto de datos final}
-\end{figure}
-
-\begin{table}[H]
-\centering
-\caption{My caption}
-\label{my-label}
-\begin{tabular}{|l|l|}
-\hline
-Nombre                   & Porcentage \\ \hline
-msno                     & 0          \\ \hline
-song\_id                 & 0          \\ \hline
-source\_system\_tab      & 0.3368     \\ \hline
-source\_screen\_name     & 5.6226     \\ \hline
-source\_type             & 0.2919     \\ \hline
-target                   & 0          \\ \hline
-city                     & 0          \\ \hline
-bd                       & 0          \\ \hline
-gender                   & 40.142     \\ \hline
-registered\_via          & 0          \\ \hline
-registration\_init\_time & 0          \\ \hline
-expiration\_date         & 0          \\ \hline
-song\_length             & 0.0015     \\ \hline
-genre\_ids               & 1.605      \\ \hline
-artist\_name             & 0.0015     \\ \hline
-composer                 & 22.7139    \\ \hline
-lyricist                 & 43.0882    \\ \hline
-language                 & 0.0020     \\ \hline
-name                     & 0.0197     \\ \hline
-isrc                     & 7.8327     \\ \hline
-\end{tabular}
-\end{table}
-
-
-Viendo esta información descartamos \textit{lyricist} y \textit{composer}
-
-En el resto de variables eliminamos las muestras con missings salvo en \textit{gender}. 
-
-\textbf{Tratamiento de los valores perdidos en \textit{gender}}.
-
-Los imputamos utilizando la clasificación que nos daría un knn.
-
 \subsection{Tratamiento de outliers}
 
 \subsection{Tratamiento de valores incorrectos}
 
 \subsection{Codificación de variables categóricas}
 
+
+\subsection{Selección de features}
 
 \subsection{Creación de nuevas variables}
 
