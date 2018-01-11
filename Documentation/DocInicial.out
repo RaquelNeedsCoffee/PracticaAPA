@@ -1,0 +1,19 @@
+\BOOKMARK [1][-]{section.1}{Descripci\363n del trabajo}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Introducci\363n}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Conjunto de datos disponible}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Notas sobre el lenguaje de programaci\363n escogido}{section.1}% 4
+\BOOKMARK [1][-]{section.2}{Trabajo Relacionado}{}% 5
+\BOOKMARK [1][-]{section.3}{Data exploration and Preprocessing}{}% 6
+\BOOKMARK [2][-]{subsection.3.1}{Tratamiento de valores perdidos}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.2}{Tratamiento de outliers}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.3}{Tratamiento de valores incorrectos}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.4}{Codificaci\363n de variables categ\363ricas}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.5}{Selecci\363n de features}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.6}{Creaci\363n de nuevas variables}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.7}{Estandarizaci\363n}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.8}{Transformaci\363n de variables}{section.3}% 14
+\BOOKMARK [1][-]{section.4}{Resampling Protocol}{}% 15
+\BOOKMARK [1][-]{section.5}{Resultados de los m\351todos lineales}{}% 16
+\BOOKMARK [1][-]{section.6}{Resultados de los m\351todos no lineales}{}% 17
+\BOOKMARK [1][-]{section.7}{Descripci\363n y justificaci\363n del modelo escogido}{}% 18
+\BOOKMARK [1][-]{section.8}{Conclusiones}{}% 19
