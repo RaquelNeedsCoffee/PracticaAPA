@@ -23,7 +23,6 @@
 \begin{document}
 \maketitle
 \clearpage
-
 \tableofcontents
 \clearpage
 
@@ -31,12 +30,13 @@
 
 
 \subsection{Introducción}
-Este trabajo consiste en elegir un problema de regresión o clasificación y generar un modelo para resolverlo, usando algunos de los métodos lineales y no lineales vistos en clase durante el curso de Aprendizaje Autónomo.\\
-Hemos elegido un problema de \href{https://www.kaggle.com/competitions}{kaggle competitions} sobre recomendación de música llamado \href{https://www.kaggle.com/c/kkbox-music-recommendation-challenge}{WSDM - KKBox's Music Recommendation Challenge}. Consiste en un dataset, proporcionado por \href{https://www.kkbox.com/intl/index.php?area=intl}{KKBOX} - servició de streaming de música asiático - con información sobre diferentes canciones, usuarios y como ha sido el acceso de los usuarios a dichas canciones. El objetivo es predecir si un usuario que ha escuchado una canción lo volverá a hacer en un periodo de tiempo determinado, ergo se trata de un problema de clasificación binaria (si el usuario volverá o no a escuchar una canción que ya ha escuchado anteriormente).
+Este trabajo consiste en elegir un problema de regresión o clasificación y generar un modelo para resolverlo. Para ello usaremos algunos de los métodos, lineales y no lineales, vistos en clase durante el curso de Aprendizaje Autónomo.\\
+Hemos elegido un problema de \href{https://www.kaggle.com/competitions}{kaggle competitions} sobre recomendación de música llamado \href{https://www.kaggle.com/c/kkbox-music-recommendation-challenge}{WSDM - KKBox's Music Recommendation Challenge}. Este consiste en un dataset, proporcionado por \href{https://www.kkbox.com/intl/index.php?area=intl}{KKBOX} - servició de streaming de música asiático - con información sobre diferentes canciones, usuarios y como ha sido el acceso de los usuarios a dichas canciones.\\
+El objetivo es predecir si un usuario que ha escuchado una canción lo volverá a hacer en un periodo de tiempo determinado, por lo tanto se trata de un problema de clasificación binaria: si el usuario volverá a escuchar o no una canción que ya ha oído anteriormente.
 
 
 \subsection{Conjunto de datos disponible}
-Kaggle nos ha proporcionado los datos en seis ficheros CSV, de los cuales usaremos cuatro para la práctica, ya que los otros dos són un conjunto de datos de muestra sobre como enviar los datos para el concurso y los datos de test también para el concurso (que no podemos usar ya que vienen sin los targets).
+Kaggle nos ha proporcionado los datos en seis ficheros CSV, de los cuales usaremos cuatro para la práctica.Los dos restantes són un conjunto de datos de muestra sobre como enviar los datos para el concurso y los datos de test para el concurso (que no nos sirven ya que vienen sin la variable target).
 
 \subsection*{train.csv}
 Contiene la información de las reproducciones de canciones por parte del usuario. Tiene las siguientes variables:
