@@ -39,7 +39,7 @@ def plot_lost_values_percent(percent_series):
         r, g, b = tableau20[i]
         tableau20[i] = (r / 255., g / 255., b / 255.)
     # plot figure size
-    plt.figure(figsize=(20, 15))
+    plt.figure(figsize=(30, 23))
     # remove top and right and ensure it shows only left and bottom framelines.
     ax = plt.subplot(111)
     ax.spines["top"].set_visible(False)
@@ -66,16 +66,16 @@ def main():
     # load data
     print("Loading data:")
     print("\t-- loading train.csv --")
-    df_train = pd.read_csv(data_path + 'train.csv', nrows=100000, dtype={'target': np.uint8})
+    df_train = pd.read_csv(data_path + 'train.csv', nrows=None, dtype={'target': np.uint8})
     print_df_info(df_train)
     print("\t-- loading members.csv --")
     df_members = pd.read_csv(data_path + 'members.csv')
     print_df_info(df_members)
     print("\t-- loading songs.csv --")
-    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=100000)
+    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=None)
     print_df_info(df_songs)
     print("\t-- loading song_extra_info.csv --")
-    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=100000)
+    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=None)
     print_df_info(df_song_extra)
     print("Data loaded")
 
