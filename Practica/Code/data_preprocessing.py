@@ -2,6 +2,7 @@ import gc
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from auxiliar_functions import print_df_info, extract_info
 
 # global
 data_path = '../Data/'
@@ -29,18 +30,17 @@ def plot_lost_values_percent(percent_series):
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
     # limit y range
-    plt.ylim(0, 50)
+    plt.ylim(0, 45)
     # ticks font and change yticks names
-    ticks_range_values_y = range(0, 50, 10)
+    ticks_range_values_y = range(0, 40, 10)
     plt.yticks(ticks_range_values_y, [str(x) + "%" for x in ticks_range_values_y], fontsize=14)
     plt.xticks(fontsize=14)
     # yticks lines across plot to help readability
     max_range_x = len(percent_series.values) + 1
-    range_values_y = range(5, 50, 5)
+    range_values_y = range(5, 40, 5)
     for y in range_values_y:
         plt.plot(range(0, max_range_x), [y] * len(range(0, max_range_x)), "--", lw=0.5, color="black", alpha=0.3)
 
-    plt.title("Dataset missing values per feature percentage")
     percent_series.plot.bar(color=tableau20)
 
 
