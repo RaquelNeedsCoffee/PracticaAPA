@@ -116,11 +116,13 @@ Hay dos grandes motivos por los que hemos eliminado features:
 \begin{itemize}
 \item La feature en cuestión es un \textbf{identificador}, es decir, es una variable cuyo único objetivo es identificar la muestra o alguna de sus partes. Los hemos utilizado para unir los distintos conjuntos de datos, pero de cara al análisis no tienen utilidad.
 \item Algunas de las variables eran \textbf{computacionalmente intratatables}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
+\item Algunas variables no son relevantes para el análisis, por no tener ninguna relación con lo que queremos clasificar, por ejemplo, el tiempo de registro de un usuario no puede dar información sobre si el usuario volverá a escuchar la canción en cuestión. 
+\item Hay dos variables que dan prácticamente la misma información, source\_system\_tab y source\_screen\_name, así que hemos decidido eliminar source\_system\_tab, puesto a que era ligeramente menos informativa. 
 \end{itemize}
 
 \begin{table}[H]
 \centering
-\caption{My caption}
+\caption{Selección de features}
 \label{my-label}
 \begin{tabular}{|l|l|}
 \hline
