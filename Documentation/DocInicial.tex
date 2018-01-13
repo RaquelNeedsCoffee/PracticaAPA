@@ -22,8 +22,12 @@
 \date{} % Sin fecha.
 
 \begin{document}
+
+\begin{titlepage}
 \maketitle
-\clearpage
+\thispagestyle{empty}
+\end{titlepage}
+\cleardoublepage
 \tableofcontents
 \clearpage
 
@@ -85,8 +89,10 @@ Contiene información extra de las canciones. Tiene las siguientes variables:
 \end{labeling}
 
 
-\subsection{Notas sobre el lenguaje de programación escogido}
-
+\subsection{Notas sobre el lenguaje de programación escogido, Python}
+El lenguaje de programación usado para realizar esta práctica tenía que ser R. Sin embargo pronto nos dimos cuenta de que, debido al tamaño de los datos de muestra, nuestro desconocimiento de como usarlo para trabajar con grandes cantidades de datos eficientemente y el material de que disponemos, nos iba a ser imposible trabajar con este lenguaje.\\
+Debido a esto, hemos decidido usar Python, lenguaje muy usado en Machine Learning y con muchos recursos para trabajar comodamente en este ambito. Python es bastante más eficiente que R gestionando memória y más rápido en cuanto a tiempo de ejecución.\\
+Usar Python no ha solucionado todos los problemas generados por tener tantos datos, pero nos ha permitido trabajar mejor y realizar muchas cosas que con R nos habrian sido o imposibles o muy dificiles.
 
 \section{Trabajo Relacionado}
 
@@ -100,33 +106,16 @@ Contiene información extra de las canciones. Tiene las siguientes variables:
 %\end{itemize}
 
 
-\section{Data exploration and Preprocessing}
-
-Los datos iniciales son: 
-\begin{itemize}
-\item train.csv
-\item test.csv
-\item songs.csv
-\item members.csv
-\item song\_extra\_info.csv
-\end{itemize}
-
-La idea inicial es mejorar train utilizando songs, members y song\_extra\_info y convertirlo en un único train y test. 
-
-Después pasar todas las variables categóricasa numéricas y aplicarle un MCA.
-
-Debería quedar: 
-\begin{itemize}
-\item clean\_train.csv
-\item clean\_test.csv
-\end{itemize}
+\section{Estudio y procesamiento de los datos}
+Inicialmente contamos con cinco conjuntos de datos: train, members, songs y song\_extra\_info, que hemos juntado en un solo conjunto de datos de donde sacaremos los conjuntos de training y de test. Después hemos convertido todas las variables de categóricas a numéricas y aplicado MCA.\\
+Finalmente nos quedan dos conjuntos de datos que hemos guardado en los ficheros clean\_train.csv y clean\_test.csv.
 
 \subsection{Selección de features}
 Hay dos grandes motivos por los que hemos eliminado features: 
 
 \begin{itemize}
 \item La feature en cuestión es un \textbf{identificador}, es decir, es una variable cuyo único objetivo es identificar la muestra o alguna de sus partes. Los hemos utilizado para unir los distintos conjuntos de datos, pero de cara al análisis no tienen utilidad.
-\item Algunas de las variables eran \textbf{computacionalmente intratatable}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
+\item Algunas de las variables eran \textbf{computacionalmente intratatables}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
 \end{itemize}
 
 \begin{table}[H]
@@ -151,7 +140,7 @@ isrc                     & Es solo un identificador    \\ \hline
 \begin{figure}[H]
 \centering
 \includegraphics[width=1\textwidth]{Images/missings_percentage.png}
-\caption{En esta gráfica podemos ver porcentage de valores perdidos en cada variable del conjunto final de datos.}
+\caption{En esta gráfica podemos ver el porcentage de valores perdidos en cada variable del conjunto final de datos.}
 \end{figure}
 
 \begin{table}[H]
@@ -183,15 +172,14 @@ name                     & 0.0197     \\ \hline
 isrc                     & 7.8327     \\ \hline
 \end{tabular}
 \end{table}
+Viendo esta información descartamos las variables \textit{lyricist} y \textit{composer} por el alto número de datos que faltan en ellas y 
 
+\textbf{!!!!!!!!!! Y por ser variables categoricas con muchas categorias y que añaden mucha complejidad. !!!!!!
+Hacer codigo cuente numero de categorias que saldrian de cada uno de ellos, añadir la info aqui, mejorar el texto.
+}
 
-Viendo esta información descartamos \textit{lyricist} y \textit{composer}
-
-En el resto de variables eliminamos las muestras con missings salvo en \textit{gender}. 
-
-\textbf{Tratamiento de los valores perdidos en \textit{gender}}.
-
-Los imputamos utilizando la clasificación que nos daría un knn.
+Eliminamos las muestras con missings en el resto de variables salvo en \textit{gender}, ya que tienen un bajo número de missings.\\
+Los datos de \textit{gender} los hemos imputado mediante KNN.
 
 \subsection{Tratamiento de outliers}
 
