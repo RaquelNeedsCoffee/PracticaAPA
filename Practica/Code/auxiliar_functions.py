@@ -25,11 +25,11 @@ def data_from_filesMCA():
     print('loading data...')
     warnings.filterwarnings('ignore')
     X_train = pd.read_csv('../Data/preprocessedTrainMCA.csv', compact_ints=True)
-    X_test = pd.read_csv('../Data/preprocessedTestMCA.csv', compact_ints=True)
+    #X_test = pd.read_csv('../Data/preprocessedTestMCA.csv', compact_ints=True)
     X_val = pd.read_csv('../Data/preprocessedValMCA.csv', compact_ints=True)
 
     y_train = X_train['target']
-    y_test = X_test['target']
+    #y_test = X_test['target']
     y_val = X_val['target']
     print('\nLoaded data:')
     X_train = X_train.drop(columns=['target'])
@@ -41,7 +41,7 @@ def data_from_filesMCA():
     print('Test shape Y: ', y_test.shape)
     print('Val shape: ', X_val.shape)
     print('Test shape: ', y_val.shape)
-    return X_train, X_test, X_val, y_train, y_test, y_val
+    return X_train, X_val, y_train, y_val# X_test,y_test,
 
 
 def save_model(name, model):
