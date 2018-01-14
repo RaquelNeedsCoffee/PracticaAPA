@@ -3,36 +3,11 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import LabelBinarizer
 from auxiliar_functions import print_df_info, extract_info
 
 # global
 data_path = '../Data/'
 plt.interactive(True)
-
-
-def fill_na_gender_knn(members):
-    index = members['gender'].isnull()
-    x_test = members.ix[index, members.columns != 'gender']
-    msno_test = x_test['msno']
-    x_test = x_test.ix[:, x_test.columns != 'msno']
-
-    x_train = members.dropna(subset=['gender'])
-    y_train = x_train.ix[:, x_train.columns == 'gender']
-    x_train = x_train.ix[:, x_train.columns != 'gender']
-    msno_train = x_train['msno']
-    x_train = x_train.ix[:, x_train.columns != 'msno']
-
-    knn = KNeighborsClassifier(algorithm='ball_tree', n_jobs=-1)
-    knn_trained = knn.fit(x_train, y_train.values.ravel())
-    new_y = knn_trained.predict(x_test)
-    x_test['gender'] = new_y
-    x_test['msno'] = msno_test
-    x_train['gender'] = y_train
-    x_train['msno'] = msno_train
-    x_train = x_train.append(x_test)
-    return x_train
 
 
 def plot_lost_values_percent(percent_series):
@@ -93,6 +68,38 @@ def bd_nanify_outlier(age):
     if age < 16 or age > 90:
         age = np.nan
     return age
+
+
+def process_isrc(isrc):
+    song_year = np.nan
+    if isinstance(isrc, str) and len(isrc) >= 12:
+        yy = int(isrc[5:7])
+        if yy > 20:
+            song_year = 1900 + yy
+        else:
+            song_year = 2000 + yy
+    return song_year
+
+
+def count_genres_freq(df):
+    freq_map = {}
+    for g in df['genre_ids']:
+        if g is not np.nan:
+            song_genres = g.split('|')
+            for sg in song_genres:
+                if sg in freq_map:
+                    freq_map[sg] += 1
+                else:
+                    freq_map[sg] = 1
+    return freq_map
+
+
+def get_max_genre(song_genres, genres_count_dict):
+    song_genres = song_genres.split('|')
+    song_genres_dict = {}
+    for k in song_genres:
+        song_genres_dict[k] = genres_count_dict[k]
+    return max(song_genres_dict, key=song_genres_dict.get)
 
 
 def main():
