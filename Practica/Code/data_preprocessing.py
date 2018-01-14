@@ -46,7 +46,7 @@ def plot_lost_values_percent(percent_series):
 
 
 def split_feature(feature):
-    return re.split('[\|;,\\\\]', str(feature).replace(' ', ''))
+    return re.split('[|;,\\\\]', str(feature).replace(' ', ''))
 
 
 def make_set_categories(dfeature):
@@ -62,6 +62,44 @@ def make_set_categories(dfeature):
     s_composers = s_composers.apply(split_feature)
     s.update([item for sublist in s_composers for item in sublist])
     return s
+
+
+def bd_nanify_outlier(age):
+    if age < 16 or age > 90:
+        age = np.nan
+    return age
+
+
+def process_isrc(isrc):
+    song_year = np.nan
+    if isinstance(isrc, str) and len(isrc) >= 12:
+        yy = int(isrc[5:7])
+        if yy > 20:
+            song_year = 1900 + yy
+        else:
+            song_year = 2000 + yy
+    return song_year
+
+
+def count_genres_freq(df):
+    freq_map = {}
+    for g in df['genre_ids']:
+        if g is not np.nan:
+            song_genres = g.split('|')
+            for sg in song_genres:
+                if sg in freq_map:
+                    freq_map[sg] += 1
+                else:
+                    freq_map[sg] = 1
+    return freq_map
+
+
+def get_max_genre(song_genres, genres_count_dict):
+    song_genres = song_genres.split('|')
+    song_genres_dict = {}
+    for k in song_genres:
+        song_genres_dict[k] = genres_count_dict[k]
+    return max(song_genres_dict, key=song_genres_dict.get)
 
 
 def main():
