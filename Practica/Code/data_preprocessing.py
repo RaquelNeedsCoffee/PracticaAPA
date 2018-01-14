@@ -1,4 +1,5 @@
 import gc
+import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,18 +31,37 @@ def plot_lost_values_percent(percent_series):
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
     # limit y range
-    plt.ylim(0, 45)
+    plt.ylim(0, 50)
     # ticks font and change yticks names
-    ticks_range_values_y = range(0, 40, 10)
+    ticks_range_values_y = range(0, 41, 10)
     plt.yticks(ticks_range_values_y, [str(x) + "%" for x in ticks_range_values_y], fontsize=14)
     plt.xticks(fontsize=14)
     # yticks lines across plot to help readability
     max_range_x = len(percent_series.values) + 1
-    range_values_y = range(5, 40, 5)
+    range_values_y = range(5, 46, 5)
     for y in range_values_y:
         plt.plot(range(0, max_range_x), [y] * len(range(0, max_range_x)), "--", lw=0.5, color="black", alpha=0.3)
 
     percent_series.plot.bar(color=tableau20)
+
+
+def split_feature(feature):
+    return re.split('[\|;,\\\\]', str(feature).replace(' ', ''))
+
+
+def make_set_categories(dfeature):
+    n_rows = len(dfeature)
+    s = set()
+    len_subset = 100000
+    n_steps = int(n_rows / len_subset)
+    for i in range(0, n_steps):
+        s_composers = dfeature[i * len_subset:(i + 1) * len_subset - 1].dropna()
+        s_composers = s_composers.apply(split_feature)
+        s.update([item for sublist in s_composers for item in sublist])
+    s_composers = dfeature[n_steps * len_subset:(n_steps + 1) * len_subset - 1].dropna()
+    s_composers = s_composers.apply(split_feature)
+    s.update([item for sublist in s_composers for item in sublist])
+    return s
 
 
 def main():
