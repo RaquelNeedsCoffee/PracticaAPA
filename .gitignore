@@ -74,6 +74,7 @@ Documentation/*.pdf
 Documentation/*.synctex.gz
 Documentation/*.toc
 Documentation/*.dvi
+Practica/Documentation/DocInicial.pdf
 
 Practica/Code/\.ipynb_checkpoints/
 
