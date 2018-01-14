@@ -3,11 +3,36 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelBinarizer
 from auxiliar_functions import print_df_info, extract_info
 
 # global
 data_path = '../Data/'
 plt.interactive(True)
+
+
+def fill_na_gender_knn(members):
+    index = members['gender'].isnull()
+    x_test = members.ix[index, members.columns != 'gender']
+    msno_test = x_test['msno']
+    x_test = x_test.ix[:, x_test.columns != 'msno']
+
+    x_train = members.dropna(subset=['gender'])
+    y_train = x_train.ix[:, x_train.columns == 'gender']
+    x_train = x_train.ix[:, x_train.columns != 'gender']
+    msno_train = x_train['msno']
+    x_train = x_train.ix[:, x_train.columns != 'msno']
+
+    knn = KNeighborsClassifier(algorithm='ball_tree', n_jobs=-1)
+    knn_trained = knn.fit(x_train, y_train.values.ravel())
+    new_y = knn_trained.predict(x_test)
+    x_test['gender'] = new_y
+    x_test['msno'] = msno_test
+    x_train['gender'] = y_train
+    x_train['msno'] = msno_train
+    x_train = x_train.append(x_test)
+    return x_train
 
 
 def plot_lost_values_percent(percent_series):
@@ -46,7 +71,7 @@ def plot_lost_values_percent(percent_series):
 
 
 def split_feature(feature):
-    return re.split('[\|;,\\\\]', str(feature).replace(' ', ''))
+    return re.split('[|;,\\\\]', str(feature).replace(' ', ''))
 
 
 def make_set_categories(dfeature):
@@ -62,6 +87,12 @@ def make_set_categories(dfeature):
     s_composers = s_composers.apply(split_feature)
     s.update([item for sublist in s_composers for item in sublist])
     return s
+
+
+def bd_nanify_outlier(age):
+    if age < 16 or age > 90:
+        age = np.nan
+    return age
 
 
 def main():
