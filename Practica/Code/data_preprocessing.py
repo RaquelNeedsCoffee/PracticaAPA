@@ -7,10 +7,18 @@ from auxiliar_functions import print_df_info, extract_info
 
 # global
 data_path = '../Data/'
-plt.interactive(True)
+img_path = '../Documentation/Images/'
+#plt.interactive(True)
 
 
 def plot_lost_values_percent(percent_series):
+    """Barplot of lost values. Will save it at img_path + 'lost_values_percent.svg'
+
+    Args:
+        percent_series (pandas.Series): with just one row of percentages.
+
+    """
+
     # These are the "Tableau 20" colors as RGB.
     tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
                  (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
@@ -23,7 +31,7 @@ def plot_lost_values_percent(percent_series):
         r, g, b = tableau20[i]
         tableau20[i] = (r / 255., g / 255., b / 255.)
     # plot figure size
-    plt.figure(figsize=(30, 23))
+    plt.figure(figsize=(30, 22))
     # remove top and right and ensure it shows only left and bottom framelines.
     ax = plt.subplot(111)
     ax.spines["top"].set_visible(False)
@@ -43,9 +51,20 @@ def plot_lost_values_percent(percent_series):
         plt.plot(range(0, max_range_x), [y] * len(range(0, max_range_x)), "--", lw=0.5, color="black", alpha=0.3)
 
     percent_series.plot.bar(color=tableau20)
+    plt.savefig(img_path + 'lost_values_percent.svg')
 
 
 def split_feature(feature):
+    """Split and format feature. 
+    Changes type of feature to string, remove spaces and splits over characters '|', '\\', ';' and ','.
+
+    Args:
+        feature: parameter to be formated.
+
+    Returns:
+        list of string: feature formated and splitted.
+
+    """
     return re.split('[|;,\\\\]', str(feature).replace(' ', ''))
 
 
@@ -106,16 +125,16 @@ def main():
     # load data
     print("Loading data:")
     print("\t-- loading train.csv --")
-    df_train = pd.read_csv(data_path + 'train.csv', nrows=None, dtype={'target': np.uint8})
+    df_train = pd.read_csv(data_path + 'train.csv', nrows=10000, dtype={'target': np.uint8})
     print_df_info(df_train)
     print("\t-- loading members.csv --")
     df_members = pd.read_csv(data_path + 'members.csv')
     print_df_info(df_members)
     print("\t-- loading songs.csv --")
-    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=None)
+    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=10000)
     print_df_info(df_songs)
     print("\t-- loading song_extra_info.csv --")
-    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=None)
+    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=10000)
     print_df_info(df_song_extra)
     print("Data loaded")
 
