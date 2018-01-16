@@ -48,7 +48,7 @@
 
 Este trabajo consiste en elegir un problema de regresión o clasificación y generar un modelo para resolverlo. Para ello usaremos algunos de los métodos, lineales y no lineales, vistos en clase durante el curso de Aprendizaje Autónomo.\\
 
-Hemos elegido un problema de \href{https://www.kaggle.com/competitions}{kaggle competitions} sobre recomendación de música llamado \href{https://www.kaggle.com/c/kkbox-music-recommendation-challenge}{WSDM - KKBox's Music Recommendation Challenge}. Este consiste en un dataset, proporcionado por \href{https://www.kkbox.com/intl/index.php?area=intl}{KKBOX} - servició de streaming de música asiático - con información sobre diferentes canciones, usuarios y como ha sido el acceso de los usuarios a dichas canciones.\\
+Hemos elegido un problema de \href{https://www.kaggle.com/competitions}{kaggle competitions} sobre recomendación de música llamado \href{https://www.kaggle.com/c/kkbox-music-recommendation-challenge}{WSDM - KKBox's Music Recommendation Challenge}. Este consiste en un conjunto de datos, proporcionado por \href{https://www.kkbox.com/intl/index.php?area=intl}{KKBOX} - servició de streaming de música asiático - con información sobre diferentes canciones, usuarios y como ha sido el acceso de los usuarios a dichas canciones.\\
 
 Nuestro objetivo es predecir si un usuario que ha escuchado una canción lo volverá a hacer en un periodo de tiempo determinado, por lo tanto se trata de un problema de clasificación binaria: si el usuario volverá a escuchar o no una canción que ya ha oído anteriormente.
 
@@ -110,18 +110,16 @@ Contiene información extra de las canciones. Tiene las siguientes variables:
 \item [isrc] \href{https://en.wikipedia.org/wiki/International_Standard_Recording_Code}{International Standard Recording Code}. En teoría se puede usar como identificador de la canción, pero hay codigos ISRC sin verificar. Contiene información de la canción aunque puede ser erronea o confusa como el country code, que no se refiere a la canción si no a la agencia que proporciona el codigo ISRC.
 \end{labeling}
 
-
-
-
 \subsection{Notas sobre el lenguaje de programación escogido, Python}
+
 El lenguaje de programación usado para realizar esta práctica tenía que ser R. Sin embargo pronto nos dimos cuenta de que, debido al tamaño de los datos de muestra, nuestro desconocimiento de como usarlo para trabajar con grandes cantidades de datos eficientemente y el material de que disponemos, nos iba a ser imposible trabajar con este lenguaje.\\
 
 Debido a esto, hemos decidido usar Python, lenguaje muy usado en Machine Learning y con muchos recursos para trabajar comodamente en este ambito. Python es bastante más eficiente que R gestionando memória y más rápido en cuanto a tiempo de ejecución.\\
 
 Usar Python no ha solucionado todos los problemas generados por tener tantos datos, pero nos ha permitido trabajar mejor y realizar muchas cosas que con R nos habrian sido o imposibles o muy dificiles.
 
-\section{Trabajo Relacionado}
 
+\section{Trabajo Relacionado}
 
 %\section{Posibles Métodos}
 %\begin{itemize}
@@ -132,97 +130,107 @@ Usar Python no ha solucionado todos los problemas generados por tener tantos dat
 %\end{itemize}
 
 
-\section{Data exploration and Preprocessing}
+\section{Análisis y preprocesamiento de los datos}
 
-Partiendo de los datos iniciales (procedentes de los ficheros nombrados en el apartado 1.2) hemos generado un solo dataframe. Para hacerlo hemos unido la información de \textbf{members} y \textbf{train} por \textit{msno}, y el resultado lo hemos unido a \textbf{songs} y \textbf{song\_extra\_info} por \textit{song\_id}. Al nuevo dataset con toda la información lo llamaremos \textbf{merged}.\\
+\subsection{Análisis inicial de los datos}
 
-Este dataframe, después de preprocesarlo, lo convertiremos en los dos conjuntos \textit{train} y \textit{test}, que guardaremos en los ficheros \textbf{clean\_train.csv} y \textbf{clean\_test.csv}.
-
-\subsection{Analísis de los datos}
-
-El nuevo dataset \textbf{merged} se compone de 20 columnas o variables y 7377418 filas diferentes. La siguiente tabla nos muestra algo de información que nos interesa sobre este:
-
+Partiendo de los datos iniciales (descritos en el apartado \textit{Conjunto de datos disponible}) hemos generado un solo data frame uniendo primero la información de \textbf{members} y \textbf{train} por \textit{msno}, y luego uniendo el resultado a \textbf{songs} y \textbf{song\_extra\_info} por \textit{song\_id}. Al nuevo conjunto de datos con toda la información lo llamaremos \textbf{merged}. El nuevo conjunto de datos se compone de $20$ variables y $7377418$ muestras diferentes. La siguiente tabla nos muestra información sobre los valores perdidos en cada variable y su tipo:
 \begin{table}[H]
 \centering
-\rowcolors{1}{light-gray}{white}
+\rowcolors{1}{white}{light-gray}
 \begin{tabular}{l*{4}l}
 \hiderowcolors
-\textbf{Nombre}          & \textbf{Valores perdidos} & \textbf{Porcentage}  & \textbf{Tipo de datos} \\
+\textbf{Variable}          & \textbf{Valores perdidos} & \textbf{Porcentage}  & \textbf{Tipo de datos} \\
 \showrowcolors
-\hline
-msno                     & 0                 & 0           & categóricos (object)                    \\
-song\_id                 & 0                 & 0           & categóricos (object)                    \\
-source\_system\_tab      & 24849             & 0.3368      & categóricos (object)                    \\
-source\_screen\_name     & 414804            & 5.6226      & categóricos (object)                    \\
-source\_type             & 21539             & 0.2919      & categóricos (object)                    \\
-target                   & 0                 & 0           & categóricos (uint8)                     \\
-city                     & 0                 & 0           & categóricos (int64)                     \\
-bd                       & 0                 & 0           & numéricos (int64)                       \\
-gender                   & 2961479           & 40.142      & categóricos (object)                    \\
-registered\_via          & 0                 & 0           & categóricos (int64)                     \\
-registration\_init\_time & 0                 & 0           & numéricos (int64) (\textit{\%Y\%m\%d})  \\
-expiration\_date         & 0                 & 0           & numéricos (int64)  (\textit{\%Y\%m\%d}) \\
-song\_length             & 114               & 0.0015      & numéricos (float64)                     \\
-genre\_ids               & 118455            & 1.605       & categóricos (object)                    \\
-artist\_name             & 114               & 0.0015      & categóricos (object)                    \\
-composer                 & 1675706           & 22.7139     & categóricos (object)                    \\
-lyricist                 & 3178798           & 43.0882     & categóricos (object)                    \\
-language                 & 150               & 0.0020      & categóricos (float64)                   \\
-name                     & 1457              & 0.0197      & categóricos (object)                    \\
-isrc                     & 577858            & 7.8327      & categóricos (object)                    \\
+\hline 
+\textbf{msno}                     & 0                 & 0           & categóricos (object)                    \\
+\textbf{song\_id}                 & 0                 & 0           & categóricos (object)                    \\
+\textbf{source\_system\_tab}      & 24849             & 0.3368      & categóricos (object)                    \\
+\textbf{source\_screen\_name}     & 414804            & 5.6226      & categóricos (object)                    \\
+\textbf{source\_type}             & 21539             & 0.2919      & categóricos (object)                    \\
+\textbf{target}                   & 0                 & 0           & categóricos (uint8)                     \\
+\textbf{city}                     & 0                 & 0           & categóricos (int64)                     \\
+\textbf{bd}                       & 0                 & 0           & numéricos (int64)                       \\
+\textbf{gender}                   & 2961479           & 40.142      & categóricos (object)                    \\
+\textbf{registered\_via}          & 0                 & 0           & categóricos (int64)                     \\
+\textbf{registration\_init\_time} & 0                 & 0           & numéricos (int64) (\textit{\%Y\%m\%d})  \\
+\textbf{expiration\_date}         & 0                 & 0           & numéricos (int64)  (\textit{\%Y\%m\%d}) \\
+\textbf{song\_length}             & 114               & 0.0015      & numéricos (float64)                     \\
+\textbf{genre\_ids}               & 118455            & 1.605       & categóricos (object)                    \\
+\textbf{artist\_name}             & 114               & 0.0015      & categóricos (object)                    \\
+\textbf{composer}                 & 1675706           & 22.7139     & categóricos (object)                    \\
+\textbf{lyricist}                 & 3178798           & 43.0882     & categóricos (object)                    \\
+\textbf{language}                 & 150               & 0.0020      & categóricos (float64)                   \\
+\textbf{name}                     & 1457              & 0.0197      & categóricos (object)                    \\
+\textbf{isrc}                     & 577858            & 7.8327      & categóricos (object)                    \\
 \end{tabular}
-\caption{Información general sobre el dataset merged.}
+\caption{\textit{Información general sobre el conjunto de datos merged.}}
 \end{table}
+En la tabla siguiente vemos de cuantas categorías consta cada variable categórica. Esto es muy importante en nuestro caso porque contamos con un conjunto de datos muy grande y el número de categorías añade mucha complejidad a los datos cuando queramos diseñar los diferentes modelos:
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{2}l}
+\hiderowcolors
+\textbf{Variable}                   & \textbf{Número de categorías} \\
+\showrowcolors
+\hline 
+\textbf{msno}                     & 30755   \\
+\textbf{song\_id}                 & 359966  \\
+\textbf{source\_system\_tab}      & 8       \\
+\textbf{source\_screen\_name}     & 20      \\
+\textbf{source\_type}             & 12      \\
+\textbf{target}                   & 2       \\
+\textbf{city}                     & 21      \\
+\textbf{gender}                   & 2       \\
+\textbf{registered\_via}          & 5       \\
+\textbf{genre\_ids}               & 166     \\
+\textbf{artist\_name}             & 40582   \\
+\textbf{composer}                 & 81566   \\
+\textbf{lyricist}                 & 38473   \\
+\textbf{language}                 & 10      \\
+\textbf{name}                     & 234144  \\
+\textbf{isrc}                     & 269760  \\
+\end{tabular}
+\caption{\textit{Número de categorías en las variables categóricas del conjunto de datos.}}
+\end{table}
+Con esta información pasaremos a tratar los datos para preprocesarlos.
 
 \subsection{Tratamiento de valores perdidos}
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=1\textwidth]{Images/lost_values_percent.png}
-\caption{En esta gráfica podemos ver porcentage de valores perdidos en cada variable del conjunto final de datos.}
+\caption{\textit{En esta gráfica podemos ver porcentage de valores perdidos en cada variable del conjunto final de datos.}}
 \end{figure}
 
-\begin{table}[H]
-\centering
-\label{my-label}
-\begin{tabular}{|l|l|}
-\hline
-Nombre                   & Porcentage \\ \hline
-msno                     & 0          \\ \hline
-song\_id                 & 0          \\ \hline
-source\_system\_tab      & 0.3368     \\ \hline
-source\_screen\_name     & 5.6226     \\ \hline
-source\_type             & 0.2919     \\ \hline
-target                   & 0          \\ \hline
-city                     & 0          \\ \hline
-bd                       & 0          \\ \hline
-gender                   & 40.142     \\ \hline
-registered\_via          & 0          \\ \hline
-registration\_init\_time & 0          \\ \hline
-expiration\_date         & 0          \\ \hline
-song\_length             & 0.0015     \\ \hline
-genre\_ids               & 1.605      \\ \hline
-artist\_name             & 0.0015     \\ \hline
-composer                 & 22.7139    \\ \hline
-lyricist                 & 43.0882    \\ \hline
-language                 & 0.0020     \\ \hline
-name                     & 0.0197     \\ \hline
-isrc                     & 7.8327     \\ \hline
-\end{tabular}
-\caption{Porcentage de valores perdidos de cada variable}
-\end{table}
+Como podemos ver en \textit{Table 1} y \textit{Figure 1} tenemos varias variables donde hay valores perdidos y que trataremos de diferentes maneras.\\
 
-
-Viendo esta información descartamos \textit{lyricist} y \textit{composer}
-
-En el resto de variables eliminamos las muestras con missings salvo en \textit{gender}. 
-
-\textbf{Tratamiento de los valores perdidos en \textit{gender}}.
-
-Los imputamos utilizando la clasificación que nos daría un knn.
+\begin{itemize}
+\item Las variables \textit{lyricist} y \textit{gender} hemos decidido eliminarlas por tener un porcentage muy alto de valores perdidos, más de un $40\%$. 
+\item La variable \textit{composer} también hemos decidido eliminarla. Aunque el porcentage de valores perdidos en esta variable es un $22.71\%$, un valor alto pero que podriamos haber decidido imputar por ejemplo, cuenta con $81566$ categorías diferentes. Teniendo en cuenta el tamaño de nuestro conjunto de datos, la complejidad que añade esta variable nos es intratable con el conocimiento y material del que disponemos.
+\item El resto de variables tienen menos de un $10\%$ de valores perdidos. Podriamos haberlos imputado a partir del resto de datos, pero disponemos de un conjunto de datos lo bastante grande como para poder eliminar las muestras donde aparecen valores nulos sin problemas.
+\end{itemize}
+Después de tratar los valores perdidos en el conjunto de datos este consta de 17 variables y 6317407 muestras.
 
 \subsection{Tratamiento de outliers}
 
-\subsection{Tratamiento de valores incorrectos}
+La única variable que contiene outliers es \textit{bd}, que representa la edad de un usuario, y tiene valores imposibles (como 0 años). Lo primero que hemos hecho ha sido eliminarlos, convirtiendo los valores menores a 16 y los mayores a 90 en valores nulos.\\
+
+Habiamos pensado en imputar el valor de los outliers mediante KNN, pero al convertirlos en valores nulos hemos visto que un $39.68\%$ de \textit{bd} són outliers. Al ver esto hemos decidido que lo mejor era simplemente eliminar esta variable.
+
+\subsection{Creación de nuevas variables}
+
+La variable \textit{ISRC} representa el \href{https://en.wikipedia.org/wiki/International_Standard_Recording_Code}{International Standard Recording Code} de la canción. Este codigo tiene un formato de 12 carácteres y cuatro partes de la forma CC-XXX-YY-NNNNN, donde:
+
+\begin{labeling}{source\_screen\_name}
+\item [CC] identificador del país del emisor del código ISRC.
+\item [XXX] codigo numérico identificador del emisor del código ISRC.
+\item [YY] dos últimos digitos del año en que el código ISRC fue asignado a la grabación.
+\item [NNNNN] identificador numérico de la grabación.
+\end{labeling}
+
+De esta variable crearemos una nueva variable con el año en que se registro el codigo de la grabación, ya que nos ha parecido un valor representativo para el conjunto, a la que llamaremos \textit{song\_year}. Para hacerlo cogeremos los dos dígitos YY del código ISRC, los valores mayores a 18 los convertimos en valores numéricos de la forma 19YY, el resto de la forma 20YY.
 
 \subsection{Selección de features}
 Hay dos grandes motivos por los que hemos eliminado features: 
@@ -250,9 +258,6 @@ isrc                     & Es solo un identificador    \\ \hline
 \end{table}
 
 \subsection{Codificación de variables categóricas}
-
-
-\subsection{Creación de nuevas variables}
 
 \subsection{Estandarización}
 

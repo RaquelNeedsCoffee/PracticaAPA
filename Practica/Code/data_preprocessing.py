@@ -111,7 +111,7 @@ def process_isrc(isrc):
     song_year = np.nan
     if isinstance(isrc, str) and len(isrc) >= 12:
         yy = int(isrc[5:7])
-        if yy > 20:
+        if yy > 18:
             song_year = 1900 + yy
         else:
             song_year = 2000 + yy
