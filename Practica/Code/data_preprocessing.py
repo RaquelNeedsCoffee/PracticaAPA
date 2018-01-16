@@ -142,7 +142,7 @@ def get_max_genre(song_genres, genres_count_dict):
 
     :param song_genres: genre_ids of a song. String format separated with '|'.
     :param genres_count_dict: dictionary of genre_ids and frequencies.
-    :return: the most frequent genre_id of the song in the dictionary.
+    :return: the most frequent genre_id of the song in the dictionary.d
     """
     song_genres = song_genres.split('|')
     song_genres_dict = {}
