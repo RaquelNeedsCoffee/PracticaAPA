@@ -8,17 +8,15 @@ from auxiliar_functions import print_df_info, extract_info
 # global
 data_path = '../Data/'
 img_path = '../Documentation/Images/'
-#plt.interactive(True)
+# plt.interactive(True)
 
 
 def plot_lost_values_percent(percent_series):
-    """Barplot of lost values. Will save it at img_path + 'lost_values_percent.svg'
+    """Barplot of lost value percentages. Will save it at img_path + 'lost_values_percent.svg'
 
-    Args:
-        percent_series (pandas.Series): with just one row of percentages.
-
+    :param percent_series: pandas.Series with only one row of percentages.
+    :return:
     """
-
     # These are the "Tableau 20" colors as RGB.
     tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
                  (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
@@ -51,45 +49,65 @@ def plot_lost_values_percent(percent_series):
         plt.plot(range(0, max_range_x), [y] * len(range(0, max_range_x)), "--", lw=0.5, color="black", alpha=0.3)
 
     percent_series.plot.bar(color=tableau20)
-    plt.savefig(img_path + 'lost_values_percent.svg')
+    plt.savefig(img_path + 'lost_values_percent.png')
 
 
 def split_feature(feature):
-    """Split and format feature. 
+    """Split and format feature.
     Changes type of feature to string, remove spaces and splits over characters '|', '\\', ';' and ','.
 
-    Args:
-        feature: parameter to be formated.
-
-    Returns:
-        list of string: feature formated and splitted.
-
+    :param feature: parameter to be formated.
+    :return: feature formated and splitted.
     """
+
     return re.split('[|;,\\\\]', str(feature).replace(' ', ''))
 
 
-def make_set_categories(dfeature):
+def make_set_categories(dfeature, split=True):
+    """Search different categories in the data frame feature,
+    working with subsets of it to avoid memory errors.
+
+    :param dfeature: pandas data frame feature column.
+    :param split: True to split and format the values, False otherwise.
+    :return: set with the supposed categories of the feature.
+    """
     n_rows = len(dfeature)
     s = set()
+
     len_subset = 100000
     n_steps = int(n_rows / len_subset)
     for i in range(0, n_steps):
-        s_composers = dfeature[i * len_subset:(i + 1) * len_subset - 1].dropna()
-        s_composers = s_composers.apply(split_feature)
-        s.update([item for sublist in s_composers for item in sublist])
-    s_composers = dfeature[n_steps * len_subset:(n_steps + 1) * len_subset - 1].dropna()
-    s_composers = s_composers.apply(split_feature)
-    s.update([item for sublist in s_composers for item in sublist])
+        subset_feature = dfeature[i * len_subset:(i + 1) * len_subset - 1].dropna()
+        if split:
+            subset_feature = subset_feature.apply(split_feature)
+            subset_feature = [item for sublist in subset_feature for item in sublist]
+        s.update(subset_feature)
+
+    subset_feature = dfeature[n_steps * len_subset:(n_steps + 1) * len_subset - 1].dropna()
+    if split:
+        subset_feature = subset_feature.apply(split_feature)
+        subset_feature = [item for sublist in subset_feature for item in sublist]
+    s.update(subset_feature)
     return s
 
 
 def bd_nanify_outlier(age):
+    """If the age is an outlier, converts it to np.nan.
+
+    :param age: integer.
+    :return: np.nan if outlier, age otherwise.
+    """
     if age < 16 or age > 90:
         age = np.nan
     return age
 
 
 def process_isrc(isrc):
+    """Takes song_year info from the isrc.
+
+    :param isrc: string with the ISRC code.
+    :return: year if correct ISRC, np.nan otherwise.
+    """
     song_year = np.nan
     if isinstance(isrc, str) and len(isrc) >= 12:
         yy = int(isrc[5:7])
@@ -101,6 +119,12 @@ def process_isrc(isrc):
 
 
 def count_genres_freq(df):
+    """Counts the frequency of each genre_id of the data frame in itself.
+
+    :param df: pandas data frame.
+    :return: map (dictionary) with the diferent genres on 'genre_ids' as keys
+    and the number each genre_id appears as values.
+    """
     freq_map = {}
     for g in df['genre_ids']:
         if g is not np.nan:
@@ -114,6 +138,12 @@ def count_genres_freq(df):
 
 
 def get_max_genre(song_genres, genres_count_dict):
+    """Gets the most frequent genre_id of the song.
+
+    :param song_genres: genre_ids of a song. String format separated with '|'.
+    :param genres_count_dict: dictionary of genre_ids and frequencies.
+    :return: the most frequent genre_id of the song in the dictionary.
+    """
     song_genres = song_genres.split('|')
     song_genres_dict = {}
     for k in song_genres:
@@ -124,17 +154,18 @@ def get_max_genre(song_genres, genres_count_dict):
 def main():
     # load data
     print("Loading data:")
+    rows = 10000
     print("\t-- loading train.csv --")
-    df_train = pd.read_csv(data_path + 'train.csv', nrows=10000, dtype={'target': np.uint8})
+    df_train = pd.read_csv(data_path + 'train.csv', nrows=rows, dtype={'target': np.uint8})
     print_df_info(df_train)
     print("\t-- loading members.csv --")
     df_members = pd.read_csv(data_path + 'members.csv')
     print_df_info(df_members)
     print("\t-- loading songs.csv --")
-    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=10000)
+    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=rows)
     print_df_info(df_songs)
     print("\t-- loading song_extra_info.csv --")
-    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=10000)
+    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=rows)
     print_df_info(df_song_extra)
     print("Data loaded")
 

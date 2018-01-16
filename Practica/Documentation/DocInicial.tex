@@ -1,3 +1,4 @@
+\PassOptionsToPackage{table}{xcolor}
 \documentclass[a4paper]{article}
 
 %% Language and font encodings
@@ -18,40 +19,63 @@
 \addtokomafont{labelinglabel}{\bfseries}
 
 \title{Music recomendation}
-\author{Raquel Leandra Pérez Arnal i Adrián Sánchez Albanell}
+\author{Raquel Leandra Pérez Arnal y Adrián Sánchez Albanell}
 \date{} % Sin fecha.
 
+\definecolor{light-gray}{gray}{0.95}
+
 \begin{document}
-\maketitle
+\begin{titlepage}
+	\centering
+	{\scshape\LARGE Grado en Ingenieria Informatica - UPC \par}
+	\vspace{1cm}
+	{\scshape\Large Proyecto Aprendizaje Autónomo (APA)\par}
+	\vspace{1.5cm}
+	{\huge\bfseries KKBox's Music Recommendation Challenge\par}
+	\vspace{2cm}
+	{\Large\itshape Raquel Leandra Pérez Arnal y Adrián Sánchez Albanell\par}
+\end{titlepage}
 \clearpage
+{\hypersetup{linkcolor=black}
 \tableofcontents
-\clearpage
+}
+\cleardoublepage
 
 \section{Descripción del trabajo}
 
 
 \subsection{Introducción}
+
 Este trabajo consiste en elegir un problema de regresión o clasificación y generar un modelo para resolverlo. Para ello usaremos algunos de los métodos, lineales y no lineales, vistos en clase durante el curso de Aprendizaje Autónomo.\\
+
 Hemos elegido un problema de \href{https://www.kaggle.com/competitions}{kaggle competitions} sobre recomendación de música llamado \href{https://www.kaggle.com/c/kkbox-music-recommendation-challenge}{WSDM - KKBox's Music Recommendation Challenge}. Este consiste en un dataset, proporcionado por \href{https://www.kkbox.com/intl/index.php?area=intl}{KKBOX} - servició de streaming de música asiático - con información sobre diferentes canciones, usuarios y como ha sido el acceso de los usuarios a dichas canciones.\\
-El objetivo es predecir si un usuario que ha escuchado una canción lo volverá a hacer en un periodo de tiempo determinado, por lo tanto se trata de un problema de clasificación binaria: si el usuario volverá a escuchar o no una canción que ya ha oído anteriormente.
+
+Nuestro objetivo es predecir si un usuario que ha escuchado una canción lo volverá a hacer en un periodo de tiempo determinado, por lo tanto se trata de un problema de clasificación binaria: si el usuario volverá a escuchar o no una canción que ya ha oído anteriormente.
 
 
 \subsection{Conjunto de datos disponible}
-Kaggle nos ha proporcionado los datos en seis ficheros CSV, de los cuales usaremos cuatro para la práctica.Los dos restantes són un conjunto de datos de muestra sobre como enviar los datos para el concurso y los datos de test para el concurso (que no nos sirven ya que vienen sin la variable target).
+
+Kaggle nos ha proporcionado los datos en seis ficheros con formato CSV, de los cuales usaremos cuatro para la práctica. Los dos restantes són un conjunto de datos de muestra sobre como enviar los datos para el concurso y los datos de test para el concurso (que no nos sirven ya que no tienen la variable target).
 
 \subsection*{train.csv}
+
 Contiene la información de las reproducciones de canciones por parte del usuario. Tiene las siguientes variables:
+
 \begin{labeling}{source\_screen\_name}
 \item [msno] identificador del usuario.
 \item [song\_id] identificador de la canción.
-\item [source\_system\_tab] nombre de la pestaña donde se selecciono el evento.\\ Ejemplos: \textit{my library}, \textit{search}, etc.
+\item [source\_system\_tab] nombre de la pestaña donde se selecciono el evento.\\
+Ejemplos: \textit{my library}, \textit{search}, etc.
 \item [source\_screen\_name] nombre de la pantalla que ve el usuario.
-\item [source\_type] des de donde se ha reproducido la canción.\\ Ejemplos: \textit{album}, \textit{online-playlist}, \textit{song}, etc.
+\item [source\_type] des de donde se ha reproducido la canción.\\
+Ejemplos: \textit{album}, \textit{online-playlist}, \textit{song}, etc.
 \item [target] variable de target. Si el usuario ha escuchado la canción más de una vez en un intervalo de un mes target es 1, si no es 0.
 \end{labeling}
 
 \subsection*{members.csv}
+
 Contiene información de los usuarios. Tiene las siguientes variables:
+
 \begin{labeling}{registration\_init\_time}
 \item [msno] identificador del usuario.
 \item [city] identificador de ciudad.
@@ -63,9 +87,9 @@ Contiene información de los usuarios. Tiene las siguientes variables:
 \end{labeling}
 
 \subsection*{songs.csv}
-Tiene tamaño: (2,286,220 , 7)
 
 Contiene información de las canciones. Tiene las siguientes variables:
+
 \begin{labeling}{song\_length}
 \item [song\_id] identificador de la canción.
 \item [song\_length] duración de la canción en milisegundos.
@@ -77,7 +101,9 @@ Contiene información de las canciones. Tiene las siguientes variables:
 \end{labeling}
 
 \subsection*{song\_extra\_info.csv}
+
 Contiene información extra de las canciones. Tiene las siguientes variables:
+
 \begin{labeling}{song\_name}
 \item [song\_id] identificador de la canción.
 \item [song\_name] nombre de la canción.
@@ -85,9 +111,13 @@ Contiene información extra de las canciones. Tiene las siguientes variables:
 \end{labeling}
 
 
+
+
 \subsection{Notas sobre el lenguaje de programación escogido, Python}
 El lenguaje de programación usado para realizar esta práctica tenía que ser R. Sin embargo pronto nos dimos cuenta de que, debido al tamaño de los datos de muestra, nuestro desconocimiento de como usarlo para trabajar con grandes cantidades de datos eficientemente y el material de que disponemos, nos iba a ser imposible trabajar con este lenguaje.\\
+
 Debido a esto, hemos decidido usar Python, lenguaje muy usado en Machine Learning y con muchos recursos para trabajar comodamente en este ambito. Python es bastante más eficiente que R gestionando memória y más rápido en cuanto a tiempo de ejecución.\\
+
 Usar Python no ha solucionado todos los problemas generados por tener tantos datos, pero nos ha permitido trabajar mejor y realizar muchas cosas que con R nos habrian sido o imposibles o muy dificiles.
 
 \section{Trabajo Relacionado}
@@ -104,61 +134,55 @@ Usar Python no ha solucionado todos los problemas generados por tener tantos dat
 
 \section{Data exploration and Preprocessing}
 
-Los datos iniciales son: 
-\begin{itemize}
-\item train.csv
-\item test.csv
-\item songs.csv
-\item members.csv
-\item song\_extra\_info.csv
-\end{itemize}
+Partiendo de los datos iniciales (procedentes de los ficheros nombrados en el apartado 1.2) hemos generado un solo dataframe. Para hacerlo hemos unido la información de \textbf{members} y \textbf{train} por \textit{msno}, y el resultado lo hemos unido a \textbf{songs} y \textbf{song\_extra\_info} por \textit{song\_id}. Al nuevo dataset con toda la información lo llamaremos \textbf{merged}.\\
 
-La idea inicial es mejorar train utilizando songs, members y song\_extra\_info y convertirlo en un único train y test. 
+Este dataframe, después de preprocesarlo, lo convertiremos en los dos conjuntos \textit{train} y \textit{test}, que guardaremos en los ficheros \textbf{clean\_train.csv} y \textbf{clean\_test.csv}.
 
-Después pasar todas las variables categóricasa numéricas y aplicarle un MCA.
+\subsection{Analísis de los datos}
 
-Debería quedar: 
-\begin{itemize}
-\item clean\_train.csv
-\item clean\_test.csv
-\end{itemize}
-
-\subsection{Selección de features}
-Hay dos grandes motivos por los que hemos eliminado features: 
-
-\begin{itemize}
-\item La feature en cuestión es un \textbf{identificador}, es decir, es una variable cuyo único objetivo es identificar la muestra o alguna de sus partes. Los hemos utilizado para unir los distintos conjuntos de datos, pero de cara al análisis no tienen utilidad.
-\item Algunas de las variables eran \textbf{computacionalmente intratatable}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
-\end{itemize}
+El nuevo dataset \textbf{merged} se compone de 20 columnas o variables y 7377418 filas diferentes. La siguiente tabla nos muestra algo de información que nos interesa sobre este:
 
 \begin{table}[H]
 \centering
-\caption{My caption}
-\label{my-label}
-\begin{tabular}{|l|l|}
+\rowcolors{1}{light-gray}{white}
+\begin{tabular}{l*{4}l}
+\hiderowcolors
+\textbf{Nombre}          & \textbf{Valores perdidos} & \textbf{Porcentage}  & \textbf{Tipo de datos} \\
+\showrowcolors
 \hline
-Nombre                   & Motivo \\ \hline
-msno                     & Es solo un identificador \\ \hline
-song\_id                 & Es solo un identificadors \\ \hline
-artist\_name             & Computacionalmente intratable \\ \hline
-composer                 & Computacionalmente intratable \\ \hline
-lyricist                 & Computacionalmente intratable    \\ \hline
-name                     & Computacionalmente intratable     \\ \hline
-isrc                     & Es solo un identificador    \\ \hline
+msno                     & 0                 & 0           & categóricos (object)                    \\
+song\_id                 & 0                 & 0           & categóricos (object)                    \\
+source\_system\_tab      & 24849             & 0.3368      & categóricos (object)                    \\
+source\_screen\_name     & 414804            & 5.6226      & categóricos (object)                    \\
+source\_type             & 21539             & 0.2919      & categóricos (object)                    \\
+target                   & 0                 & 0           & categóricos (uint8)                     \\
+city                     & 0                 & 0           & categóricos (int64)                     \\
+bd                       & 0                 & 0           & numéricos (int64)                       \\
+gender                   & 2961479           & 40.142      & categóricos (object)                    \\
+registered\_via          & 0                 & 0           & categóricos (int64)                     \\
+registration\_init\_time & 0                 & 0           & numéricos (int64) (\textit{\%Y\%m\%d})  \\
+expiration\_date         & 0                 & 0           & numéricos (int64)  (\textit{\%Y\%m\%d}) \\
+song\_length             & 114               & 0.0015      & numéricos (float64)                     \\
+genre\_ids               & 118455            & 1.605       & categóricos (object)                    \\
+artist\_name             & 114               & 0.0015      & categóricos (object)                    \\
+composer                 & 1675706           & 22.7139     & categóricos (object)                    \\
+lyricist                 & 3178798           & 43.0882     & categóricos (object)                    \\
+language                 & 150               & 0.0020      & categóricos (float64)                   \\
+name                     & 1457              & 0.0197      & categóricos (object)                    \\
+isrc                     & 577858            & 7.8327      & categóricos (object)                    \\
 \end{tabular}
+\caption{Información general sobre el dataset merged.}
 \end{table}
-
 
 \subsection{Tratamiento de valores perdidos}
 \begin{figure}[H]
 \centering
-\includegraphics[width=1\textwidth]{Images/missings_percentage.png}
+\includegraphics[width=1\textwidth]{Images/lost_values_percent.png}
 \caption{En esta gráfica podemos ver porcentage de valores perdidos en cada variable del conjunto final de datos.}
 \end{figure}
 
 \begin{table}[H]
 \centering
-\caption{My caption}
 \label{my-label}
 \begin{tabular}{|l|l|}
 \hline
@@ -184,6 +208,7 @@ language                 & 0.0020     \\ \hline
 name                     & 0.0197     \\ \hline
 isrc                     & 7.8327     \\ \hline
 \end{tabular}
+\caption{Porcentage de valores perdidos de cada variable}
 \end{table}
 
 
@@ -198,6 +223,31 @@ Los imputamos utilizando la clasificación que nos daría un knn.
 \subsection{Tratamiento de outliers}
 
 \subsection{Tratamiento de valores incorrectos}
+
+\subsection{Selección de features}
+Hay dos grandes motivos por los que hemos eliminado features: 
+
+\begin{itemize}
+\item La feature en cuestión es un \textbf{identificador}, es decir, es una variable cuyo único objetivo es identificar la muestra o alguna de sus partes. Los hemos utilizado para unir los distintos conjuntos de datos, pero de cara al análisis no tienen utilidad.
+\item Algunas de las variables eran \textbf{computacionalmente intratatable}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{|l|l|}
+\hline
+Nombre                   & Motivo \\ \hline
+msno                     & Es solo un identificador \\ \hline
+song\_id                 & Es solo un identificadors \\ \hline
+artist\_name             & Computacionalmente intratable \\ \hline
+composer                 & Computacionalmente intratable \\ \hline
+lyricist                 & Computacionalmente intratable    \\ \hline
+name                     & Computacionalmente intratable     \\ \hline
+isrc                     & Es solo un identificador    \\ \hline
+\end{tabular}
+\end{table}
 
 \subsection{Codificación de variables categóricas}
 
