@@ -1,0 +1,8 @@
+\begin{thebibliography}{1}
+
+\bibitem{randomSearch}
+James Bergstra and Yoshua Bengio.
+\newblock Random search for hyper-parameter optimization.
+\newblock {\em Random Search for Hyper-Parameter Optimization}, 2012.
+
+\end{thebibliography}

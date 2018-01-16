@@ -14,8 +14,8 @@
 \contentsline {subsection}{\numberline {3.7}Creaci\IeC {\'o}n de nuevas variables}{6}{subsection.3.7}
 \contentsline {subsection}{\numberline {3.8}Estandarizaci\IeC {\'o}n}{6}{subsection.3.8}
 \contentsline {subsection}{\numberline {3.9}Transformaci\IeC {\'o}n de variables}{6}{subsection.3.9}
-\contentsline {section}{\numberline {4}Resampling Protocol}{6}{section.4}
-\contentsline {section}{\numberline {5}Resultados de los m\IeC {\'e}todos lineales}{6}{section.5}
-\contentsline {section}{\numberline {6}Resultados de los m\IeC {\'e}todos no lineales}{6}{section.6}
-\contentsline {section}{\numberline {7}Descripci\IeC {\'o}n y justificaci\IeC {\'o}n del modelo escogido}{6}{section.7}
-\contentsline {section}{\numberline {8}Conclusiones}{6}{section.8}
+\contentsline {section}{\numberline {4}Protocolo de re-muestreo}{6}{section.4}
+\contentsline {section}{\numberline {5}Resultados de los m\IeC {\'e}todos lineales}{7}{section.5}
+\contentsline {section}{\numberline {6}Resultados de los m\IeC {\'e}todos no lineales}{7}{section.6}
+\contentsline {section}{\numberline {7}Descripci\IeC {\'o}n y justificaci\IeC {\'o}n del modelo escogido}{7}{section.7}
+\contentsline {section}{\numberline {8}Conclusiones}{7}{section.8}

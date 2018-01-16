@@ -16,10 +16,11 @@
 \usepackage{scrextend} % lists
 \usepackage{float}
 \addtokomafont{labelinglabel}{\bfseries}
+\usepackage{natbib}
 
-\title{Music recomendation}
+\title{Recomendaciones de música}
 \author{Raquel Leandra Pérez Arnal i Adrián Sánchez Albanell}
-\date{} % Sin fecha.
+\date{18.01.19} % Sin fecha.
 
 \begin{document}
 
@@ -147,11 +148,11 @@ source\_system\_tab        & Información redundante \\ \hline
 \begin{figure}[H]
 \centering
 \includegraphics[width=1\textwidth]{Images/missings_percentage.png}
-\caption{En esta gráfica podemos ver el porcentage de valores perdidos en cada variable del conjunto final de datos.}
+\caption{En esta gráfica podemos ver el porcentaje de valores perdidos en cada variable del conjunto final de datos.}
 \end{figure}
 
 \begin{table}[H]
-\centering
+\centering1
 \caption{My caption}
 \label{my-label}
 \begin{tabular}{|l|l|}
@@ -201,7 +202,35 @@ Los datos de \textit{gender} los hemos imputado mediante KNN.
 
 \subsection{Transformación de variables}
 
-\section{Resampling Protocol}
+\section{Protocolo de re-muestreo}
+
+Una vez preprocesados los datos, a la hora de entrenar los métodos hemos separado en dos conjuntos conjuntos de datos, 
+con objetivo de poder comparar bien los resultados. Obteniendo de esta forma: 
+
+\begin{table}[H]
+\centering
+\caption{Partición de los datos}
+\label{my-label}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Subconjunto}              & \textbf{Proporción}   & \textbf{Tamaño}    \\ \hline
+Entrenamiento                     & 0.7                   & 4,422,186   \\ \hline
+Test                              & 0.3                   & 1,895,223   \\ \hline
+Total                             & 1                     & 6,317,409   \\ \hline
+\end{tabular}
+\end{table}
+
+Hemos tomado un 30\% de los datos para test con el objetivo de, por un lado obtener unos resultados más estables a la hora de 
+comparar los distintos modelos, además de esta forma reducimos la cantidad de datos de entrenamiento a una cantidad ligeramente 
+más tratable a nivel computacional. Puesto a que con tal cantidad de datos la potencia computacional y el tiempo de procesamiento es 
+bastante considerable. 
+
+Además para algunos modelos hemos tenido que calcular hiper-parámetros. Para ello hemos utilizado \textit{Random Search Cross-Validation}.
+
+Con tal cantidad de datos nos podríamos haber limitado a tomar una partición de validación para buscar los mejores hiper-parámetros, pero de 
+esta forma teníamos que entrenar iterativamente cada modelo con los diferentes hiper-parámetros a comprobar, para luego analizar los resultados obtenidos con la partición de validación. El problema en este caso es que cuando había que buscar varios hiper-parámetros para un mismo modelo no sabíamos paralelizar el proceso, haciendo que de esta forma fuera significativamente más lento que otras opciones ya implementadas en la librería utilizada, como serían \textit{sklearn.model\_selection.GridSearchCV} \textit{sklearn.model\_selection.RandomizedSearchCV}. Entre estas dos opciones decidimos utilizar \textit{RandomizedSearchCV}, por ser más rápida sin tener unos peores resultados por ello. 
+
+\textbf{sklearn.model\_selection.RandomizedSearchCV} es un método de \textit{sklearn} que aplica \textit{3-fold stratified cross-validation} a una muestra aleatoria de los hiper-parámetros que queremos obtener. A diferencia con \textit{Grid-Search CV}, este método no prueba todas las posibles opciones, lo que implica una menor cantidad de entrenamientos del modelo, y por tanto un coste muy inferior respecto al tiempo  total, sin perder demasiada accuracy por el camino. Como se puede ver en \citep{randomSearch} es especialmente efectivo con conjuntos de validación grandes, como es nuestro caso. 
 
 \section{Resultados de los métodos lineales}
 logistic regression, multinomial regression
@@ -212,5 +241,9 @@ Random Forest
 \section{Descripción y justificación del modelo escogido}
 
 \section{Conclusiones}
+
+\bibliographystyle{unsrt}
+\bibliography{biblio}
+
 
 \end{document}
