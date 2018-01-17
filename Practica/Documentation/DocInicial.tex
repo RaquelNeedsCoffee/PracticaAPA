@@ -377,18 +377,55 @@ De esta forma nos ha dado los siguientes resultados:
   \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
 \showrowcolors
 \hline 
-\textbf{0}             & 0.62                & 0.61              &  0.61               &    933345    \\
-\textbf{1}             & 0.62                & 0.64              &  0.63               &    961878   \\
-\textbf{Average/Total} & 0.62                & 0.62              &  0.62               &   1895223    \\
+\textbf{0}             & 0.57                & 0.60              &  0.59               &    933345    \\
+\textbf{1}             & 0.59                & 0.56              &  0.58               &    961878   \\
+\textbf{Average/Total} & 0.58                & 0.58              &  0.58               &   1895223    \\
 \end{tabular}
 \caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
 \end{table}
 
 Va mejor que el LDA pero no significativamente.
 
+
 \section{Resultados de los métodos no lineales}
-one-hidden-layer MLP, the RBFNN, the SVM with RBF kernel, a
-Random Forest
+
+\subsection{Multi Layer Perceptron}
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{5}l}
+\hiderowcolors
+  \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
+\showrowcolors
+\hline 
+\textbf{0}             & 0.56                & 0.89              &  0.69               &    933345    \\
+\textbf{1}             & 0.75                & 0.31              &  0.44               &    961878   \\
+\textbf{Average/Total} & 0.66                & 0.60              &  0.56               &   1895223    \\
+\end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
+\end{table}
+
+
+Va mejor que el LDA pero no significativamente.
+
+\subsection{Random Forest}
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{5}l}
+\hiderowcolors
+  \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
+\showrowcolors
+\hline 
+\textbf{0}             & 0.67                & 0.66              &  0.66               &    933345    \\
+\textbf{1}             & 0.67                & 0.69              &  0.68               &    961878   \\
+\textbf{Average/Total} & 0.67                & 0.67              &  0.67               &   1895223    \\
+\end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
+\end{table}
+
+Va mejor que el LDA pero no significativamente.
+
 \section{Descripción y justificación del modelo escogido}
 
 \section{Conclusiones}

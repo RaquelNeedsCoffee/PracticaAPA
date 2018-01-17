@@ -19,6 +19,8 @@
 \contentsline {subsection}{\numberline {5.2}Quadratic Discriminant Analysis}{8}{subsection.5.2}
 \contentsline {subsection}{\numberline {5.3}Regularized Discriminant Analysis}{8}{subsection.5.3}
 \contentsline {section}{\numberline {6}Resultados de los m\IeC {\'e}todos no lineales}{8}{section.6}
-\contentsline {section}{\numberline {7}Descripci\IeC {\'o}n y justificaci\IeC {\'o}n del modelo escogido}{8}{section.7}
-\contentsline {section}{\numberline {8}Conclusiones}{8}{section.8}
-\contentsline {section}{\numberline {9}Bibliograf\IeC {\'\i }a}{9}{section.9}
+\contentsline {subsection}{\numberline {6.1}Multi Layer Perceptron}{8}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Random Forest}{9}{subsection.6.2}
+\contentsline {section}{\numberline {7}Descripci\IeC {\'o}n y justificaci\IeC {\'o}n del modelo escogido}{9}{section.7}
+\contentsline {section}{\numberline {8}Conclusiones}{9}{section.8}
+\contentsline {section}{\numberline {9}Bibliograf\IeC {\'\i }a}{10}{section.9}
