@@ -10,11 +10,12 @@
 \contentsline {subsection}{\numberline {3.3}Tratamiento de outliers}{5}{subsection.3.3}
 \contentsline {subsection}{\numberline {3.4}Creaci\IeC {\'o}n de nuevas variables}{6}{subsection.3.4}
 \contentsline {subsection}{\numberline {3.5}Selecci\IeC {\'o}n de features}{6}{subsection.3.5}
-\contentsline {subsection}{\numberline {3.6}Codificaci\IeC {\'o}n de variables categ\IeC {\'o}ricas}{6}{subsection.3.6}
-\contentsline {subsection}{\numberline {3.7}Estandarizaci\IeC {\'o}n}{6}{subsection.3.7}
-\contentsline {subsection}{\numberline {3.8}Transformaci\IeC {\'o}n de variables}{6}{subsection.3.8}
-\contentsline {section}{\numberline {4}Protocolo de re-muestreo}{6}{section.4}
-\contentsline {section}{\numberline {5}Resultados de los m\IeC {\'e}todos lineales}{7}{section.5}
-\contentsline {section}{\numberline {6}Resultados de los m\IeC {\'e}todos no lineales}{7}{section.6}
-\contentsline {section}{\numberline {7}Descripci\IeC {\'o}n y justificaci\IeC {\'o}n del modelo escogido}{7}{section.7}
-\contentsline {section}{\numberline {8}Conclusiones}{7}{section.8}
+\contentsline {subsection}{\numberline {3.6}Codificaci\IeC {\'o}n de variables categ\IeC {\'o}ricas}{7}{subsection.3.6}
+\contentsline {subsection}{\numberline {3.7}Estandarizaci\IeC {\'o}n}{7}{subsection.3.7}
+\contentsline {subsection}{\numberline {3.8}Transformaci\IeC {\'o}n de variables}{7}{subsection.3.8}
+\contentsline {section}{\numberline {4}Protocolo de re-muestreo}{7}{section.4}
+\contentsline {section}{\numberline {5}Resultados de los m\IeC {\'e}todos lineales}{8}{section.5}
+\contentsline {section}{\numberline {6}Resultados de los m\IeC {\'e}todos no lineales}{8}{section.6}
+\contentsline {section}{\numberline {7}Descripci\IeC {\'o}n y justificaci\IeC {\'o}n del modelo escogido}{8}{section.7}
+\contentsline {section}{\numberline {8}Conclusiones}{8}{section.8}
+\contentsline {section}{\numberline {9}Bibliograf\IeC {\'\i }a}{9}{section.9}

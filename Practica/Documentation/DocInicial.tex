@@ -17,6 +17,7 @@
 \usepackage{scrextend} % lists
 \usepackage{float}
 \addtokomafont{labelinglabel}{\bfseries}
+\usepackage{natbib}
 
 \title{Music recomendation}
 \author{Raquel Leandra Pérez Arnal y Adrián Sánchez Albanell}
@@ -33,7 +34,8 @@
 	\vspace{1.5cm}
 	{\huge\bfseries KKBox's Music Recommendation Challenge\par}
 	\vspace{2cm}
-	{\Large\itshape Raquel Leandra Pérez Arnal y Adrián Sánchez Albanell\par}
+	{\Large\itshape Raquel Leandra Pérez Arnal\par}
+	{\Large\itshape Adrián Sánchez Albanell\par}
 \end{titlepage}
 \clearpage
 {\hypersetup{linkcolor=black}
@@ -57,7 +59,7 @@ Nuestro objetivo es predecir si un usuario que ha escuchado una canción lo volv
 
 Kaggle nos ha proporcionado los datos en seis ficheros con formato CSV, de los cuales usaremos cuatro para la práctica. Los dos restantes són un conjunto de datos de muestra sobre como enviar los datos para el concurso y los datos de test para el concurso (que no nos sirven ya que no tienen la variable target).
 
-\subsection*{train.csv}
+\subsubsection*{train.csv}
 
 Contiene la información de las reproducciones de canciones por parte del usuario. Tiene las siguientes variables:
 
@@ -72,7 +74,7 @@ Ejemplos: \textit{album}, \textit{online-playlist}, \textit{song}, etc.
 \item [target] variable de target. Si el usuario ha escuchado la canción más de una vez en un intervalo de un mes target es 1, si no es 0.
 \end{labeling}
 
-\subsection*{members.csv}
+\subsubsection*{members.csv}
 
 Contiene información de los usuarios. Tiene las siguientes variables:
 
@@ -86,7 +88,7 @@ Contiene información de los usuarios. Tiene las siguientes variables:
 \item [expiration\_date] día de expiración del registro de usuario, en formato \textit{\%Y\%m\%d}.
 \end{labeling}
 
-\subsection*{songs.csv}
+\subsubsection*{songs.csv}
 
 Contiene información de las canciones. Tiene las siguientes variables:
 
@@ -100,7 +102,7 @@ Contiene información de las canciones. Tiene las siguientes variables:
 \item [language] identificador del lenguaje de la canción.
 \end{labeling}
 
-\subsection*{song\_extra\_info.csv}
+\subsubsection*{song\_extra\_info.csv}
 
 Contiene información extra de las canciones. Tiene las siguientes variables:
 
@@ -140,7 +142,7 @@ Partiendo de los datos iniciales (descritos en el apartado \textit{Conjunto de d
 \rowcolors{1}{white}{light-gray}
 \begin{tabular}{l*{4}l}
 \hiderowcolors
-\textbf{Variable}          & \textbf{Valores perdidos} & \textbf{Porcentage}  & \textbf{Tipo de datos} \\
+\textbf{Variable}          & \textbf{Valores perdidos} & \textbf{Porcentaje}  & \textbf{Tipo de datos} \\
 \showrowcolors
 \hline 
 \textbf{msno}                     & 0                 & 0           & categóricos (object)                    \\
@@ -154,7 +156,7 @@ Partiendo de los datos iniciales (descritos en el apartado \textit{Conjunto de d
 \textbf{gender}                   & 2961479           & 40.142      & categóricos (object)                    \\
 \textbf{registered\_via}          & 0                 & 0           & categóricos (int64)                     \\
 \textbf{registration\_init\_time} & 0                 & 0           & numéricos (int64) (\textit{\%Y\%m\%d})  \\
-\textbf{expiration\_date}         & 0                 & 0           & numéricos (int64)  (\textit{\%Y\%m\%d}) \\
+\textbf{expiration\_date}         & 0                 & 0           & numéricos (int64) (\textit{\%Y\%m\%d})  \\
 \textbf{song\_length}             & 114               & 0.0015      & numéricos (float64)                     \\
 \textbf{genre\_ids}               & 118455            & 1.605       & categóricos (object)                    \\
 \textbf{artist\_name}             & 114               & 0.0015      & categóricos (object)                    \\
@@ -201,17 +203,17 @@ Con esta información pasaremos a tratar los datos para preprocesarlos.
 \begin{figure}[H]
 \centering
 \includegraphics[width=1\textwidth]{Images/lost_values_percent.png}
-\caption{\textit{En esta gráfica podemos ver porcentage de valores perdidos en cada variable del conjunto final de datos.}}
+\caption{\textit{En esta gráfica podemos ver porcentaje de valores perdidos en cada variable del conjunto final de datos.}}
 \end{figure}
 
 Como podemos ver en \textit{Table 1} y \textit{Figure 1} tenemos varias variables donde hay valores perdidos y que trataremos de diferentes maneras.\\
 
 \begin{itemize}
-\item Las variables \textit{lyricist} y \textit{gender} hemos decidido eliminarlas por tener un porcentage muy alto de valores perdidos, más de un $40\%$. 
-\item La variable \textit{composer} también hemos decidido eliminarla. Aunque el porcentage de valores perdidos en esta variable es un $22.71\%$, un valor alto pero que podriamos haber decidido imputar por ejemplo, cuenta con $81566$ categorías diferentes. Teniendo en cuenta el tamaño de nuestro conjunto de datos, la complejidad que añade esta variable nos es intratable con el conocimiento y material del que disponemos.
+\item Las variables \textit{lyricist} y \textit{gender} hemos decidido eliminarlas por tener un porcentaje muy alto de valores perdidos, más de un $40\%$. 
+\item La variable \textit{composer} también hemos decidido eliminarla. Aunque el porcentaje de valores perdidos en esta variable es un $22.71\%$, un valor alto pero que podriamos haber decidido imputar por ejemplo, cuenta con $81566$ categorías diferentes. Teniendo en cuenta el tamaño de nuestro conjunto de datos, la complejidad que añade esta variable nos es intratable con el conocimiento y material del que disponemos.
 \item El resto de variables tienen menos de un $10\%$ de valores perdidos. Podriamos haberlos imputado a partir del resto de datos, pero disponemos de un conjunto de datos lo bastante grande como para poder eliminar las muestras donde aparecen valores nulos sin problemas.
 \end{itemize}
-Después de tratar los valores perdidos en el conjunto de datos este consta de 17 variables y 6317407 muestras.
+Después de tratar los valores perdidos en el conjunto de datos este consta de 17 variables y $6317407$ muestras.
 
 \subsection{Tratamiento de outliers}
 
@@ -233,64 +235,84 @@ La variable \textit{ISRC} representa el \href{https://en.wikipedia.org/wiki/Inte
 De esta variable crearemos una nueva variable con el año en que se registro el codigo de la grabación, ya que nos ha parecido un valor representativo para el conjunto, a la que llamaremos \textit{song\_year}. Para hacerlo cogeremos los dos dígitos YY del código ISRC, los valores mayores a 18 los convertimos en valores numéricos de la forma 19YY, el resto de la forma 20YY.
 
 \subsection{Selección de features}
-Hay dos grandes motivos por los que hemos eliminado features: 
 
+Hemos decidido eliminar varias de las variables. En esta sección explicaremos cuales y los motivos principales para hacerlo.
 \begin{itemize}
-\item La feature en cuestión es un \textbf{identificador}, es decir, es una variable cuyo único objetivo es identificar la muestra o alguna de sus partes. Los hemos utilizado para unir los distintos conjuntos de datos, pero de cara al análisis no tienen utilidad.
-\item Algunas de las variables eran \textbf{computacionalmente intratatable}, esto se debe a que tienen tal cantidad de categorías, que al intentar procesarlas con los conocimientos y hardware que tenemos se vuelven intratables (tanto en python como en R).
+\item \textit{msno} y \textit{song\_id} han sido eliminadas por tratarse de simples identificadores, sin otro objetivo que identificar la muestra o una parte de ella. Se han usado para unir los diferentes conjuntos de datos de que disponiamos inicialmente, pero de cara al análisis no tienen utilidad alguna.
+\item El \textit{isrc} es otro identificador como las variables mencionadas anteriormente. Sin embargo contiene más información que podría parecer útil.\\
+De esa información ya hemos elegido una parte que se encuentra en la variable \textit{song\_year}, la otra información que podemos encontrar en el ISRC o bien són identificadores (y no nos aportan información relevante) o puede ser erronea (el CC, en la pagina del concurso de kaggle, cuando explican la información de los diferentes ficheros, se avisa de que esta parte del identificador puede resultar confusa o incluso erronea).\\
+Por estas razones de esta variable no aprovechamos nada más de lo que pueda aportar y la descartamos.
+\item \textit{artist\_name} y \textit{name} las rechazamos porque nos són computacionalmente intratables, tanto en R como en Python. La variable \textit{artist\_name} tiene $40582$ clases diferentes y \textit{name} otras $234144$.
+\item \textit{registered\_via}, \textit{registration\_init\_time} y \textit{expiration\_date} nos proporcionan información irrelevante para determinar si un usuario escuchara o no una canción repetidas veces.
 \end{itemize}
+
+Después del proceso de selección de features nos quedan $6317407$ muestras y 9 variables, 8 de ellas categóricas y 2 numéricas:
 
 \begin{table}[H]
 \centering
-\caption{My caption}
-\label{my-label}
-\begin{tabular}{|l|l|}
-\hline
-Nombre                   & Motivo \\ \hline
-msno                     & Es solo un identificador \\ \hline
-song\_id                 & Es solo un identificadors \\ \hline
-artist\_name             & Computacionalmente intratable \\ \hline
-composer                 & Computacionalmente intratable \\ \hline
-lyricist                 & Computacionalmente intratable    \\ \hline
-name                     & Computacionalmente intratable     \\ \hline
-isrc                     & Es solo un identificador    \\ \hline
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{2}l}
+\hiderowcolors
+\textbf{Variable}                   & \textbf{Número de categorías} \\
+\showrowcolors
+\hline 
+\textbf{source\_system\_tab}      & 8                \\
+\textbf{source\_screen\_name}     & 20               \\
+\textbf{source\_type}             & 12               \\
+\textbf{target}                   & 2                \\
+\textbf{city}                     & 21               \\
+\textbf{genre\_ids}               & 166              \\
+\textbf{language}                 & 10               \\
+\textbf{song\_length}             & (no categórica)  \\
+\textbf{song\_year}               & (no categórica)  \\
 \end{tabular}
+\caption{\textit{Número de categorías en las variables categóricas del conjunto de datos.}}
 \end{table}
 
 \subsection{Codificación de variables categóricas}
+
+La mayoría de variables categóricas las dejamos como estan, pero \textit{genre\_ids} la preprocesamos para hacer un poco menos complejo el conjunto de datos con el que trataremos luego.
+La variable \textit{genre\_ids} permite varias categorías diferentes por muestra (como se explica en la sección \textit{Conjunto de datos disponible}). Hemos tratado los datos para que cada muestra tenga una sola categoría para esta variable.\\
+
+Para hacerlo hemos calculado la freqüencia de cada categoría diferente y hemos tratado cada muestra para que conserve solo la más freqüente de sus categorías.\\
+
+A parte de simplificar las muestras que tenian multiples categorías, después de tratar los datos el número de categorías diferentes en \textit{genre\_ids} se ha reducido de 166 a 148.
 
 \subsection{Estandarización}
 
 \subsection{Transformación de variables}
 
 \section{Protocolo de re-muestreo}
-Una vez preprocesados los datos, a la hora de entrenar los métodos hemos separado en dos conjuntos conjuntos de datos, 
-con objetivo de poder comparar bien los resultados. Obteniendo de esta forma: 
+
+Una vez preprocesados los datos, a la hora de entrenar los métodos hemos separado en dos conjuntos el conjunto de datos 
+con el objetivo de poder comparar bien los resultados, obteniendo:
 
 \begin{table}[H]
 \centering
-\caption{Partición de los datos}
-\label{my-label}
-\begin{tabular}{|l|l|l|}
-\hline
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{2}l}
+\hiderowcolors
 \textbf{Subconjunto}              & \textbf{Proporción}   & \textbf{Tamaño}    \\ \hline
-Entrenamiento                     & 0.7                   & 4,422,186   \\ \hline
-Test                              & 0.3                   & 1,895,223   \\ \hline
-Total                             & 1                     & 6,317,409   \\ \hline
+\showrowcolors
+\hline 
+\textbf{Entrenamiento}                     & 0.7                   & 4,422,185   \\
+\textbf{Test}                              & 0.3                   & 1,895,222   \\
+\textbf{Total}                             & 1                     & 6,317,407   \\
 \end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
 \end{table}
 
-Hemos tomado un 30\% de los datos para test con el objetivo de, por un lado obtener unos resultados más estables a la hora de 
-comparar los distintos modelos, además de esta forma reducimos la cantidad de datos de entrenamiento a una cantidad ligeramente 
-más tratable a nivel computacional. Puesto a que con tal cantidad de datos la potencia computacional y el tiempo de procesamiento es 
-bastante considerable. 
+Con tal cantidad de datos podriamos haber tomado una partición de datos con más entrenamiento y menos test ($90$/$10$ o incluso más por ejemplo), pero hemos elejido particionar los datos en $70\%$ entrenamiento y $30\%$ test por dos razones:
+\begin{itemize}
+\item Obtener unos resultados más estables a la hora de comparar los distintos modelos.
+\item Reducir la cantidad de datos de entrenamiento a una cantidad ligeramente más tratable a nivel computacional. Ya que con tal cantidad de datos la potencia computacional y el tiempo de procesamiento necesarios són bastante considerables. 
+\end{itemize}
 
-Además para algunos modelos hemos tenido que calcular hiper-parámetros. Para ello hemos utilizado \textit{Random Search Cross-Validation}.
+Además, para algunos modelos hemos tenido que calcular hiper-parámetros. Hemos usado \textit{Random Search Cross-Validation} para ello.\\
 
-Con tal cantidad de datos nos podríamos haber limitado a tomar una partición de validación para buscar los mejores hiper-parámetros, pero de 
-esta forma teníamos que entrenar iterativamente cada modelo con los diferentes hiper-parámetros a comprobar, para luego analizar los resultados obtenidos con la partición de validación. El problema en este caso es que cuando había que buscar varios hiper-parámetros para un mismo modelo no sabíamos paralelizar el proceso, haciendo que de esta forma fuera significativamente más lento que otras opciones ya implementadas en la librería utilizada, como serían \textit{sklearn.model\_selection.GridSearchCV} \textit{sklearn.model\_selection.RandomizedSearchCV}. Entre estas dos opciones decidimos utilizar \textit{RandomizedSearchCV}, por ser más rápida sin tener unos peores resultados por ello. 
+Con tal cantidad de datos nos podríamos haber limitado a tomar una partición de validación para buscar los mejores hiper-parámetros, pero de esta forma teníamos que entrenar iterativamente cada modelo con los diferentes hiper-parámetros a comprobar y luego analizar los resultados obtenidos con la partición de validación. El problema en este caso es que cuando había que buscar varios hiper-parámetros para un mismo modelo no sabíamos paralelizar el proceso, y hacerlo de esta forma era significativamente más lento que otras opciones ya implementadas en librerías como la que hemos usado, \textit{sklearn}, como por ejemplo  \textit{sklearn.model\_selection.GridSearchCV} o \textit{sklearn.model\_selection.RandomizedSearchCV}. De estas dos opciones hemos decidido usar \textit{RandomizedSearchCV}.\\
 
-\textbf{sklearn.model\_selection.RandomizedSearchCV} es un método de \textit{sklearn} que aplica \textit{3-fold stratified cross-validation} a una muestra aleatoria de los hiper-parámetros que queremos obtener. A diferencia con \textit{Grid-Search CV}, este método no prueba todas las posibles opciones, lo que implica una menor cantidad de entrenamientos del modelo, y por tanto un coste muy inferior respecto al tiempo  total, sin perder demasiada accuracy por el camino. Como se puede ver en \cite{randomSearch} es especialmente efectivo con conjuntos de validación grandes, como es nuestro caso. 
+El método \textit{RandomizedSearchCV} de \textit{sklearn} aplica \textit{3-fold stratified cross-validation} a una muestra aleatoria de los hiper-parámetros que queremos obtener. A diferencia del \textit{Grid-Search CV}, este método no prueba todas las posibles opciones, lo que implica una menor cantidad de entrenamientos del modelo y por tanto va más rápido. Esto implica un coste en cuanto a la accuracy respecto al \textit{Grid-Search CV}, sin embargo este coste es negligible. Como se puede ver randomSearch\cite{randomSearch} es especialmente efectivo con conjuntos de validación grandes, como es nuestro caso, y es la mejor opción que hemos encontrado.\\
 
 \section{Resultados de los métodos lineales}
 logistic regression, multinomial regression
@@ -301,6 +323,9 @@ Random Forest
 \section{Descripción y justificación del modelo escogido}
 
 \section{Conclusiones}
+
+\clearpage
+\section{Bibliografía}
 
 \bibliographystyle{unsrt}
 \bibliography{biblio}
