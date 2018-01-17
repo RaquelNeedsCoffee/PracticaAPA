@@ -315,8 +315,77 @@ Con tal cantidad de datos nos podríamos haber limitado a tomar una partición d
 El método \textit{RandomizedSearchCV} de \textit{sklearn} aplica \textit{3-fold stratified cross-validation} a una muestra aleatoria de los hiper-parámetros que queremos obtener. A diferencia del \textit{Grid-Search CV}, este método no prueba todas las posibles opciones, lo que implica una menor cantidad de entrenamientos del modelo y por tanto va más rápido. Esto implica un coste en cuanto a la accuracy respecto al \textit{Grid-Search CV}, sin embargo este coste es negligible. Como se puede ver randomSearch\cite{randomSearch} es especialmente efectivo con conjuntos de validación grandes, como es nuestro caso, y es la mejor opción que hemos encontrado.\\
 
 \section{Resultados de los métodos lineales}
-logistic regression, multinomial regression
-(single-layer MLP), LDA, QDA, RDA, \textbf{Naive Bayes}, \textbf{nearest-neighbours},\textbf{linear SVM}, quadratic SVM
+
+\subsection{Linear Discriminant Analysis}
+
+Hemos elegido este modelo por ser rápido y sencillo. Al no tener hiper-parámetros ha bastado con entrenarlo 
+con la partición de train al completo y probarlo con la partición de test. De esta forma nos ha dado los siguientes resultados: 
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{5}l}
+\hiderowcolors
+  \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
+\showrowcolors
+\hline 
+\textbf{0}             & 0.62                & 0.63              &  0.63               &    933345    \\
+\textbf{1}             & 0.64                & 0.63              &  0.63               &    961878   \\
+\textbf{Average/Total} & 0.63                & 0.63              &  0.63               &   1895223    \\
+\end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
+\end{table}
+
+Viendo los resultados obtenidos, es probable que los datos no cumplan la hipótesis de homocedasticidad. 
+
+\subsection{Quadratic Discriminant Analysis}
+
+Hemos elegido este modelo por ser rápido y sencillo. Al no tener hiper-parámetros ha bastado con entrenarlo 
+con la partición de train al completo y probarlo con la partición de test. De esta forma nos ha dado los siguientes resultados: 
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{5}l}
+\hiderowcolors
+  \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
+\showrowcolors
+\hline 
+\textbf{0}             & 0.62                & 0.54              &  0.57               &    933345    \\
+\textbf{1}             & 0.60                & 0.67              &  0.64               &    961878   \\
+\textbf{Average/Total} & 0.61                & 0.61              &  0.61               &   1895223    \\
+\end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
+\end{table}
+
+** Escribir motivos por los que va peor que el LDA
+
+\subsection{Regularized Discriminant Analysis}
+
+Hemos elegido este modelo por ser rápido y sencillo. 
+
+Hemos probado hiperparámetros dentro de una distribución uiniforme en 0,1
+
+Hemos acabado eligiendo: 0.7010416905212281
+
+De esta forma nos ha dado los siguientes resultados: 
+
+
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{5}l}
+\hiderowcolors
+  \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
+\showrowcolors
+\hline 
+\textbf{0}             & 0.62                & 0.61              &  0.61               &    933345    \\
+\textbf{1}             & 0.62                & 0.64              &  0.63               &    961878   \\
+\textbf{Average/Total} & 0.62                & 0.62              &  0.62               &   1895223    \\
+\end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
+\end{table}
+
+Va mejor que el LDA pero no significativamente.
+
 \section{Resultados de los métodos no lineales}
 one-hidden-layer MLP, the RBFNN, the SVM with RBF kernel, a
 Random Forest
