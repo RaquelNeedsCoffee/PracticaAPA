@@ -54,55 +54,6 @@ def load_model(name):
         return None
 
 
-def count_genres_freq(df):
-    freq_map = {}
-    for g in df['genre_ids']:
-        if g is not np.nan:
-            song_genres = g.split('|')
-            for sg in song_genres:
-                if sg in freq_map:
-                    freq_map[sg] += 1
-                else:
-                    freq_map[sg] = 1
-    return freq_map
-
-
-def get_max_genre(song_genres, genres_count_dict):
-    song_genres = song_genres.split('|')
-    song_genres_dict = {}
-    for k in song_genres:
-        song_genres_dict[k] = genres_count_dict[k]
-    return max(song_genres_dict, key=song_genres_dict.get)
-
-
-def process_genres(song_genres, genres, genres_count):
-    if song_genres is np.nan:
-        return np.nan
-    sg_list = [g for g in song_genres.split('|') if g in genres]
-    sg_dict = {}
-    for g in sg_list:
-        if g in genres_count:
-            sg_dict[g] = genres_count[g]
-    if len(sg_dict) <= 0:
-        return np.nan
-    return max(sg_dict, key=sg_dict.get)
-
-
-def get_sons_with_only_one_genre(songs):
-    print('Remove less common genres that doesn\'t appear in test and limit categories per song to 1:')
-    genres_count = count_genres_freq(songs)
-    sorted_genres_count = sorted(genres_count.items(), key=operator.itemgetter(1), reverse=True)
-    portion_keep_genres = 0.5
-    num_genres = math.floor(portion_keep_genres * len(sorted_genres_count))
-    genres_train = sorted_genres_count[:num_genres]
-    genres_train = list(map(lambda x: x[0], genres_train))
-    final_genres = set()
-    final_genres.update(genres_train)
-    songs['genre_ids'] = songs['genre_ids'].apply(lambda i: process_genres(i, final_genres, genres_count))
-    songs['genre_ids'] = songs['genre_ids'].astype('category')
-    return songs
-
-
 def extract_info(df):
     n_rows = len(df)
     nulls_sum = df.isnull().sum().rename('null_count')

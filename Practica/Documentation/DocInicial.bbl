@@ -1,5 +1,10 @@
 \begin{thebibliography}{1}
 
+\bibitem{pythonML}
+Sebastian Raschka.
+\newblock Python machine learning.
+\newblock {\em Python Machine Learning}, 2015.
+
 \bibitem{randomSearch}
 James Bergstra and Yoshua Bengio.
 \newblock Random search for hyper-parameter optimization.

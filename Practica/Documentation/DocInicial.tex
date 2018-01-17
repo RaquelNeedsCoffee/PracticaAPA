@@ -280,6 +280,13 @@ A parte de simplificar las muestras que tenian multiples categorías, después d
 
 \subsection{Estandarización}
 
+Escalar los datos es una parte importante del preproceso del conjunto de datos. Hay muy pocos métodos, como el Random Forest, donde estandarizar los datos no sea importante para encontrar mejores resultados.\\
+
+Para hacerlo lo más freqüente es onormalizar o estandarizar los datos. Hemos decidido estandarizarlos ya que hemos encontrado que era la mejor opción para la mayoría de métodos, como regresión logística o SVM\cite{pythonML}, en cambio no hemos encontrado ningun caso que nos fuera útil en que fuera mejor la normalización de los datos.\\
+
+Para hacerlo hemos usado el método \textit{sklearn.preprocessing.StandardScaler} con la opción \textit{copy=False}, para evitar que copie datos innecesarios y de problemas de memoria.
+
+
 \subsection{Transformación de variables}
 
 \section{Protocolo de re-muestreo}
@@ -377,18 +384,55 @@ De esta forma nos ha dado los siguientes resultados:
   \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
 \showrowcolors
 \hline 
-\textbf{0}             & 0.62                & 0.61              &  0.61               &    933345    \\
-\textbf{1}             & 0.62                & 0.64              &  0.63               &    961878   \\
-\textbf{Average/Total} & 0.62                & 0.62              &  0.62               &   1895223    \\
+\textbf{0}             & 0.57                & 0.60              &  0.59               &    933345    \\
+\textbf{1}             & 0.59                & 0.56              &  0.58               &    961878   \\
+\textbf{Average/Total} & 0.58                & 0.58              &  0.58               &   1895223    \\
 \end{tabular}
 \caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
 \end{table}
 
 Va mejor que el LDA pero no significativamente.
 
+
 \section{Resultados de los métodos no lineales}
-one-hidden-layer MLP, the RBFNN, the SVM with RBF kernel, a
-Random Forest
+
+\subsection{Multi Layer Perceptron}
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{5}l}
+\hiderowcolors
+  \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
+\showrowcolors
+\hline 
+\textbf{0}             & 0.56                & 0.89              &  0.69               &    933345    \\
+\textbf{1}             & 0.75                & 0.31              &  0.44               &    961878   \\
+\textbf{Average/Total} & 0.66                & 0.60              &  0.56               &   1895223    \\
+\end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
+\end{table}
+
+
+Va mejor que el LDA pero no significativamente.
+
+\subsection{Random Forest}
+\begin{table}[H]
+\centering
+\rowcolors{1}{white}{light-gray}
+\begin{tabular}{l*{5}l}
+\hiderowcolors
+  \textbf{Clase}      & \textbf{Precision}   & \textbf{Recall}   & \textbf{F1-Score}   & \textbf{Support} \\ \hline
+\showrowcolors
+\hline 
+\textbf{0}             & 0.67                & 0.66              &  0.66               &    933345    \\
+\textbf{1}             & 0.67                & 0.69              &  0.68               &    961878   \\
+\textbf{Average/Total} & 0.67                & 0.67              &  0.67               &   1895223    \\
+\end{tabular}
+\caption{\textit{Particines de entrenamiento y test del conjunto de datos.}}
+\end{table}
+
+Va mejor que el LDA pero no significativamente.
+
 \section{Descripción y justificación del modelo escogido}
 
 \section{Conclusiones}

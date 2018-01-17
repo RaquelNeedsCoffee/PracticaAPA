@@ -3,12 +3,12 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from auxiliar_functions import print_df_info, extract_info
+from auxiliar_functions import extract_info, print_df_info
 
-# global
+# global vars
 data_path = '../Data/'
 img_path = '../Documentation/Images/'
-# plt.interactive(True)
+plt.interactive(True)
 
 
 def plot_lost_values_percent(percent_series):
@@ -152,36 +152,64 @@ def get_max_genre(song_genres, genres_count_dict):
 
 
 def main():
-    # load data
-    print("Loading data:")
-    rows = 10000
+    # load and merge data
+    # important: del and gc calls for performance and memory issues.
+    print("Load and merge data:")
+    rows = None
     print("\t-- loading train.csv --")
     df_train = pd.read_csv(data_path + 'train.csv', nrows=rows, dtype={'target': np.uint8})
     print_df_info(df_train)
     print("\t-- loading members.csv --")
     df_members = pd.read_csv(data_path + 'members.csv')
     print_df_info(df_members)
-    print("\t-- loading songs.csv --")
-    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=rows)
-    print_df_info(df_songs)
-    print("\t-- loading song_extra_info.csv --")
-    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=rows)
-    print_df_info(df_song_extra)
-    print("Data loaded")
-
-    # Grafica lost values
-    print("merge")
     df_merged = df_train.merge(df_members, on='msno', how='left')
     del df_train, df_members
     gc.collect()
+    print("\t-- loading songs.csv --")
+    df_songs = pd.read_csv(data_path + 'songs.csv', nrows=rows)
+    print_df_info(df_songs)
     df_merged = df_merged.merge(df_songs, on='song_id', how='left')
     del df_songs
     gc.collect()
+    print("\t-- loading song_extra_info.csv --")
+    df_song_extra = pd.read_csv(data_path + 'song_extra_info.csv', nrows=rows)
+    print_df_info(df_song_extra)
     df_merged = df_merged.merge(df_song_extra, on='song_id', how='left')
     del df_song_extra
     gc.collect()
-    print("fmerge")
+    print("Merged data:")
+    print_df_info(df_merged)
+    print("Data loaded and merged")
+
+    # Grafica lost values
+    print("Make and save plot lost values")
     plot_lost_values_percent(extract_info(df_merged)['null_percentage'])
+
+    # Generate song_year
+    df_merged['song_year'] = df_merged['isrc']
+    df_merged['song_year'] = df_merged['song_year'].apply(process_isrc)
+
+    # Remove columns
+    rm_columns = ['gender', 'composer', 'lyricist']
+    df_merged = df_merged.drop(columns=rm_columns)
+
+
+    # Remove columns
+    rm_columns = ['bd', 'msno', 'song_id', 'registered_via', 'registration_init_time',
+                  'expiration_date', 'artist_name', 'name', 'isrc']
+    df_merged = df_merged.drop(columns=rm_columns)
+    # drop_na
+    df_merged = df_merged.dropna()
+
+    # set unique genre_ids values
+    genres_dict = count_genres_freq(df_merged)
+    df_merged['genre_ids'] = df_merged['genre_ids'].apply(lambda x: get_max_genre(x, genres_dict))
+
+    # info final data
+    print_df_info(df_merged)
+
+    # save data
+    df_merged.to_csv(data_path + 'df_clean.csv')
 
 
 if __name__ == "__main__":
